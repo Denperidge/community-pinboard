@@ -6,8 +6,11 @@ const Event = require("../app/Event");
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/', async function(req, res, next) {
+  console.log("MEow")
+  res.render('index', { 
+    events: await db.getEvents()
+  });
 });
 
 module.exports = router;

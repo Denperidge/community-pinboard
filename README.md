@@ -2,6 +2,7 @@
 
 ```bash
 yarn install
-yarn start
 
+
+set DEBUG=community-pinboard:* & yarn start
 ```
