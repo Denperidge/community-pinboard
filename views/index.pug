@@ -1,6 +1,29 @@
 extends layout
 
+mixin input(id, inputType="text")
+  - const title = id[0].toUpperCase() + id.substring(1)
+  label(for=id)=title
+  input(type=inputType name=id id=id)
+  br
+
 block content
   h1 Community Pinboard!
   each event in events
     h2=event.title
+  
+  aside
+    form(action="/new-event" method="POST")
+      +input("thumbnail", "url")
+      +input("title")
+      +input("description")
+      +input("location")
+      +input("datetime", "datetime-local")
+      +input("poster")
+      input(type="submit" value="Pin!")
+      
+
+
+
+
+      
+

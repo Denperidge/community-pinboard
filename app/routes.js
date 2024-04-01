@@ -13,4 +13,9 @@ router.get('/', async function(req, res, next) {
   });
 });
 
+router.post("/new-event",async function(req, res, next) {
+  db.writeEvent(Event.fromObject(req.body))
+  res.redirect("/");
+});
+
 module.exports = router;

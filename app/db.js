@@ -1,4 +1,5 @@
 const fs = require("fs");
+const Event = require("./Event");
 
 const DATA_DIR = "data/"
 const EVENTS_DIR = DATA_DIR + "events/"
@@ -17,7 +18,7 @@ async function readEvent(jsonPath) {
             if (err) {    
                 reject(err);
             } else {
-                resolve(JSON.parse(data.toString()));
+                resolve(Event.fromObject(JSON.parse(data.toString())));
             }
         })
     });
@@ -38,7 +39,9 @@ async function getEvents(dir=EVENTS_DIR) {
             const events = [];
             for (let i=0; i < eventFiles.length; i++) {
                 const eventFile = EVENTS_DIR + eventFiles[i];
-                events.push(await readEvent(eventFile));
+                const event = await readEvent(eventFile);
+                console.log(event.Title)
+                events.push(event);
             }
             resolve(events);
         });
