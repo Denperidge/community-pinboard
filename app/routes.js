@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const db = require("../app/db")
-const Event = require("../app/Event");
+const db = require("./db")
+const Event = require("./Event");
 
 
 /* GET home page. */
