@@ -1,6 +1,12 @@
 extends layout
 
-mixin Pin(pin)
+mixin pinPreview(pin)
+  if pin.thumbnail
+    img(src=pin.thumbnail)
+  h3=pin.title
+  p=pin.poster
+
+mixin pinView(pin)
   if pin.thumbnail
     img(src=pin.thumbnail)
   h3=pin.title
@@ -9,7 +15,16 @@ mixin Pin(pin)
   input(disabled=true type="datetime-local" value=pin.datetime)
   p=pin.poster
 
-  
+
+mixin pins(pins, previews=true)
+  ul.pins
+    each pin in pins
+      li.pin
+        if previews
+          +pinPreview(pin)
+        else
+          +pinView(pin)
+        
   
 
 mixin input(id, inputType="text")
@@ -20,19 +35,22 @@ mixin input(id, inputType="text")
 
 block content
   h1 Community Pinboard!
-  - console.log(pins)
 
   main
     h2 Pinboard
     // Replace div with better elementç
     div#board
-      ul#pins
-        each pin in pins
-          li.pin
-            +Pin(pin)
-  
+      +pins(pinArray, true)
+    
+
+  // Switch aside to main?
   aside
-    h2 New pin
+    h2 Pin view
+    +pins(pinArray, false)
+
+    hr
+
+    h3 New pin
     form(action="/new-event" method="POST")
       +input("thumbnail", "url")
       +input("title")

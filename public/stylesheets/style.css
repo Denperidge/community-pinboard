@@ -1,4 +1,12 @@
 
+main {
+  min-width: 50%;
+}
+
+aside {
+  max-width: 30%;
+  float: right;
+}
 
 #board {
   width: 100%;
@@ -7,7 +15,7 @@
   border: 5px solid beige;
 }
 
-#pins {
+#board ul {
   padding: 0;
   list-style: none;
 

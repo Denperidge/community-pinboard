@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/', async function(req, res, next) {
   console.log(await db.getPins())
   res.render('index', { 
-    pins: await db.getPins()
+    pinArray: await db.getPins()
   });
 });
 
