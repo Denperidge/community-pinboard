@@ -42,15 +42,15 @@ block content
     h1 Community Pinboard!
 
   main
-    h2 Pinboard
+    h2.sr-only Pinboard
     // Replace div with better elementç
     div#board
       +pins(pinArray, true)
     
 
   // Switch aside to main?
-  aside
-    h2 Pin view
+  aside#pinview
+    h2.sr-only Pin view
     +pins(pinArray, false)
 
       hr
