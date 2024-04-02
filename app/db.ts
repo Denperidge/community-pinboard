@@ -2,13 +2,13 @@ import * as fs from "fs";
 import { Pin } from "./Pin";
 
 const DATA_DIR = "data/"
-const EVENTS_DIR = DATA_DIR + "pins/"
+const PINS_DIR = DATA_DIR + "pins/"
 
 
 async function makeDirs() {
     return Promise.all([
         fs.mkdir(DATA_DIR, {}, ()=>{}),
-        fs.mkdir(EVENTS_DIR, {}, ()=>{})
+        fs.mkdir(PINS_DIR, {}, ()=>{})
     ]);
 }
 
@@ -26,21 +26,21 @@ export async function readPin(jsonPath: string): Promise<Pin> {
 
 export async function writePin(pin: Pin): Promise<void> {
     return new Promise((resolve, reject) => {
-        fs.writeFile(EVENTS_DIR + pin.filename(), pin.toString(), ()=>{resolve();})
+        fs.writeFile(PINS_DIR + pin.filename(), pin.toString(), ()=>{resolve();})
     });
 }
 
 
-export async function getPins(dir=EVENTS_DIR): Promise<Array<Pin>> {
+export async function getPins(dir=PINS_DIR): Promise<Array<Pin>> {
     return new Promise((resolve, reject) => {
-        fs.readdir(dir, async (err, eventFiles) => {
+        fs.readdir(dir, async (err, pinFiles) => {
             if (err) { reject(err); }
     
             const pins: Array<Pin> = [];
-            for (let i=0; i < eventFiles.length; i++) {
-                const pinFile = EVENTS_DIR + eventFiles[i];
+            for (let i=0; i < pinFiles.length; i++) {
+                const pinFile = PINS_DIR + pinFiles[i];
                 const pin = await readPin(pinFile);
-                console.log(pin.title)
+                pins.push(pin)
             }
             resolve(pins);
         });

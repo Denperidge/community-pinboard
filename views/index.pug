@@ -1,5 +1,17 @@
 extends layout
 
+mixin Pin(pin)
+  if pin.thumbnail
+    img(src=pin.thumbnail)
+  h2=pin.title
+  p=pin.description
+  p=pin.location 
+  input(disabled=true type="datetime-local" value=pin.datetime)
+  p=pin.poster
+
+  
+  
+
 mixin input(id, inputType="text")
   - const title = id[0].toUpperCase() + id.substring(1)
   label(for=id)=title
@@ -8,10 +20,15 @@ mixin input(id, inputType="text")
 
 block content
   h1 Community Pinboard!
-  each event in events
-    h2=event.title
+  - console.log(pins)
+
+  main
+    h2 Pinboard
+    each pin in pins
+      +Pin(pin)
   
   aside
+    h2 New pin
     form(action="/new-event" method="POST")
       +input("thumbnail", "url")
       +input("title")

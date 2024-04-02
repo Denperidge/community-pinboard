@@ -8,9 +8,9 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  console.log("MEow")
+  console.log(await db.getPins())
   res.render('index', { 
-    events: await db.getPins()
+    pins: await db.getPins()
   });
 });
 
