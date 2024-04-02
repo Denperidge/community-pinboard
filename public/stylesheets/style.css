@@ -27,17 +27,15 @@ body {
 
   display: grid;
   grid-template-columns: 0.7fr 0.3fr;
-  grid-template-rows: 0.1fr 1fr;
+  grid-template-rows: auto 1fr;
 
-  row-gap: 20px;
   column-gap: 20px;
 
   font-family: "RodinBokutoh Pro EB";
   letter-spacing: 0.1rem;
 
-  background-color: #00fffb;
-  background: linear-gradient(0deg, #3eff00 0%, #00fffb 61%); 
-
+  background-color: #b4f4d9;
+  background-image: url("/images/nookipedia-tile.jpg");
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -52,6 +50,11 @@ header {
   grid-row: 1;
 }
 
+header h1 {
+  padding: 0;
+  margin: 0;
+}
+
 main {
   grid-row: 2;
 }
@@ -63,7 +66,7 @@ aside {
 
 @media (max-width: 800px) {
   body {
-    grid-template-rows: 0.1fr 1fr 1fr;
+    grid-template-rows: auto 1fr 1fr;
 
   }
   aside {
@@ -73,12 +76,17 @@ aside {
 
 
 /* Specific parts */
-#board {
+#board, #pinview {
   width: 100%;
   height: 80vh;
 
-  border: 5px solid beige;
   box-sizing: border-box;
+
+  background-color: beige;
+  border: 25px solid hsl(30, 50%, 15%);
+
+  /* Placeholder border image by Jim Kang. See https://gist.github.com/jimkang/6a9df6c0b65effc7c7aa6885e526ceb1 */
+  border-image: repeating-linear-gradient(40deg, hsl(30, 50%, 15%), hsl(20, 50%, 30%), hsl(25, 40%, 20%) 8px) 60;
 }
 
 .pins {
