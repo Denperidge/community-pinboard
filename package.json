@@ -2,7 +2,9 @@
   "name": "community-pinboard",
   "version": "0.0.0",
   "scripts": {
-    "start": "ts-node-dev --respawn ./bin/www"
+    "start": "yarn dev",
+    "dev": "ts-node-dev --respawn ./bin/www",
+    "dev:debug": "set DEBUG=community-pinboard:* & yarn dev"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
