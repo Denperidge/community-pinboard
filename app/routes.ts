@@ -31,6 +31,7 @@ router.post(
       res.send({
         errors: errors.array()
       });
+      return;
     }
 
     db.writePin(Pin.fromObject(matchedData(req)))

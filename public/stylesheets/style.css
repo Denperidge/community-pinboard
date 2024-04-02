@@ -1,8 +1,21 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+
+
+#board {
+  width: 100%;
+  min-height: 80vh;
+
+  border: 5px solid beige;
 }
 
-a {
-  color: #00B7FF;
+#pins {
+  padding: 0;
+  list-style: none;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+#board .pin {
+  max-width: 250px;
 }

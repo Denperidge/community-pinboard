@@ -3,7 +3,7 @@ extends layout
 mixin Pin(pin)
   if pin.thumbnail
     img(src=pin.thumbnail)
-  h2=pin.title
+  h3=pin.title
   p=pin.description
   p=pin.location 
   input(disabled=true type="datetime-local" value=pin.datetime)
@@ -24,8 +24,12 @@ block content
 
   main
     h2 Pinboard
-    each pin in pins
-      +Pin(pin)
+    // Replace div with better elementç
+    div#board
+      ul#pins
+        each pin in pins
+          li.pin
+            +Pin(pin)
   
   aside
     h2 New pin
