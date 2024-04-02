@@ -1,12 +1,14 @@
 extends layout
 
 mixin pinPreview(pin)
-  if pin.thumbnail
-    img(src=pin.thumbnail)
-  h3=pin.title
-  p=pin.poster
+  a(href="#" + pin.title)
+    if pin.thumbnail
+      img(src=pin.thumbnail)
+    h3=pin.title
+    p=pin.poster
 
 mixin pinView(pin)
+  a(id=pin.title)
   if pin.thumbnail
     img(src=pin.thumbnail)
   h3=pin.title
@@ -24,6 +26,8 @@ mixin pins(pins, previews=true)
           +pinPreview(pin)
         else
           +pinView(pin)
+    if block
+      block
         
   
 
@@ -34,7 +38,8 @@ mixin input(id, inputType="text")
   br
 
 block content
-  h1 Community Pinboard!
+  header
+    h1 Community Pinboard!
 
   main
     h2 Pinboard
@@ -48,18 +53,18 @@ block content
     h2 Pin view
     +pins(pinArray, false)
 
-    hr
+      hr
 
-    h3 New pin
-    form(action="/new-event" method="POST")
-      +input("thumbnail", "url")
-      +input("title")
-      +input("description")
-      +input("location")
-      +input("datetime", "datetime-local")
-      +input("poster")
-      input(type="submit" value="Pin!")
-      
+      h3 New pin
+      form(action="/new-event" method="POST")
+        +input("thumbnail", "url")
+        +input("title")
+        +input("description")
+        +input("location")
+        +input("datetime", "datetime-local")
+        +input("poster")
+        input(type="submit" value="Pin!")
+        
 
 
 
