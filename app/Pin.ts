@@ -6,7 +6,7 @@ export class Pin {
     poster: string;
     thumbnail?: URL;
 
-    constructor(pTitle: string, pDescription: string, pLocation: string, pDatetime: Date, pPoster: string, pThumbnail?: URL) {
+    constructor(pTitle: string, pDescription: string, pLocation: string, pDatetime: Date, pPoster: string, pThumbnail?: string) {
         this.title = pTitle;
         this.description = pDescription;
         this.location = pLocation;
@@ -14,7 +14,7 @@ export class Pin {
         this.poster = pPoster;
 
         if (pThumbnail) {
-            this.thumbnail = pThumbnail;
+            this.thumbnail = new URL(pThumbnail);
         } else {
             this.thumbnail = undefined;
         }
@@ -27,7 +27,7 @@ export class Pin {
             obj.location,
             new Date(obj.datetime),
             obj.poster,
-            new URL(obj.thumbnail)
+            obj.thumbnail
         );
     }
 
@@ -35,14 +35,14 @@ export class Pin {
         return this.title + ".json";
     }
 
-    toJSON() : object {
+    /*toJSON() : object {
         return {
             "title": this.title
         }
-    }
+    }*/
 
     toString() : string {
-        return JSON.stringify(this.toJSON());
+        return JSON.stringify(this);
     }
 }
 

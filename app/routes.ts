@@ -1,5 +1,5 @@
 import * as express from "express";
-import { query, validationResult } from "express-validator";
+import { check, validationResult, matchedData } from "express-validator";
 
 import * as db from "./db";
 import { Pin } from "./Pin";
@@ -16,14 +16,24 @@ router.get('/', async function(req, res, next) {
 
 router.post(
   "/new-event", 
-  query("title").isAlphanumeric().not().isEmpty(),
-  query("description"),
-  query("location"),
-  query("datetime"),
-  query("poster"),
-  query("thumbnail"),
-  async function(req, res, next) {
-    db.writePin(Pin.fromObject(req.body))
+  [
+    check("title").isAlphanumeric().notEmpty(),
+    check("description"),
+    check("location").notEmpty(),
+    check("datetime").notEmpty(),
+    check("poster").notEmpty(),
+    check("thumbnail")
+  ],
+  async function(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.send({
+        errors: errors.array()
+      });
+    }
+
+    db.writePin(Pin.fromObject(matchedData(req)))
     res.redirect("/");
 });
 
