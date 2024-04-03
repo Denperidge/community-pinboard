@@ -12,10 +12,11 @@ mixin pinView(pin)
   if pin.thumbnail
     img(src=pin.thumbnail)
   h3=pin.title
-  p=pin.description
-  p=pin.location 
-  input(disabled=true type="datetime-local" value=pin.datetime)
-  p=pin.poster
+  if pin.description
+    p Description: #{pin.description}
+  p Location: #{pin.location} 
+  p Time/day: #{pin.datetime.toLocaleString()}
+  p Posted by: #{pin.poster}
 
 
 mixin pins(pins, previews=true)
