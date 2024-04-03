@@ -1,0 +1,12 @@
+aside {
+  height: 90vh;
+  overflow-y: hidden;
+
+  .pins {
+    overflow-y: scroll;
+  }
+}
+
+#pinview ul {
+  height: 100%;
+}

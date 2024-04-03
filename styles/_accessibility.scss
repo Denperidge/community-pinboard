@@ -1,0 +1,34 @@
+/*
+Usage:
+@import "accessibility";
+*/
+
+.sr-only {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.skip-link {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    float: left;
+    padding: 5px;
+    overflow: hidden;
+    
+    &:link, &:visited, &:hover,  &:active {
+        color: white;  // Normalise the color
+    }
+    
+    &:focus {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: auto;
+        height: auto;
+    }
+}
