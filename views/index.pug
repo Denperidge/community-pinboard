@@ -38,14 +38,26 @@ mixin input(id, inputType="text", required=true)
   - const title = id[0].toUpperCase() + id.substring(1)
   - let error = false;
   - let role = "";
+  - let value = "";
 
   if errors
     if errors[id]
       - error = true;
+    
+  if inputType == "datetime-local"
+    // https://stackoverflow.com/a/28149561
+    - const timezoneOffset = (new Date()).getTimezoneOffset() * 60000;
+    - const date = (new Date(Date.now() - timezoneOffset))
+    - date.setDate(date.getDate() + 1)
+    - date.setSeconds(null);
+    - date.setMilliseconds(null);
+    - value = date.toISOString().slice(0, -1);
+  
   
   label(for=id role=error ? "alert": "")=required ? `*${title}` : title
   input(
     type=inputType name=id id=id required=required
+    value=value 
     aria-describedby=error ? `${id}-error` : null
     aria-invalid=error)
   if error
