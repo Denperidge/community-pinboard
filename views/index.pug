@@ -33,13 +33,26 @@ mixin pins(pins, previews=true)
         
   
 
-mixin input(id, inputType="text")
+mixin input(id, inputType="text", required=true)
   - const title = id[0].toUpperCase() + id.substring(1)
-  label(for=id)=title
-  input(type=inputType name=id id=id)
+  - let error = false;
+  - let role = "";
+
+  if errors
+    if errors[id]
+      - error = true;
+  
+  label(for=id role=error ? "alert": "")=required ? `*${title}` : title
+  input(
+    type=inputType name=id id=id required=required
+    aria-describedby=error ? `${id}-error` : null
+    aria-invalid=error)
+  if error
+    p.error(id=`${id}-error`)=errors[id]
   br
 
 block content
+  - console.log(errors)
   header
     h1 Community Pinboard!
 
@@ -57,9 +70,9 @@ block content
 
       h3 New pin
       form(action="/new-event" method="POST")
-        +input("thumbnail", "url")
+        +input("thumbnail", "url", required=false)
         +input("title")
-        +input("description")
+        +input("description", "text", required=false)
         +input("location")
         +input("datetime", "datetime-local")
         +input("poster")

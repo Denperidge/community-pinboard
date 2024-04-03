@@ -32,3 +32,18 @@ Usage:
         height: auto;
     }
 }
+
+input {
+    &:optional {
+        border-color: gray;
+    }
+    &:required {
+        border-color: black;
+    }
+    &:invalid {
+        border-color: red;
+    }
+}
+.error {
+    color: red;
+}

@@ -1,5 +1,5 @@
 import * as express from "express";
-import { check, validationResult, matchedData } from "express-validator";
+import { check, validationResult, matchedData, ValidationError, FieldValidationError } from "express-validator";
 
 import * as db from "./db";
 import { Pin } from "./Pin";
@@ -17,7 +17,7 @@ router.get('/', async function(req, res, next) {
 router.post(
   "/new-event", 
   [
-    check("title").isAlphanumeric().notEmpty(),
+    check("title").notEmpty(),
     check("description"),
     check("location").notEmpty(),
     check("datetime").notEmpty(),
@@ -28,9 +28,14 @@ router.post(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      res.send({
-        errors: errors.array()
+      const returnErrors: {[key:string]: string} = {};
+      (errors.array() as FieldValidationError[]).forEach((err: FieldValidationError) => {
+        returnErrors[err.path] = `${err.msg}: "${err.value}"`;
       });
+      res.render("index", {
+        pinArray: await db.getPins(),
+        errors: returnErrors,
+      })
       return;
     }
 
