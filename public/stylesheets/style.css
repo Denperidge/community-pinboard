@@ -50,7 +50,7 @@ body {
   grid-template-columns: 0.7fr 0.3fr;
   grid-template-rows: auto 1fr;
 
-  column-gap: 20px;
+  /*column-gap: 20px;*/
 
   font-family: "RodinBokutoh Pro EB";
   letter-spacing: 0.1rem;
@@ -62,6 +62,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: "Seurat Pro B";
   letter-spacing: 0.12rem;
+  text-align: center;
 
 }
 
@@ -83,6 +84,7 @@ main {
 
 aside {
   grid-row: 2;
+  margin-left: 50px;
 }
 
 @media (max-width: 800px) {
@@ -92,13 +94,14 @@ aside {
   }
   aside {
     grid-row: 3;
+    margin-left: 0px;
   }
 }
 
 
 /* Specific parts */
 #board {
-  height: 100%;
+  height: 90%;
 }
 
 aside {
@@ -122,6 +125,7 @@ aside {
 
 .pins {
   padding: 0;
+  margin: 0;
   list-style: none;
 }
 
@@ -134,7 +138,18 @@ aside {
   overflow: none;
   text-overflow: ellipsis;
   text-wrap: wrap;
+
+  width: 200px;
+  height: 200px;
+
+  padding: 30px 50px;
+
+  background-image: url("/images/note-paper-with-clips.svg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center center;
 }
+
 
 aside .pins {
   overflow-y: scroll;
