@@ -43,16 +43,14 @@ block content
   header
     h1 Community Pinboard!
 
-  main
-    h2.sr-only Pinboard
-    // Replace div with better elementç
-    div#board
-      +pins(pinArray, true)
+  main#board
+    h2.sr-only Pinboard      
+    +pins(pinArray, true)
     
 
   // Switch aside to main?
   aside#pinview
-    h2.sr-only Pin view
+    h2 Pin view
     +pins(pinArray, false)
 
       hr

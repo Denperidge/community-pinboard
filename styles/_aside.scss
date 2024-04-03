@@ -1,6 +1,10 @@
 aside {
-  height: 90vh;
+  height: 80vh;
   overflow-y: hidden;
+
+  h2 {
+    margin: 0;
+  }
 
   .pins {
     overflow-y: scroll;

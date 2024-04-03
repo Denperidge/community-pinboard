@@ -21,3 +21,21 @@ img {
   margin: 0;
   list-style: none;
 }
+
+/* Placeholder border image by Jim Kang. See https://gist.github.com/jimkang/6a9df6c0b65effc7c7aa6885e526ceb1 */
+$woodenBorder: repeating-linear-gradient(40deg, hsl(30, 50%, 15%), hsl(20, 50%, 30%), hsl(25, 40%, 20%) 8px) 60;
+
+
+#board, aside {
+  background-color: beige;
+
+  border: 25px solid hsl(30, 50%, 15%);
+  border-image: $woodenBorder;
+
+  box-sizing: border-box;
+}
+
+aside {
+  padding: 30px;
+  border-width: 20px;
+}
