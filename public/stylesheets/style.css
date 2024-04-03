@@ -146,11 +146,17 @@ aside {
 
   background-image: url("/images/note-paper-with-clips.svg");
   background-repeat: no-repeat;
-  background-size: 100%;
+  background-size: contain;
   background-position: center center;
 }
 
 
 aside .pins {
   overflow-y: scroll;
+}
+
+.pin img {
+  object-fit: contain;
+  width: 95%;
+  margin: auto;
 }

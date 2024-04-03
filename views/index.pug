@@ -2,7 +2,7 @@ extends layout
 
 mixin pinPreview(pin)
   a(href="#" + pin.title)
-    if pin.thumbnail
+    //if pin.thumbnail
       img(src=pin.thumbnail)
     h3=pin.title
     p=pin.poster
@@ -21,11 +21,13 @@ mixin pinView(pin)
 mixin pins(pins, previews=true)
   ul.pins
     each pin in pins
-      li.pin
+      li.pin(style=pin.thumbnail && previews ? `background-image: URL(${pin.thumbnail}); background-c lip: URL(/images/note-paper-with-clips.svg);` : "")
         if previews
           +pinPreview(pin)
         else
           +pinView(pin)
+        br
+        br
     if block
       block
         
