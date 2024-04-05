@@ -1,5 +1,10 @@
 extends layout
 
+mixin icon()
+  i.icon
+    img(src="/public/images/icons.png")
+  
+
 mixin pinPreview(pin)
   a(href="#" + pin.title)
     //if pin.thumbnail
@@ -14,7 +19,8 @@ mixin pinView(pin)
   h3=pin.title
   if pin.description
     p Description: #{pin.description}
-  p Location: #{pin.location} 
+  p 
+    Location: #{pin.location} 
   p Time/day: #{pin.datetime.toLocaleString()}
   p Posted by: #{pin.postedBy}
 
