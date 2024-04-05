@@ -1,10 +1,12 @@
+import { PUBLIC_UPLOADS_PATH as PUBLIC_UPLOADS_PATH } from "./conf";
+
 export class Pin {
     title: string;
     description: string;
     location: string;
     datetime: Date;
     poster: string;
-    thumbnail?: URL;
+    thumbnail?: string;
 
     constructor(pTitle: string, pDescription: string, pLocation: string, pDatetime: Date, pPoster: string, pThumbnail?: string) {
         this.title = pTitle;
@@ -14,7 +16,7 @@ export class Pin {
         this.poster = pPoster;
 
         if (pThumbnail) {
-            this.thumbnail = new URL(pThumbnail);
+            this.thumbnail = pThumbnail;
         } else {
             this.thumbnail = undefined;
         }
@@ -33,6 +35,21 @@ export class Pin {
 
     filename() : string {
         return this.title + ".json";
+    }
+
+    get thumbnailPath() { 
+        // If no thumbnail, return same undefined value
+        if (!this.thumbnail) {
+            return this.thumbnail;
+        }
+        // If it's an url, return url
+        else if (this.thumbnail.includes("/")) {
+            return this.thumbnail;
+        }
+        // If it's just a filename, return uploads 
+        else {
+            return PUBLIC_UPLOADS_PATH + this.thumbnail;
+        }
     }
 
     /*toJSON() : object {

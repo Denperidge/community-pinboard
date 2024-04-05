@@ -9,8 +9,8 @@ mixin pinPreview(pin)
 
 mixin pinView(pin)
   a(id=pin.title)
-  if pin.thumbnail
-    img(src=pin.thumbnail)
+  if pin.thumbnailPath
+    img(src=pin.thumbnailPath)
   h3=pin.title
   if pin.description
     p Description: #{pin.description}
@@ -22,7 +22,7 @@ mixin pinView(pin)
 mixin pins(pins, previews=true)
   ul.pins
     each pin in pins
-      li.pin(style=pin.thumbnail && previews ? `background-image: URL(${pin.thumbnail}); background-c lip: URL(/images/note-paper-with-clips.svg);` : "")
+      li.pin(style=pin.thumbnailPath && previews ? `background-image: URL(${pin.thumbnailPath}); background-c lip: URL(/images/note-paper-with-clips.svg);` : "")
         if previews
           +pinPreview(pin)
         else
@@ -82,8 +82,9 @@ block content
       hr
 
       h3 New pin
-      form(action="/new-event" method="POST")
-        +input("thumbnail", "url", required=false)
+      form(action="/new-event" method="POST" enctype="multipart/form-data")
+        +input("thumbnailUrl", "url", required=false)
+        +input("thumbnailFile", "file", required=false)
         +input("title")
         +input("description", "text", required=false)
         +input("location")
