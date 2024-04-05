@@ -5,7 +5,7 @@ mixin pinPreview(pin)
     //if pin.thumbnail
       img(src=pin.thumbnail)
     h3=pin.title
-    p=pin.poster
+    p=pin.postedBy
 
 mixin pinView(pin)
   a(id=pin.title)
@@ -16,7 +16,7 @@ mixin pinView(pin)
     p Description: #{pin.description}
   p Location: #{pin.location} 
   p Time/day: #{pin.datetime.toLocaleString()}
-  p Posted by: #{pin.poster}
+  p Posted by: #{pin.postedBy}
 
 
 mixin pins(pins, previews=true)
@@ -89,7 +89,7 @@ block content
         +input("description", "text", required=false)
         +input("location")
         +input("datetime", "datetime-local")
-        +input("poster")
+        +input("postedBy")
         input(type="submit" value="Pin!")
         
 

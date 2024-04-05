@@ -5,15 +5,15 @@ export class Pin {
     description: string;
     location: string;
     datetime: Date;
-    poster: string;
+    postedBy: string;
     thumbnail?: string;
 
-    constructor(pTitle: string, pDescription: string, pLocation: string, pDatetime: Date, pPoster: string, pThumbnail?: string) {
+    constructor(pTitle: string, pDescription: string, pLocation: string, pDatetime: Date, pPostedBy: string, pThumbnail?: string) {
         this.title = pTitle;
         this.description = pDescription;
         this.location = pLocation;
         this.datetime = pDatetime;
-        this.poster = pPoster;
+        this.postedBy = pPostedBy;
 
         if (pThumbnail) {
             this.thumbnail = pThumbnail;
@@ -28,7 +28,7 @@ export class Pin {
             obj.description,
             obj.location,
             new Date(obj.datetime),
-            obj.poster,
+            obj.postedBy,
             obj.thumbnail
         );
     }

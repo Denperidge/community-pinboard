@@ -56,7 +56,7 @@ router.post(
     check("description"),
     check("location").notEmpty(),
     check("datetime").notEmpty(),
-    check("poster").notEmpty(),
+    check("postedBy").notEmpty(),
     check("thumbnailUrl"),
     check("thumbnailFile")
   ],
