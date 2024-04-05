@@ -34,6 +34,10 @@ The non-edited post-it SVG is from Openclipart, licensed under the Public Domain
 
 The current (placeholder) background is from the [Nookipedia assets page](https://nookipedia.com/wiki/Nookipedia:Assets).
 
+The cork.jpg material is...
+- Created using `Cork001` from ambientCG.com,
+  licensed under the Creative Commons CC0 1.0 Universal License.
+- Modified by @hynet-mel.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
