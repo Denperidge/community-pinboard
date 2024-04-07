@@ -19,6 +19,7 @@ mixin pinView(pin)
   +icon("egg")
   if pin.description
     p Description: #{pin.description}
+  +icon("suitcase")
   p Location: #{pin.location} 
   +icon("time")
   p Time/day: #{pin.datetime.toLocaleString()}
