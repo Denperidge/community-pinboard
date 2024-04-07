@@ -1,5 +1,9 @@
 extends layout
 
+mixin icon(id)
+  // See https://a11y-101.com/development/icons-and-links
+  i(class=`icon ${id}` aria-hidden=true)  
+
 mixin pinPreview(pin)
   a(href="#" + pin.title)
     //if pin.thumbnail
@@ -13,10 +17,18 @@ mixin pinView(pin)
     img(src=pin.thumbnailPath)
   h3=pin.title
   if pin.description
-    p Description: #{pin.description}
-  p Location: #{pin.location} 
-  p Time/day: #{pin.datetime.toLocaleString()}
-  p Posted by: #{pin.postedBy}
+    p.
+      #[+icon("egg")]
+      Description: #{pin.description}
+  p.
+    #[+icon("suitcase")]
+    Location: #{pin.location} 
+  p.
+    #[+icon("time")]
+    Time/day: #{pin.datetime.toLocaleString()}
+  p.
+    #[+icon("celeste")]
+    Posted by: #{pin.postedBy}
 
 
 mixin pins(pins, previews=true)
@@ -34,7 +46,7 @@ mixin pins(pins, previews=true)
         
   
 
-mixin input(id, inputType="text", required=true)
+mixin input(id, inputType="text", icon=null, required=true)
   - const title = id[0].toUpperCase() + id.substring(1)
   - let error = false;
   - let role = "";
@@ -54,9 +66,16 @@ mixin input(id, inputType="text", required=true)
     - value = date.toISOString().slice(0, -1);
   
   
-  label(for=id role=error ? "alert": "")=required ? `*${title}` : title
+  label(for=id role=error ? "alert": "")
+    if required
+      span *&nbsp;
+    if icon
+      +icon(icon)
+    span=title
   input(
-    type=inputType name=id id=id required=required
+    type=inputType
+    name=id id=id
+    required=required
     value=value 
     aria-describedby=error ? `${id}-error` : null
     aria-invalid=error)
@@ -86,10 +105,10 @@ block content
         +input("thumbnailUrl", "url", required=false)
         +input("thumbnailFile", "file", required=false)
         +input("title")
-        +input("description", "text", required=false)
-        +input("location")
-        +input("datetime", "datetime-local")
-        +input("postedBy")
+        +input("description", "text", "egg", required=false)
+        +input("location", "text", "suitcase")
+        +input("datetime", "datetime-local", "time")
+        +input("postedBy", "text", icon="celeste")
         input(type="submit" value="Pin!")
         
 
