@@ -2,9 +2,7 @@ extends layout
 
 mixin icon(id)
   // See https://a11y-101.com/development/icons-and-links
-  i(class=`icon ${id}` aria-hidden=true)
-    img(src="/images/icons.png")
-  
+  i(class=`icon ${id}` aria-hidden=true)  
 
 mixin pinPreview(pin)
   a(href="#" + pin.title)

@@ -2,12 +2,12 @@
 Defines a new icon preset
 
 $name: class name (to be used as class="icon CLASS_NAME")
-$left: absolute position left
-$top: absolute position top
+$posX: background-position-x value
+$posY: background-position-y value
 $widthMod, $heightMod: the spritesheets' sprites are not
-in a consistent grid. The modifiers will be applied
-to the original width/height spritesheet height in px.
-Default values for widthMod & heightMod are both 0.5
+in a consistent grid. The modifiers will be applied to
+the width/height values
+  background-size: (origWidth * $widthMod) (origWidth * $heightModDefault values for widthMod & heightMod are both 0.5
 
 Usage:
 .icon {
@@ -20,12 +20,15 @@ Usage:
 <i class="icon egg">...</i>
 
 */
-@mixin icon($name, $left, $top, $widthMod: 0.5, $heightMod: 0.5) {
-    &.#{$name} img {
-        width: 1496px * $widthMod;
-        height: 1008px * $heightMod;
-        left: $left;
-        top: $top;
+@mixin icon($name, $posX, $posY, $widthMod: 0.5, $heightMod: 0.5) {
+    &.#{$name} {
+        background-position-x: $posX;
+        background-position-y: $posY;
+        background-size: (1496px * $widthMod) (1008px * $heightMod);
+
+
+        background-image: url("/images/icons.png");
+        
     }
 }
 
