@@ -5,56 +5,62 @@ mixin icon(id)
   i(class=`icon ${id}` aria-hidden=true)  
 
 mixin pinPreview(pin)
-  a(href="#" + pin.title)
-    //if pin.thumbnail
-      img(src=pin.thumbnail)
-    h3=pin.title
-    p=pin.postedBy
+  -
+    // The classic: https://www.w3schools.com/js/js_random.asp
+    function random(min, max) {
+      return Math.floor(Math.random() * (max - min) ) + min;
+    }
+    // TODO: more efficient, random might get redefined every run?
+    let classNames = "pin preview";
+    let style = `transform-origin: ${random(40, 60)}% ${random(0, 35)}%; transform: rotate(${random(-15, 15)}deg);`;
+  
+  if pin.thumbnailPath
+    - classNames += " bg";
+    - style += `background-image: URL(${pin.thumbnailPath});`;
+  
+
+  a(class=classNames style=style href="#" + pin.title )
+    li
+      h3=pin.title
+      ul
+        li.
+          #[+icon("time")]
+          #{pin.datetime.toLocaleDateString()}
+        li.
+          #[+icon("suitcase")]
+          #{pin.location}
+        li.
+          #[+icon("celeste")]
+          #{pin.postedBy}
 
 mixin pinView(pin)
-  a(id=pin.title)
-  if pin.thumbnailPath
-    img(src=pin.thumbnailPath)
-  h3=pin.title
-  if pin.description
+  li.pin.view(id=pin.title)
+    if pin.thumbnailPath
+      img(src=pin.thumbnailPath)
+    h3=pin.title
+    if pin.description
+      p.
+        #[+icon("egg")]
+        Description: #{pin.description}
     p.
-      #[+icon("egg")]
-      Description: #{pin.description}
-  p.
-    #[+icon("suitcase")]
-    Location: #{pin.location} 
-  p.
-    #[+icon("time")]
-    Time/day: #{pin.datetime.toLocaleString()}
-  p.
-    #[+icon("celeste")]
-    Posted by: #{pin.postedBy}
+      #[+icon("suitcase")]
+      Location: #{pin.location} 
+    p.
+      #[+icon("time")]
+      Time/day: #{pin.datetime.toLocaleString()}
+    p.
+      #[+icon("celeste")]
+      Posted by: #{pin.postedBy}
 
 
 mixin pins(pins, previews=true)
-  -
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values
-    function random(min, max) {
-       return Math.random() * (max - min) + min;
-    }
-    // TODO: more efficient, random might get redefined every run?
-
   ul.pins
     each pin in pins
-      - let style = "";
       if previews
-        - style += `transform-origin: ${random(40, 60)}% ${random(0, 35)}%; transform: rotate(${random(-15, 15)}deg); `;
-        if pin.thumbnailPath
-          - style += `background-image: URL(${pin.thumbnailPath}); `
-
-
-      li.pin(style=style)
-        if previews
-          +pinPreview(pin)
-        else
-          +pinView(pin)
-        br
-        br
+        +pinPreview(pin)
+      else
+        +pinView(pin)
+        
     if block
       block
         

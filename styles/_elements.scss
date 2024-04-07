@@ -9,10 +9,37 @@ img {
 }
 
 .pin {
+  padding: 20px;
+
   img {
     object-fit: contain;
     width: 95%;
     margin: auto;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  &.bg {
+    h1, h2, h3, h4, h5, h6, span, p, a, ul li {
+      padding: 5px;
+      background-color: rgba(46, 46, 46, 0.8);
+    }
+    // In case of embedded <a> or if the pin is an <a>
+    a:link, &:link {
+      color: white;
+    }
+    a:visited, &:visited {
+      color: rgb(164, 255, 187);
+    }
+    a:hover, &:hover {
+      color: greenyellow;
+    }
+    a:active, &:active {
+      color: black;
+    }
   }
 }
 
