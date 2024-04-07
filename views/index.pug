@@ -32,9 +32,23 @@ mixin pinView(pin)
 
 
 mixin pins(pins, previews=true)
+  -
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values
+    function random(min, max) {
+       return Math.random() * (max - min) + min;
+    }
+    // TODO: more efficient, random might get redefined every run?
+
   ul.pins
     each pin in pins
-      li.pin(style=pin.thumbnailPath && previews ? `background-image: URL(${pin.thumbnailPath}); background-c lip: URL(/images/note-paper-with-clips.svg);` : "")
+      - let style = "";
+      if previews
+        - style += `transform-origin: ${random(40, 60)}% ${random(0, 35)}%; transform: rotate(${random(-15, 15)}deg); `;
+        if pin.thumbnailPath
+          - style += `background-image: URL(${pin.thumbnailPath}); `
+
+
+      li.pin(style=style)
         if previews
           +pinPreview(pin)
         else

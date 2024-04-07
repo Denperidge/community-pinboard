@@ -1,6 +1,8 @@
 #board {
     height: 90%;
 
+    padding: 20px;
+
     .pins {
         display: grid;
         grid-template-columns: repeat(auto-fill, 320px);
