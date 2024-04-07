@@ -1,40 +1,72 @@
 extends layout
 
+mixin icon(id)
+  // See https://a11y-101.com/development/icons-and-links
+  i(class=`icon ${id}` aria-hidden=true)  
+
 mixin pinPreview(pin)
-  a(href="#" + pin.title)
-    //if pin.thumbnail
-      img(src=pin.thumbnail)
-    h3=pin.title
-    p=pin.poster
+  -
+    // The classic: https://www.w3schools.com/js/js_random.asp
+    function random(min, max) {
+      return Math.floor(Math.random() * (max - min) ) + min;
+    }
+    // TODO: more efficient, random might get redefined every run?
+    let classNames = "pin preview";
+    let style = `transform-origin: ${random(40, 60)}% ${random(0, 35)}%; transform: rotate(${random(-15, 15)}deg);`;
+  
+  if pin.thumbnailPath
+    - classNames += " bg";
+    - style += `background-image: URL(${pin.thumbnailPath});`;
+  
+
+  a(class=classNames style=style href="#" + pin.title )
+    li
+      h3=pin.title
+      ul
+        li.
+          #[+icon("time")]
+          #{pin.datetime.toLocaleDateString()}
+        li.
+          #[+icon("suitcase")]
+          #{pin.location}
+        li.
+          #[+icon("celeste")]
+          #{pin.postedBy}
 
 mixin pinView(pin)
-  a(id=pin.title)
-  if pin.thumbnail
-    img(src=pin.thumbnail)
-  h3=pin.title
-  if pin.description
-    p Description: #{pin.description}
-  p Location: #{pin.location} 
-  p Time/day: #{pin.datetime.toLocaleString()}
-  p Posted by: #{pin.poster}
+  li.pin.view(id=pin.title)
+    if pin.thumbnailPath
+      img(src=pin.thumbnailPath)
+    h3=pin.title
+    if pin.description
+      p.
+        #[+icon("egg")]
+        Description: #{pin.description}
+    p.
+      #[+icon("suitcase")]
+      Location: #{pin.location} 
+    p.
+      #[+icon("time")]
+      Time/day: #{pin.datetime.toLocaleString()}
+    p.
+      #[+icon("celeste")]
+      Posted by: #{pin.postedBy}
 
 
 mixin pins(pins, previews=true)
   ul.pins
     each pin in pins
-      li.pin(style=pin.thumbnail && previews ? `background-image: URL(${pin.thumbnail}); background-c lip: URL(/images/note-paper-with-clips.svg);` : "")
-        if previews
-          +pinPreview(pin)
-        else
-          +pinView(pin)
-        br
-        br
+      if previews
+        +pinPreview(pin)
+      else
+        +pinView(pin)
+        
     if block
       block
         
   
 
-mixin input(id, inputType="text", required=true)
+mixin input(id, inputType="text", icon=null, required=true)
   - const title = id[0].toUpperCase() + id.substring(1)
   - let error = false;
   - let role = "";
@@ -54,9 +86,16 @@ mixin input(id, inputType="text", required=true)
     - value = date.toISOString().slice(0, -1);
   
   
-  label(for=id role=error ? "alert": "")=required ? `*${title}` : title
+  label(for=id role=error ? "alert": "")
+    if required
+      span *&nbsp;
+    if icon
+      +icon(icon)
+    span=title
   input(
-    type=inputType name=id id=id required=required
+    type=inputType
+    name=id id=id
+    required=required
     value=value 
     aria-describedby=error ? `${id}-error` : null
     aria-invalid=error)
@@ -81,13 +120,14 @@ block content
       hr
 
       h3 New pin
-      form(action="/new-event" method="POST")
-        +input("thumbnail", "url", required=false)
+      form(action="/new-event" method="POST" enctype="multipart/form-data")
+        +input("thumbnailUrl", "url", required=false)
+        +input("thumbnailFile", "file", required=false)
         +input("title")
-        +input("description", "text", required=false)
-        +input("location")
-        +input("datetime", "datetime-local")
-        +input("poster")
+        +input("description", "text", "egg", required=false)
+        +input("location", "text", "suitcase")
+        +input("datetime", "datetime-local", "time")
+        +input("postedBy", "text", icon="celeste")
         input(type="submit" value="Pin!")
         
 

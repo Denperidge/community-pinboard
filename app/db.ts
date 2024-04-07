@@ -1,14 +1,15 @@
 import * as fs from "fs";
-import { Pin } from "./Pin";
+import { join } from "path";
 
-const DATA_DIR = "data/"
-const PINS_DIR = DATA_DIR + "pins/"
+import { DATA_DIR, PINS_DIR, UPLOADS_DIR } from "./conf";
+import { Pin } from "./Pin";
 
 
 async function makeDirs() {
     return Promise.all([
         fs.mkdir(DATA_DIR, {}, ()=>{}),
-        fs.mkdir(PINS_DIR, {}, ()=>{})
+        fs.mkdir(PINS_DIR, {}, ()=>{}),
+        fs.mkdir(UPLOADS_DIR, {}, ()=>{})
     ]);
 }
 
@@ -27,6 +28,20 @@ export async function readPin(jsonPath: string): Promise<Pin> {
 export async function writePin(pin: Pin): Promise<void> {
     return new Promise((resolve, reject) => {
         fs.writeFile(PINS_DIR + pin.filename(), pin.toString(), ()=>{resolve();})
+    });
+}
+
+
+export function uploadPath(filename: string, path=UPLOADS_DIR) {
+    return path + filename;
+}
+
+export async function saveImage(filename: string, buffer: Buffer, path=UPLOADS_DIR): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const dest = join(path, filename);
+        fs.writeFile(dest, buffer, () => {
+            resolve(filename);
+        });
     });
 }
 
