@@ -39,16 +39,7 @@ Usage:
 
     @include icon("egg", -9.5px, -4.5px);
     @include icon("time", -149px, -360px, 0.45, 0.45);
-    @include icon("suitcase", -83px, -1px, 0.128, 0.128, "/images/spritesheet-2.png")
-
-    /*
-    &.egg img {
-        left: -9.5px;
-        top: -4.5px;
-    }
-    */
-    
-    //background-image: url("/images/icons.png");
-    //background-size: 100% 100%;
-    //background-position: 0 0;
+    @include icon("suitcase", -83px, -1px, 0.128, 0.128, "/images/spritesheet-2.png");
+    // TODO: fix Celeste borders being visible
+    @include icon("celeste", -0.4px, -50px, 0.124, 0.124, "/images/spritesheet-2.png");
 }
