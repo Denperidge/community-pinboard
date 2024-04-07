@@ -16,7 +16,7 @@ mixin pinPreview(pin)
   
   if pin.thumbnailPath
     - classNames += " bg";
-    - style += `background-image: URL(${pin.thumbnailPath});`;
+    - style += `background-image: URL("${pin.thumbnailPath}");`;
   
 
   a(class=classNames style=style href="#" + pin.title )
@@ -63,7 +63,7 @@ mixin pins(pins, previews=true)
         
   
 
-mixin input(id, inputType="text", placeholder, icon=null, required=true)
+mixin input(id="", inputType="text", placeholder, maxlength=null, icon=null, required)
   - const title = id[0].toUpperCase() + id.substring(1)
   - let error = false;
   - let role = "";
@@ -83,7 +83,7 @@ mixin input(id, inputType="text", placeholder, icon=null, required=true)
     - value = date.toISOString().slice(0, -1);
   
   
-  label(for=id role=error ? "alert": "")
+  label(for=id role=(error ? "alert": "") class=(error ? "error" : ""))
     if required
       span *&nbsp;
     if icon
@@ -92,9 +92,10 @@ mixin input(id, inputType="text", placeholder, icon=null, required=true)
   input(
     type=inputType
     name=id id=id
+    maxlength=maxlength
     required=required
     placeholder=placeholder
-    value=value 
+    value=value
     aria-describedby=error ? `${id}-error` : null
     aria-invalid=error)
   if error
@@ -114,20 +115,60 @@ block content
   aside#pinview
     h2 Pin view
     +pins(pinArray, false)
-
       hr
 
-      h3 New pin
+      h3#new-pin New pin
       form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")
-        +input("title", "text", "The name of the event")
-        +input("description", "text", "Description...", "egg", required=false)
-        +input("location", "text", "Where your event takes place...", "suitcase")
-        +input("datetime", "datetime-local", placeholder="", "time")
-        +input("postedBy", "text", "Your name", icon="celeste")
+        //+input(id="title", inputType="text", placeholder="The name of the event", maxlength=20, icon=null, required=true)
+        +input(
+          "title",
+          "text",
+          "The name of the event",
+          20,
+          null,
+          true)
+        +input(
+          "description",
+          "text",
+          "Description...",
+          200, 
+          "egg",
+          false)
+        +input(
+          "location",
+          "text",
+          "Where your event takes place...",
+          50,
+          "suitcase",
+          true)
+        +input(
+          "datetime",
+          "datetime-local",
+          "",
+          "",
+          "time",
+          true)
+        +input(
+          "postedBy",
+          "text",
+          "Your name",
+          20,
+          "celeste",
+          true)
         p For an (optional) image, you can use
-        +input("thumbnailUrl", "url", "https://www.example.com/image.png", null, required=false)
+        +input(
+          "thumbnailUrl",
+          "url",
+          "https://www.example.com/image.png",
+          null,
+          false)
         p ... or ...
-        +input("thumbnailFile", "file", placeholder="", null, required=false)
+        +input(
+          "thumbnailFile", 
+          "file", 
+          "", 
+          null,
+          false)
         input(type="submit" value="Pin!")
         
 

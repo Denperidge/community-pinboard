@@ -34,14 +34,14 @@ Usage:
 }
 
 input {
+    &:invalid {
+        border-color: red;
+    }
     &:optional {
         border-color: gray;
     }
     &:required {
         border-color: black;
-    }
-    &:invalid {
-        border-color: red;
     }
 }
 
