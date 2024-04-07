@@ -49,15 +49,18 @@ aside {
 
 @media (max-width: 800px) {
     body {
+        grid-template-columns: 1fr;
         grid-template-rows: auto 1fr 1fr;
+        justify-items: center;
     }
 
     main, aside {
-        margin: auto;
+        width: 90%;
     }
 
     aside {
         grid-row: 3;
         margin-left: 0px;
+        margin-bottom: 15px;
     }
 }

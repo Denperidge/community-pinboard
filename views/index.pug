@@ -63,7 +63,7 @@ mixin pins(pins, previews=true)
         
   
 
-mixin input(id, inputType="text", icon=null, required=true)
+mixin input(id, inputType="text", placeholder, icon=null, required=true)
   - const title = id[0].toUpperCase() + id.substring(1)
   - let error = false;
   - let role = "";
@@ -93,6 +93,7 @@ mixin input(id, inputType="text", icon=null, required=true)
     type=inputType
     name=id id=id
     required=required
+    placeholder=placeholder
     value=value 
     aria-describedby=error ? `${id}-error` : null
     aria-invalid=error)
@@ -118,15 +119,15 @@ block content
 
       h3 New pin
       form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")
-        +input("title")
-        +input("description", "text", "egg", required=false)
-        +input("location", "text", "suitcase")
-        +input("datetime", "datetime-local", "time")
-        +input("postedBy", "text", icon="celeste")
+        +input("title", "text", "The name of the event")
+        +input("description", "text", "Description...", "egg", required=false)
+        +input("location", "text", "Where your event takes place...", "suitcase")
+        +input("datetime", "datetime-local", placeholder="", "time")
+        +input("postedBy", "text", "Your name", icon="celeste")
         p For an (optional) image, you can use
-        +input("thumbnailUrl", "url", null, required=false)
+        +input("thumbnailUrl", "url", "https://www.example.com/image.png", null, required=false)
         p ... or ...
-        +input("thumbnailFile", "file", null, required=false)
+        +input("thumbnailFile", "file", placeholder="", null, required=false)
         input(type="submit" value="Pin!")
         
 
