@@ -1,16 +1,31 @@
+/* Placeholder border image by Jim Kang. See https://gist.github.com/jimkang/6a9df6c0b65effc7c7aa6885e526ceb1 */
+$woodenBorder: repeating-linear-gradient(40deg, hsl(30, 50%, 15%), hsl(20, 50%, 30%), hsl(25, 40%, 20%) 8px) 60;
+
 aside {
   height: 80vh;
   overflow-y: hidden;
+
+  border: 25px solid hsl(30, 50%, 15%);
+  border-image: $woodenBorder;
+  background-color: rgb(193, 241, 241);
+
+
+  box-sizing: border-box;
 
   h2 {
     margin: 0;
   }
 
   .pins {
+    height: 100%;
+
     overflow-y: scroll;
+    overflow-wrap: break-word;
+  }
+
+  h4 {
+    text-align: initial;
+    margin-bottom: 0;
   }
 }
 
-#pinview ul {
-  height: 100%;
-}

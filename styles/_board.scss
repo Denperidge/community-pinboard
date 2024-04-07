@@ -1,5 +1,5 @@
 #board {
-    height: 90%;
+    height: 80%;
     border: 25px hsl(157, 42%, 67%) solid;
     background: url("/images/cork.jpg") repeat;
 
@@ -9,22 +9,6 @@
     .pins {
         display: grid;
         grid-template-columns: repeat(auto-fill, 320px);
-    }
-
-    .pin {
-        overflow: none;
-        text-overflow: ellipsis;
-        text-wrap: wrap;
-    
-        width: 200px;
-        height: 200px;
-    
-        padding: 30px 50px;
-    
-        background-image: url("/images/note-paper-with-clips.svg");
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: center center;
     }
 }
 

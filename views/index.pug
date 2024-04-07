@@ -39,18 +39,15 @@ mixin pinView(pin)
       img(src=pin.thumbnailPath)
     h3=pin.title
     if pin.description
-      p.
-        #[+icon("egg")]
-        Description: #{pin.description}
-    p.
-      #[+icon("suitcase")]
-      Location: #{pin.location} 
-    p.
-      #[+icon("time")]
-      Time/day: #{pin.datetime.toLocaleString()}
-    p.
-      #[+icon("celeste")]
-      Posted by: #{pin.postedBy}
+      h4 #[+icon("egg")] Description:
+      p=pin.description
+    h4 #[+icon("suitcase")] Location:
+    span=pin.location 
+    h4 #[+icon("time")] Time/day:
+    span=pin.datetime.toLocaleString()
+    h4 #[+icon("celeste")] Posted by:
+    span=pin.postedBy
+  hr
 
 
 mixin pins(pins, previews=true)
@@ -101,7 +98,7 @@ mixin input(id, inputType="text", icon=null, required=true)
     aria-invalid=error)
   if error
     p.error(id=`${id}-error`)=errors[id]
-  br
+  
 
 block content
   - console.log(errors)
@@ -120,14 +117,16 @@ block content
       hr
 
       h3 New pin
-      form(action="/new-event" method="POST" enctype="multipart/form-data")
-        +input("thumbnailUrl", "url", required=false)
-        +input("thumbnailFile", "file", required=false)
+      form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")
         +input("title")
         +input("description", "text", "egg", required=false)
         +input("location", "text", "suitcase")
         +input("datetime", "datetime-local", "time")
         +input("postedBy", "text", icon="celeste")
+        p For an (optional) image, you can use
+        +input("thumbnailUrl", "url", null, required=false)
+        p ... or ...
+        +input("thumbnailFile", "file", null, required=false)
         input(type="submit" value="Pin!")
         
 
