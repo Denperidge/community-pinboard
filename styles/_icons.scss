@@ -1,9 +1,60 @@
+/*
+Defines a new icon preset
+
+$name: class name (to be used as class="icon CLASS_NAME")
+$left: absolute position left
+$top: absolute position top
+$widthMod, $heightMod: the spritesheets' sprites are not
+in a consistent grid. The modifiers will be applied
+to the original width/height spritesheet height in px.
+Default values for widthMod & heightMod are both 0.5
+
+Usage:
+.icon {
+    img {
+        position: absolute;
+    }
+    @include icon("egg", -9.5px, -4.5px);
+    @include icon("time", -149px, -360px, 0.45, 0.45);
+}
+<i class="icon egg">...</i>
+
+*/
+@mixin icon($name, $left, $top, $widthMod: 0.5, $heightMod: 0.5) {
+    &.#{$name} img {
+        width: 1496px * $widthMod;
+        height: 1008px * $heightMod;
+        left: $left;
+        top: $top;
+    }
+}
+
 .icon {
     display: block;
     float: left;
     width: 25px;
     height: 25px;
+
+    overflow: hidden;
+
+    position: relative;
+
+    img {
+        position: absolute;
+    }
+
+    @include icon("egg", -9.5px, -4.5px);
+    @include icon("time", -149px, -360px, 0.45, 0.45);
+
+
+    /*
+    &.egg img {
+        left: -9.5px;
+        top: -4.5px;
+    }
+    */
     
     //background-image: url("/images/icons.png");
+    //background-size: 100% 100%;
     //background-position: 0 0;
 }

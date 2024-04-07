@@ -1,8 +1,9 @@
 extends layout
 
-mixin icon()
-  i.icon
-    img(src="/public/images/icons.png")
+mixin icon(id)
+  // See https://a11y-101.com/development/icons-and-links
+  i(class=`icon ${id}` aria-hidden=true)
+    img(src="/images/icons.png")
   
 
 mixin pinPreview(pin)
@@ -17,10 +18,11 @@ mixin pinView(pin)
   if pin.thumbnailPath
     img(src=pin.thumbnailPath)
   h3=pin.title
+  +icon("egg")
   if pin.description
     p Description: #{pin.description}
-  p 
-    Location: #{pin.location} 
+  p Location: #{pin.location} 
+  +icon("time")
   p Time/day: #{pin.datetime.toLocaleString()}
   p Posted by: #{pin.postedBy}
 
