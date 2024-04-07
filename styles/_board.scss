@@ -8,7 +8,9 @@
 
     .pins {
         display: grid;
-        grid-template-columns: repeat(auto-fill, 320px);
+        grid-template-columns: repeat(auto-fit, 250px);
+        column-gap: 20px;
+        row-gap: 5px;
     }
 }
 

@@ -37,6 +37,7 @@
     overflow: none;
     text-overflow: ellipsis;
     text-wrap: wrap;
+    overflow: hidden;
 
     width: 200px;
     height: 200px;
@@ -47,6 +48,10 @@
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center center;
+
+    h3 {
+      margin-top: 0;
+    }
   }
 
   // View, as seen on the pin view
@@ -59,4 +64,5 @@
   padding: 0;
   margin: 0;
   list-style: none;
+  overflow-wrap: break-word;
 }
