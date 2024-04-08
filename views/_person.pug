@@ -1,0 +1,12 @@
+include _icon.pug
+
+mixin personPreview(name, image)
+    span.person.
+        #[+icon(image, true)]
+        #{name}
+
+    
+    
+
+mixin personView()
+    p

@@ -1,4 +1,7 @@
-mixin icon(id)
+mixin icon(id, setAsBgImage=false)
   // See https://a11y-101.com/development/icons-and-links
-  i(class=`icon ${id}` aria-hidden=true)  
+  unless setAsBgImage
+    i(class=`icon ${id}` aria-hidden=true)  
+  else
+    i.icon(aria-hidden = true style=`background-image: URL("${id}")`)
   

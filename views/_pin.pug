@@ -1,3 +1,4 @@
+include _person.pug
 
 mixin pinPreview(pin)
   -
@@ -24,6 +25,7 @@ mixin pinPreview(pin)
         li.
           #[+icon("suitcase")]
           #{pin.location}
+        //+personPreview("Cat", "/images/Me!.jpg")
         li.
           #[+icon("celeste")]
           #{pin.postedBy}
