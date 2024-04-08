@@ -33,7 +33,10 @@ form {
 .fileInput {
   display: flex;
   input {
-    flex-grow: 1;
+    flex: 1;
   }
+  /*input[type="file"] {
+    overflow-wrap: break-word;
+  }*/
 }
 

@@ -7,7 +7,7 @@ mixin inputLabel(inputId, text, required=false, error=false, icon=null, srOnly=f
     span=text
 
 
-mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, optionalMaxlength=null, icon=null, isRequired=false)
+mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, optionalMaxlength=null, icon=null, isRequired=false, labelSrOnly=false)
   if !labelText
     - labelText = id[0].toUpperCase() + id.substring(1);
   - let errorHappened = false;
@@ -27,8 +27,8 @@ mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, o
     - date.setMilliseconds(null);
     - value = date.toISOString().slice(0, -1);
 
-  +inputLabel(id, labelText, isRequired, errorHappened, icon)
-
+  +inputLabel(id, labelText, isRequired, errorHappened, icon, labelSrOnly)
+  // Todo input file accept
   input(
     type=inputType
     name=id id=id
@@ -43,27 +43,8 @@ mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, o
 
 mixin fileInput(idUrlField, idFileField)
     - const id = idUrlField + "Span";
-    p(for=id) For an (optional) image, you can use...
+    p(for=id) If you have a flyer or another image, you can use...
     span.fileInput(id=id)
-        +input(
-            "thumbnailUrl",
-            "url",
-            "Thumbnail (url):",
-            "https://www.example.com/image.png",
-            null,
-            null,
-            false,
-            true)
-        span ... or ...
-        //-
-            id
-            inputType
-            Label text
-            Placeholder
-            maxlength
-            icon
-            isRequired
-            srOnly
         +input(
             "thumbnailFile", 
             "file",
@@ -73,7 +54,25 @@ mixin fileInput(idUrlField, idFileField)
             null,
             false,
             true)
-
+        span &nbsp;or&nbsp;&nbsp;
+        //-
+            id
+            inputType
+            Label text
+            Placeholder
+            maxlength
+            icon
+            isRequired
+            labelSrOnly
+        +input(
+            "thumbnailUrl",
+            "url",
+            "Thumbnail (url):",
+            "https://example.com/image.png",
+            null,
+            null,
+            false,
+            true)
 
 
 form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")

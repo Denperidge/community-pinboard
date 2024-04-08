@@ -6,7 +6,13 @@ Usage:
 .sr-only {
     position: absolute;
     left: -10000px;
-    top: auto;
+    top: -10000px;
+        /* Top is normally auto, but this gave
+           a bug of large vertical whitespace
+           under the body
+
+           TODO: double check it still works!
+        */
     width: 1px;
     height: 1px;
     overflow: hidden;
