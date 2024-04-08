@@ -1,12 +1,22 @@
-mixin input(id="", inputType="text", placeholder, maxlength=null, icon=null, required=false, )
-  - const title = id[0].toUpperCase() + id.substring(1)
-  - let error = false;
+mixin inputLabel(inputId, text, required=false, error=false, icon=null, srOnly=false)
+  label(for=inputId role=error ? "alert" : "" class=srOnly ? "sr-only" : "")
+    if required
+      span *&nbsp;
+    if icon
+      +icon(icon)
+    span=text
+
+
+mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, optionalMaxlength=null, icon=null, isRequired=false)
+  if !labelText
+    - labelText = id[0].toUpperCase() + id.substring(1);
+  - let errorHappened = false;
   - let role = "";
   - let value = "";
 
   if errors
     if errors[id]
-      - error = true;
+      - errorHappened = true;
     
   if inputType == "datetime-local"
     // https://stackoverflow.com/a/28149561
@@ -16,25 +26,20 @@ mixin input(id="", inputType="text", placeholder, maxlength=null, icon=null, req
     - date.setSeconds(null);
     - date.setMilliseconds(null);
     - value = date.toISOString().slice(0, -1);
-  
-  
-  label(for=id role=(error ? "alert": "") class=(error ? "error" : ""))
-    if required
-      span *&nbsp;
-    if icon
-      +icon(icon)
-    span=title
+
+  +inputLabel(id, labelText, isRequired, errorHappened, icon)
+
   input(
     type=inputType
     name=id id=id
-    maxlength=maxlength
-    required=required
-    placeholder=placeholder
+    maxlength=optionalMaxlength
+    required=isRequired
+    placeholder=optionalPlaceholder
     value=value
-    aria-describedby=error ? `${id}-error` : null
-    aria-invalid=error)
-  if error
-    p.error(id=`${id}-error`)=errors[id]
+    aria-describedby=errorHappened ? `${id}-error` : null
+    aria-invalid=errorHappened)
+  if errorHappened
+    p.error(id=`${id}-error` role="alert")=errors[id]
 
 mixin fileInput(idUrlField, idFileField)
     - const id = idUrlField + "Span";
@@ -43,24 +48,39 @@ mixin fileInput(idUrlField, idFileField)
         +input(
             "thumbnailUrl",
             "url",
+            "Thumbnail (url):",
             "https://www.example.com/image.png",
             null,
-            false)
-        //span ... or ...
+            null,
+            false,
+            true)
+        span ... or ...
+        //-
+            id
+            inputType
+            Label text
+            Placeholder
+            maxlength
+            icon
+            isRequired
+            srOnly
         +input(
             "thumbnailFile", 
-            "file", 
-            "", 
+            "file",
+            "Thumbnail (upload):",
             null,
-            false)
+            null,
+            null,
+            false,
+            true)
 
 
 
 form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")
-    //+input(id="title", inputType="text", placeholder="The name of the event", maxlength=20, icon=null, required=true)
     +input(
       "title",
       "text",
+      "Title:",
       "The name of the event",
       20,
       null,
@@ -68,13 +88,23 @@ form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")
     +input(
       "description",
       "text",
+      "Description:",
       "Description...",
       200, 
       "egg",
       false)
+    //-
+        id
+        inputType
+        Label text
+        Placeholder
+        maxlength
+        icon
+        isRequired
     +input(
-      "location",
-      "text",
+      "location",  
+      "text", 
+      "Location:",
       "Where your event takes place...",
       50,
       "suitcase",
@@ -82,13 +112,15 @@ form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")
     +input(
       "datetime",
       "datetime-local",
+      "Time/day:",
       "",
-      "",
+      false,
       "time",
       true)
     +input(
       "postedBy",
       "text",
+      "Posted by:",
       "Your name",
       20,
       "celeste",

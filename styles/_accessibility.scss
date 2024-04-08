@@ -51,6 +51,6 @@ label:has(+ input:invalid) {
 }
 */
 
-.error {
+[role=alert] {
     color: red;
 }
