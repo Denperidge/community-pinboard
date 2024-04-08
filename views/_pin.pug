@@ -1,0 +1,58 @@
+
+mixin pinPreview(pin)
+  -
+    // The classic: https://www.w3schools.com/js/js_random.asp
+    function random(min, max) {
+      return Math.floor(Math.random() * (max - min) ) + min;
+    }
+    // TODO: more efficient, random might get redefined every run?
+    let classNames = "pin preview";
+    let style = `transform-origin: ${random(40, 60)}% ${random(0, 35)}%; transform: rotate(${random(-15, 15)}deg);`;
+  
+  if pin.thumbnailPath
+    - classNames += " bg";
+    - style += `background-image: URL("${pin.thumbnailPath}");`;
+  
+
+  a(class=classNames style=style href="#" + pin.title )
+    li
+      h3=pin.title
+      ul
+        li.
+          #[+icon("time")]
+          #{pin.datetime.toLocaleDateString()}
+        li.
+          #[+icon("suitcase")]
+          #{pin.location}
+        li.
+          #[+icon("celeste")]
+          #{pin.postedBy}
+
+mixin pinView(pin)
+  li.pin.view(id=pin.title)
+    if pin.thumbnailPath
+      img(src=pin.thumbnailPath)
+    h3=pin.title
+    if pin.description
+      h4 #[+icon("egg")] Description:
+      p=pin.description
+    h4 #[+icon("suitcase")] Location:
+    span=pin.location 
+    h4 #[+icon("time")] Time/day:
+    span=pin.datetime.toLocaleString()
+    h4 #[+icon("celeste")] Posted by:
+    span=pin.postedBy
+  hr
+
+
+mixin pins(pins, previews=true)
+  ul.pins
+    each pin in pins
+      if previews
+        +pinPreview(pin)
+      else
+        +pinView(pin)
+        
+    if block
+      block
+        
