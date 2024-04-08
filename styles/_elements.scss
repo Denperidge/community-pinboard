@@ -29,3 +29,11 @@ form {
     margin-bottom: 20px;
   }
 }
+
+.fileInput {
+  display: flex;
+  input {
+    flex-grow: 1;
+  }
+}
+

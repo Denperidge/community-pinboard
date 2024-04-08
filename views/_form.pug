@@ -1,5 +1,4 @@
-
-mixin input(id="", inputType="text", placeholder, maxlength=null, icon=null, required)
+mixin input(id="", inputType="text", placeholder, maxlength=null, icon=null, required=false, )
   - const title = id[0].toUpperCase() + id.substring(1)
   - let error = false;
   - let role = "";
@@ -36,6 +35,25 @@ mixin input(id="", inputType="text", placeholder, maxlength=null, icon=null, req
     aria-invalid=error)
   if error
     p.error(id=`${id}-error`)=errors[id]
+
+mixin fileInput(idUrlField, idFileField)
+    - const id = idUrlField + "Span";
+    p(for=id) For an (optional) image, you can use...
+    span.fileInput(id=id)
+        +input(
+            "thumbnailUrl",
+            "url",
+            "https://www.example.com/image.png",
+            null,
+            false)
+        //span ... or ...
+        +input(
+            "thumbnailFile", 
+            "file", 
+            "", 
+            null,
+            false)
+
 
 
 form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")
@@ -75,18 +93,5 @@ form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")
       20,
       "celeste",
       true)
-    p For an (optional) image, you can use
-    +input(
-      "thumbnailUrl",
-      "url",
-      "https://www.example.com/image.png",
-      null,
-      false)
-    p ... or ...
-    +input(
-      "thumbnailFile", 
-      "file", 
-      "", 
-      null,
-      false)
+    +fileInput()
     input(type="submit" value="Pin!")
