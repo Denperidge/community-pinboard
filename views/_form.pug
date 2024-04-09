@@ -43,7 +43,7 @@ mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, o
 
 mixin fileInput(idUrlField, idFileField)
     - const id = idUrlField + "Span";
-    p(for=id) If you have a flyer or another image, you can use...
+    p(for=id) If you have a flyer / thumbnail, you can add it using...
     span.fileInput(id=id)
         +input(
             "thumbnailFile", 
