@@ -7,7 +7,7 @@ mixin inputLabel(inputId, text, required=false, error=false, icon=null, srOnly=f
     span=text
 
 
-mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, optionalMaxlength=null, icon=null, isRequired=false, labelSrOnly=false)
+mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, optionalMaxlength=null, icon=null, isRequired=false, labelSrOnly=false, defaultHide=false)
   if !labelText
     - labelText = id[0].toUpperCase() + id.substring(1);
   - let errorHappened = false;
@@ -36,6 +36,7 @@ mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, o
     required=isRequired
     placeholder=optionalPlaceholder
     value=value
+    class=defaultHide ? "defaultHide" : "",
     aria-describedby=errorHappened ? `${id}-error` : null
     aria-invalid=errorHappened)
   if errorHappened
@@ -73,6 +74,15 @@ mixin fileInput(idUrlField, idFileField)
             null,
             false,
             true)
+    +input(
+        "thumbnailImageDescr",
+        "text",
+        "Thumbnail alt text:",
+        "A black-red flyer for a Newgrounds Death Rugby concert. It reads 24/11, 19:30",
+        300,
+        null,
+        false
+      )
 
 
 form.pin.view(action="/new-event" method="POST" enctype="multipart/form-data")

@@ -7,19 +7,17 @@ export class Pin {
     datetime: Date;
     postedBy: string;
     thumbnail?: string;
+    thumbnailImageDescr?: string;
 
-    constructor(pTitle: string, pDescription: string, pLocation: string, pDatetime: Date, pPostedBy: string, pThumbnail?: string) {
+    constructor(pTitle: string, pDescription: string, pLocation: string, pDatetime: Date, pPostedBy: string, pThumbnail?: string, pthumbnailImageDescr?: string) {
         this.title = pTitle;
         this.description = pDescription;
         this.location = pLocation;
         this.datetime = pDatetime;
         this.postedBy = pPostedBy;
 
-        if (pThumbnail) {
-            this.thumbnail = pThumbnail;
-        } else {
-            this.thumbnail = undefined;
-        }
+        this.thumbnail = pThumbnail ? pThumbnail : undefined;
+        this.thumbnailImageDescr = pthumbnailImageDescr ? pthumbnailImageDescr : undefined;
     }
 
     static fromObject(obj: {[key: string]: string}): Pin {
@@ -29,7 +27,8 @@ export class Pin {
             obj.location,
             new Date(obj.datetime),
             obj.postedBy,
-            obj.thumbnail
+            obj.thumbnail,
+            obj.thumbnailImageDescr
         );
     }
 
