@@ -1,5 +1,5 @@
 import * as express from "express";
-import { check, validationResult, matchedData, FieldValidationError } from "express-validator";
+import { check, validationResult, matchedData, FieldValidationError, oneOf } from "express-validator";
 
 import { UPLOADS_DIR, PUBLIC_UPLOADS_PATH } from "./conf";
 import * as db from "./db";
@@ -55,7 +55,13 @@ router.post(
       .isLength({max: 20})
       .withMessage("Posted by has to be 20 characters or shorter"),
     check("thumbnailUrl").optional(),
-    check("thumbnailFile").optional()
+    check("thumbnailFile").optional(),
+    check("thumbnailImageDescr")
+      .notEmpty().if(oneOf([
+        check("thumbnailUrl").notEmpty(),
+        check("thumbnailFile").notEmpty()
+      ]))
+      .withMessage("Please provide an image description or transcription for the thumbnail")
   ],
   async function(req: express.Request, res: express.Response, next: express.NextFunction) {
     const errors = validationResult(req);

@@ -15,7 +15,8 @@ mixin pinPreview(pin)
     - style += `background-image: URL("${pin.thumbnailPath}");`;
   
 
-  a(class=classNames style=style href="#" + pin.title )
+  // TODO better optional attributes, including https://stackoverflow.com/a/61188394
+  a(class=classNames style=style href=`#${pin.title}`)
     li
       h3=pin.title
       ul
