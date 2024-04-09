@@ -63,4 +63,11 @@ aside {
         margin-left: 0px;
         margin-bottom: 15px;
     }
+
+    .fileInput {
+        flex-direction: column;
+        input:first-of-type {
+            margin-bottom: 0;
+        }
+    }
 }
