@@ -25,7 +25,8 @@ For all configuration options, please refer to [Reference: Environment variables
 | ------------------- | ----------- | ------- |
 | HOST_DOMAIN | Which domain the website/server will be reachable on | `localhost:3000` |
 | DATA_DIR | Where to store data uploaded by users | `data/` | 
-
+| WEBSITE_TITLE | The title for your website, displayed in HTML, OpenGraph, [views/index](views/index.pug) h1 | `Community Pinboard!` |
+| WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` |
 
 ### Project structure
 - [app/](app/): Custom back-end code. Routing, saving pins to disk, the Pin class etc.

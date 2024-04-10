@@ -6,7 +6,7 @@ include _pin.pug
 block content
   - console.log(errors)
   header
-    h1 Community Pinboard!
+    h1=WEBSITE_TITLE
   main#board
     h2.sr-only Pinboard      
     +pins(pinArray, true)

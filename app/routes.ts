@@ -1,7 +1,7 @@
 import * as express from "express";
 import { check, validationResult, matchedData, FieldValidationError, oneOf } from "express-validator";
 
-import { UPLOADS_DIR, PUBLIC_UPLOADS_PATH } from "./conf";
+import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN } from "./conf";
 import * as data from "./data";
 import { Pin } from "./Pin";
 import multer from "multer";
@@ -15,7 +15,10 @@ const upload: ReturnType<typeof multer> = multer({storage: multer.memoryStorage(
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   console.log(await data.getPins())
-  res.render('index', { 
+  res.render('index', {
+    WEBSITE_TITLE: WEBSITE_TITLE,
+    WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
+    HOST_DOMAIN: HOST_DOMAIN,
     pinArray: await data.getPins()
   });
 });
