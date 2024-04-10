@@ -6,13 +6,15 @@ A public event pinboard webapp for your local community, meant to be even lighte
 Pre-requirements: [node.js](https://nodejs.org/en), [yarn](https://yarnpkg.com/getting-started/install)
 
 ```bash
+# Clone the repository, navigate to it and install dependencies
 git clone https://github.com/Denperidge/community-pinboard.git
 cd community-pinboard
 yarn install
 
-yarn dev
+yarn build  # Build to dist/
+yarn prod  # Run from dist/
 ```
-(Alternative use `yarn dev:debug` for extra debug information!)
+(Alternative use `yarn dev` for live-reload development, or check the other scripts defined in [package.json](package.json))
 
 ### Configuration/environment variables
 For customisation, please set the environment variables in your shell, docker-compose or a .env file in the root directory (the same directory this file, [README.md](README.md) is in)
