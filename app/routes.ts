@@ -5,6 +5,7 @@ import { UPLOADS_DIR, PUBLIC_UPLOADS_PATH } from "./conf";
 import * as data from "./data";
 import { Pin } from "./Pin";
 import multer from "multer";
+import { createEvents } from "ics";
 
 
 const router = express.Router();
@@ -17,6 +18,16 @@ router.get('/', async function(req, res, next) {
   res.render('index', { 
     pinArray: await data.getPins()
   });
+});
+
+router.get("/upcoming.ics", async function (req, res, next) {
+  const pins = await data.getPins();
+  const events = pins.map((pin) => { return pin.getIcsAttributes() });
+  createEvents(events, (err, icsString) => {
+    if (err) { throw err };
+    res.append("Content-Type", "text/calendar")
+    res.send(icsString);
+  })
 });
 
 router.get(PUBLIC_UPLOADS_PATH + ":file", function (req, res, next) {

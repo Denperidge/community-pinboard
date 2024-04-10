@@ -1,4 +1,7 @@
-import { PUBLIC_UPLOADS_PATH as PUBLIC_UPLOADS_PATH } from "./conf";
+import { createEvent, DateTime, EventAttributes } from "ics";
+
+import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN } from "./conf";
+
 
 export class Pin {
     title: string;
@@ -59,6 +62,18 @@ export class Pin {
 
     toString() : string {
         return JSON.stringify(this);
+    }
+
+    getIcsAttributes() : EventAttributes {
+        return {
+            // https://www.npmjs.com/package/ics#attributes
+            title: this.title,
+            description: this.description,
+            location: this.location,
+            start: this.datetime.getTime(),  // See above docs
+            // postedBy, thumbnail & thumbnailImageDescr not used as of yet
+            url: "https://" + HOST_DOMAIN
+        } as EventAttributes;
     }
 }
 
