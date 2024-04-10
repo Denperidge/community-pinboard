@@ -2,7 +2,7 @@ import * as express from "express";
 import { check, validationResult, matchedData, FieldValidationError, oneOf } from "express-validator";
 
 import { UPLOADS_DIR, PUBLIC_UPLOADS_PATH } from "./conf";
-import * as db from "./db";
+import * as data from "./data";
 import { Pin } from "./Pin";
 import multer from "multer";
 
@@ -13,9 +13,9 @@ const upload: ReturnType<typeof multer> = multer({storage: multer.memoryStorage(
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  console.log(await db.getPins())
+  console.log(await data.getPins())
   res.render('index', { 
-    pinArray: await db.getPins()
+    pinArray: await data.getPins()
   });
 });
 
@@ -62,7 +62,7 @@ router.post(
         check("thumbnailUrl").notEmpty(),
         check("thumbnailFile").notEmpty()
       ]))
-      .withMessage("Please provide an image description or transcription for the thumbnail")
+      .withMessage("Please enter an image description/transcription for the thumbnail")
   ],
   async function(req: express.Request, res: express.Response, next: express.NextFunction) {
     const errors = validationResult(req);
@@ -72,12 +72,12 @@ router.post(
       console.error(errors)
       const returnErrors: {[key:string]: string} = {};
       (errors.array() as FieldValidationError[]).forEach((err: FieldValidationError) => {
-        returnErrors[err.path] = `${err.msg}: "${err.value}"`;
+        returnErrors[err.path] = `${err.msg} (provided value: "${err.value}")`;
       });
 
       // TODO: go to #new on load
       res.render("index", {
-        pinArray: await db.getPins(),
+        pinArray: await data.getPins(),
         errors: returnErrors,
       })
       return;
@@ -89,11 +89,11 @@ router.post(
       pinData.thumbnail = pinData.thumbnailUrl;
     } else if (req.file) {
       const extension = req.file.originalname.substring(req.file.originalname.lastIndexOf("."))
-      const na = await db.saveImage(pinData.title + extension, req.file?.buffer)
+      const na = await data.saveImage(pinData.title + extension, req.file?.buffer)
       pinData.thumbnail = na;
     }
 
-    db.writePin(Pin.fromObject(pinData))
+    data.writePin(Pin.fromObject(pinData))
     res.redirect("/");
 });
 
