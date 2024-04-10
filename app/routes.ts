@@ -13,6 +13,7 @@ const upload: ReturnType<typeof multer> = multer({storage: multer.memoryStorage(
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
+  console.log(await db.getPins())
   res.render('index', { 
     pinArray: await db.getPins()
   });

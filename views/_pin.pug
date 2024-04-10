@@ -14,9 +14,11 @@ mixin pinPreview(pin)
     - classNames += " bg";
     - style += `background-image: URL("${pin.thumbnailPath}");`;
   
-
-  // TODO better optional attributes, including https://stackoverflow.com/a/61188394
-  a(class=classNames style=style href=`#${pin.title}`)
+  a(
+    class=classNames style=style href=`#${pin.title}`
+    role=pin.thumbnailImageDescr ? "img" : undefined
+    aria-label=pin.thumbnailImageDescr || undefined
+    )
     li
       h3=pin.title
       ul
@@ -34,7 +36,7 @@ mixin pinPreview(pin)
 mixin pinView(pin)
   li.pin.view(id=pin.title)
     if pin.thumbnailPath
-      img(src=pin.thumbnailPath)
+      img(src=pin.thumbnailPath alt=pin.thumbnailImageDescr)
     h3=pin.title
     if pin.description
       h4 #[+icon("egg")] Description:
