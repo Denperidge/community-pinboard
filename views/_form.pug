@@ -37,6 +37,7 @@ mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, o
     placeholder=optionalPlaceholder
     value=value
     class=defaultHide ? "defaultHide" : "",
+    accept=(inputType == "file") ? "image/*" : undefined,
     aria-describedby=errorHappened ? `${id}-error` : null
     aria-invalid=errorHappened)
   if errorHappened

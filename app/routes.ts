@@ -68,40 +68,51 @@ router.post(
       .withMessage("Posted by has to be 20 characters or shorter"),
     check("thumbnailUrl").optional(),
     check("thumbnailFile").optional(),
-    check("thumbnailImageDescr")
-      .notEmpty().if(oneOf([
-        check("thumbnailUrl").notEmpty(),
-        check("thumbnailFile").notEmpty()
-      ]))
-      .withMessage("Please enter an image description/transcription for the thumbnail")
+    check("thumbnailImageDescr").optional()
   ],
   async function(req: express.Request, res: express.Response, next: express.NextFunction) {
     const errors = validationResult(req);
+    const returnErrors: {[key:string]: string} = {};
+    const pinData = matchedData(req);
 
+    // Express-Validator
     if (!errors.isEmpty()) {
-      console.error("Errors")
-      console.error(errors)
-      const returnErrors: {[key:string]: string} = {};
       (errors.array() as FieldValidationError[]).forEach((err: FieldValidationError) => {
         returnErrors[err.path] = `${err.msg} (provided value: "${err.value}")`;
       });
+    }
 
+    // Multer filesize check
+    if (req.file) {
+      // From https://stackoverflow.com/a/61791720
+      // For MB: amount * 1024 * 1024
+      const MBLimit = 10;
+      if (req.file.buffer.byteLength >= MBLimit * 1024 * 1024) {
+        returnErrors["thumbnailFile"] = `Provided thumbnail is larger than ${MBLimit}MB. Please compress it, or try another image`;
+      }
+
+      if (!pinData.thumbnailImageDescr) {
+        returnErrors["thumbnailImageDescr"] = "Please enter an image description/transcription for the thumbnail";
+      }
+    }
+
+    
+    if (Object.keys(returnErrors).length != 0) {
       // TODO: go to #new on load
       res.render("index", {
         pinArray: await data.getPins(),
         errors: returnErrors,
-      })
+      });
       return;
     }
 
 
-    const pinData = matchedData(req);
     if (pinData.thumbnailUrl) {
       pinData.thumbnail = pinData.thumbnailUrl;
     } else if (req.file) {
       const extension = req.file.originalname.substring(req.file.originalname.lastIndexOf("."))
-      const na = await data.saveImage(pinData.title + extension, req.file?.buffer)
-      pinData.thumbnail = na;
+      const filename = await data.saveImage(pinData.title + extension, req.file?.buffer)
+      pinData.thumbnail = filename;
     }
 
     data.writePin(Pin.fromObject(pinData))
