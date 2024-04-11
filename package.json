@@ -10,9 +10,11 @@
     "prod": "set NODE_ENV=production & cd dist && node ./bin/www",
     "dev": "npx ts-node-dev --respawn ./bin/www",
     "dev:debug": "set DEBUG=community-pinboard:* & yarn dev",
-    "docker:build": "docker build --no-cache -t community-pinboard .",
-    "docker:run": "docker run community-pinboard",
-    "docker": "yarn docker:build && yarn docker:run"
+    "docker:build": "docker build --no-cache -t denperidge/community-pinboard .",
+    "docker:run": "docker-compose community-pinboard",
+    "docker:compup": "docker-compose up",
+    "docker:dev": "yarn docker:build && yarn docker:compup",
+    "docker": "yarn docker:compup"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
