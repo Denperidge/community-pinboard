@@ -12,6 +12,7 @@ RUN [ "tar", "-vc", "--file=build.tar", "package.json", "yarn.lock", "dist" ]
 FROM node:lts
 WORKDIR /app
 ENV NODE_ENV=production
+ENV DATA_DIR=/app/data/
 
 COPY --from=build /build/build.tar /app/build.tar
 

@@ -21,6 +21,24 @@ For customisation, please set the environment variables in your shell, docker-co
 
 For all configuration options, please refer to [Reference: Environment variables](#environment-variables).
 
+
+### Run Docker (pull image)
+
+### Run Docker (build image)
+```bash
+# Build image
+git clone https://github.com/Denperidge/community-pinboard.git
+cd community-pinboard
+docker build -t denperidge/community-pinboard .
+
+# Run image
+docker run -p 3000:3000 denperidge/community-pinboard
+```
+You can now access the 
+
+### Run Docker-Compose
+
+
 ## Reference
 ### Environment variables
 | Key                 | Explanation | default |

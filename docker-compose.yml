@@ -1,6 +1,6 @@
 services:
   community-pinboard:
-    image: denperidge/community-pinboard
+    build: .
     ports:
       - 3000:3000
     env_file:
