@@ -14,7 +14,7 @@ function errHandler(err) {
 // Copy assets to dist/.
 async function buildAssets() {
     return Promise.all(
-        ["public/fonts/", "public/images/", "views/"].map(
+        ["public/fonts/", "public/images/", "styles/", "views/"].map(
             (dir) => { return fs.cp(dir, "dist/" + dir, {recursive:true}, errHandler); }
         )
     ).then((success) => {
