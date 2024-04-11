@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 import { Request, Response, NextFunction } from "express";
+import { PUBLIC_STYLESHEETS_DIR } from "./app/conf";
 
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -22,9 +23,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//require("fs").mkdirSync(PUBLIC_STYLESHEETS_DIR, {recursive: true});
 app.use(sassMiddleware({
   src: path.join(__dirname, "styles"),
-  dest: path.join(__dirname, "public", "stylesheets"),
+  dest: PUBLIC_STYLESHEETS_DIR,
   outputStyle: "compressed",
   prefix: "/stylesheets/"
 }));

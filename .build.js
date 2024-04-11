@@ -20,7 +20,7 @@ async function buildAssets() {
     ).then((success) => {
         console.log("All files succesfully copied!")
     }, (rejected) => {
-        console.error("Error whiel copying files")
+        console.error("Error while copying files")
         console.error(rejected)
     });
 }
