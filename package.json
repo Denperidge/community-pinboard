@@ -4,12 +4,15 @@
   "license": "MIT",
   "scripts": {
     "start": "yarn dev",
-    "build:ts": "tsc",
-    "build:assets": "cp --parents -r {public/**/*,views/*} dist/",
+    "build:ts": "yarn run tsc",
+    "build:assets": "node .build.js",
     "build": "yarn build:ts && yarn build:assets",
     "prod": "set NODE_ENV=production & cd dist && node ./bin/www",
-    "dev": "ts-node-dev --respawn ./bin/www",
-    "dev:debug": "set DEBUG=community-pinboard:* & yarn dev"
+    "dev": "npx ts-node-dev --respawn ./bin/www",
+    "dev:debug": "set DEBUG=community-pinboard:* & yarn dev",
+    "docker:build": "docker build --no-cache -t community-pinboard .",
+    "docker:run": "docker run community-pinboard",
+    "docker": "yarn docker:build && yarn docker:run"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
