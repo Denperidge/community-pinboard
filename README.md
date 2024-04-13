@@ -2,8 +2,51 @@
 A public event pinboard webapp for your local community, meant to be even lighter on the client devices than on the server!
 
 ## How-to
-### Install & run
-Pre-requirements: [node.js](https://nodejs.org/en), [yarn](https://yarnpkg.com/getting-started/install)
+### Run using Docker Compose
+Recommended for: **production**
+
+*Pre-requirements: [Docker](https://docs.docker.com/engine/install/), [Docker Compose](https://docs.docker.com/compose/install/#scenario-two-install-the-compose-plugin)*
+
+1. Create `docker-compose.yml` with the following content:
+    ```yml
+    # docker-compose.yml
+    services:
+      community-pinboard:
+        # Pull the Docker image from https://hub.docker.com/r/denperidge/community-pinboard
+        image: denperidge/community-pinboard:latest
+        volumes:
+          - ./data/:/app/data  # Mount data directory in ./data
+        ports:
+          - 3000:3000  # Expose port 3000
+        # Optionally, load environment variables from .env
+        env_file:
+          - path: .env
+            required: false
+    ```
+2. Optionally, create a `.env` file to [configure environment variables](#environment-variables)
+3. Run `docker compose up --detach`
+
+You can now access the server from `localhost:3000`, and any pins & uploads in the `data/` directory
+
+
+### Run using Docker
+Recommended for: **production**
+
+*Pre-requirements: [Docker](https://docs.docker.com/engine/install/)*
+
+```bash
+# Pull & run image
+docker run -p 3000:3000 denperidge/community-pinboard:latest
+```
+You can now access the server from `localhost:3000`
+
+*Note: this example does not automatically bind ./data to /app/data*
+
+
+### Install and run using Node.js
+Recommended for: **development**
+
+*Pre-requirements: [Node.js](https://nodejs.org/en), [Yarn](https://yarnpkg.com/getting-started/install)*
 
 ```bash
 # Clone the repository, navigate to it and install dependencies
@@ -14,62 +57,57 @@ yarn install
 yarn build  # Build to dist/
 yarn prod  # Run from dist/
 ```
-You can now access the server from `localhost:3000`
+You can now access the server from `localhost:3000`, and any pins & uploads in the `data/` directory
 
 (Alternative use `yarn dev` for live-reload development, or check the other scripts defined in [package.json](package.json))
+
+
+### Build and run using Docker
+Recommended for: **development**
+
+*Pre-requirements: [Docker](https://docs.docker.com/engine/install/)*
+
+```bash
+# Clone the repository & navigate to it
+git clone https://github.com/Denperidge/community-pinboard.git
+cd community-pinboard
+docker build -t community-pinboard .
+
+# Run image
+docker run -p 3000:3000 community-pinboard
+```
+You can now access the server from `localhost:3000`
+
+*Note: this example does not automatically bind ./data to /app/data*
+
+
+### Build and run using Docker-Compose
+Recommended for: **development**
+
+```bash
+# Clone the repository & navigate to it
+git clone https://github.com/Denperidge/community-pinboard.git
+cd community-pinboard
+
+# Build and run image
+docker compose up --build
+```
+You can now access the server from `localhost:3000`, and any pins & uploads in the `data/` directory
+
 
 ### Configuration/environment variables
 For customisation, please set the environment variables in your shell, docker-compose or a .env file in the root directory (the same directory this file, [README.md](README.md) is in)
 
 For all configuration options, please refer to [Reference: Environment variables](#environment-variables).
 
-
-### Run Docker (pull image)
-```bash
-# Pull & run image
-docker run -p 3000:3000 denperidge/community-pinboard:latest
-```
-You can now access the server from `localhost:3000`
-
-### Run Docker (docker-compose)
-The following config will use the correct image, open port 3000, and use the `.env` file for [configuration](#environment-variables) (if it's in the same directory `docker-compose.yml` is in)
-```yml
-# docker-compose.yml
-services:
-  community-pinboard:
-    image: denperidge/community-pinboard:latest
-    ports:
-      - 3000:3000
-    env_file:
-      - path: .env
-        required: false
-```
-
-
-### Run Docker (build image)
-```bash
-# Build image
-git clone https://github.com/Denperidge/community-pinboard.git
-cd community-pinboard
-docker build -t community-pinboard .
-
-# Run image
-docker run -p 3000:3000 community-pinboard:latest
-```
-You can now access the server from `localhost:3000`
-
-
-### Run Docker-Compose
-
-
 ## Reference
 ### Environment variables
-| Key                 | Explanation | default |
-| ------------------- | ----------- | ------- |
-| HOST_DOMAIN | Which domain the website/server will be reachable on | `localhost:3000` |
-| DATA_DIR | Where to store data uploaded by users | `data/` | 
-| WEBSITE_TITLE | The title for your website, displayed in HTML, OpenGraph, [views/index](views/index.pug) h1 | `Community Pinboard!` |
-| WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` |
+| Key                 | Explanation | [default](app/conf.ts) | default (Docker) |
+| ------------------- | ----------- | ------- | ---------------- |
+| HOST_DOMAIN | Which domain the website/server will be reachable on | `localhost:3000` | not set |
+| DATA_DIR | Where to store data uploaded by users | `data/` | `/app/data/` |
+| WEBSITE_TITLE | The title for your website, displayed in HTML, OpenGraph, [views/index](views/index.pug) h1 | `Community Pinboard!` | not set |
+| WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
 
 ### Project structure
 - [app/](app/): Custom back-end code. Routing, saving pins to disk, the Pin class etc.
@@ -81,6 +119,7 @@ You can now access the server from `localhost:3000`
 - [.dockerignore](.dockerignore): Which files are ignored by [Dockerfile](Dockerfile)
 - [.gitignore](.gitignore): Which files are ignored by git/version control
 - [app.ts](app.ts): auto-generated by `express-generator`. Ignore unless specifically required
+- [docker-compose.yml](docker-compose.yml): file used to [build and run using Docker Compose](#build-and-run-using-docker-compose) 
 - [Dockerfile](Dockerfile): file used to build a [Docker image](https://docs.docker.com/reference/dockerfile/)
 - [LICENSE](LICENSE): license details.
 - [package.json](package.json): package info. Stores startup scripts (`yarn start`), dependencies...

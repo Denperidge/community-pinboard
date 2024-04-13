@@ -1,7 +1,12 @@
+# This is a development docker-compose file!
+# For a production example, see README.md
 services:
   community-pinboard:
     build: .
+    volumes:
+      - ./data/:/app/data
     ports:
       - 3000:3000
     env_file:
-      - .env
+      - path: .env
+        required: false
