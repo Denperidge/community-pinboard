@@ -7,9 +7,9 @@ import { Pin } from "./Pin";
 
 async function makeDirs() {
     return Promise.all([
-        fs.mkdir(DATA_DIR, {}, ()=>{}),
-        fs.mkdir(PINS_DIR, {}, ()=>{}),
-        fs.mkdir(UPLOADS_DIR, {}, ()=>{})
+        fs.mkdir(DATA_DIR, { recursive: true }, ()=>{}),
+        fs.mkdir(PINS_DIR, { recursive:true }, ()=>{}),
+        fs.mkdir(UPLOADS_DIR, { recursive: true }, ()=>{})
     ]);
 }
 

@@ -14,6 +14,8 @@ yarn install
 yarn build  # Build to dist/
 yarn prod  # Run from dist/
 ```
+You can now access the server from `localhost:3000`
+
 (Alternative use `yarn dev` for live-reload development, or check the other scripts defined in [package.json](package.json))
 
 ### Configuration/environment variables
@@ -23,18 +25,39 @@ For all configuration options, please refer to [Reference: Environment variables
 
 
 ### Run Docker (pull image)
+```bash
+# Pull & run image
+docker run -p 3000:3000 denperidge/community-pinboard:latest
+```
+You can now access the server from `localhost:3000`
+
+### Run Docker (docker-compose)
+The following config will use the correct image, open port 3000, and use the `.env` file for [configuration](#environment-variables) (if it's in the same directory `docker-compose.yml` is in)
+```yml
+# docker-compose.yml
+services:
+  community-pinboard:
+    image: denperidge/community-pinboard:latest
+    ports:
+      - 3000:3000
+    env_file:
+      - path: .env
+        required: false
+```
+
 
 ### Run Docker (build image)
 ```bash
 # Build image
 git clone https://github.com/Denperidge/community-pinboard.git
 cd community-pinboard
-docker build -t denperidge/community-pinboard .
+docker build -t community-pinboard .
 
 # Run image
-docker run -p 3000:3000 denperidge/community-pinboard
+docker run -p 3000:3000 community-pinboard:latest
 ```
-You can now access the 
+You can now access the server from `localhost:3000`
+
 
 ### Run Docker-Compose
 
