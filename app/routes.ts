@@ -52,6 +52,14 @@ router.get("/archive.ics", async function (req, res, next) {
   renderIcs(res, true, false);
 });
 
+router.get("/about", async function (req, res, next) {
+  res.render("about", {
+    WEBSITE_TITLE: WEBSITE_TITLE,
+    WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
+    HOST_DOMAIN: HOST_DOMAIN,
+  });
+});
+
 router.get(PUBLIC_UPLOADS_PATH + ":file", function (req, res, next) {
   res.sendFile(req.params.file, { root: UPLOADS_DIR }, (err) => {
     if (err) {

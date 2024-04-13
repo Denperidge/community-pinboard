@@ -1,5 +1,6 @@
 {
   "name": "community-pinboard",
+  "description": "A public event pinboard webapp for your local community!",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
