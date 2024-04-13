@@ -1,7 +1,6 @@
 extends layout
 
 include _icon.pug
-include _pin.pug
 
 block content
   style.
@@ -14,18 +13,23 @@ block content
         margin: auto;
     }
 
+    h2, h3, h4, h5, h6 {
+      text-align: initial;
+    }
+
   header
     h1=WEBSITE_TITLE
 
   main
-    h2 Navigation
-    
+    //section
+      h2 Navigation
 
-    h2 About
-    p Community Pinboard is a public event pinboard webapp for your local community! 
-    p.
-        It is built to be as lightweight and easy to use as possible, for communities
-        and groups wanting a cozy, private place to check out any get togethers
-    p.
-        To find out more about how this all works in the back-end (or to host your own instance) view
-        #[a(href="https://github.com/Denperidge/community-pinboard/") the repository on GitHub]
+    article
+      h2 About
+      p Community Pinboard is a public event pinboard webapp for your local community! 
+      p.
+          Built to be as lightweight and easy to use as possible, for communities
+          and groups wanting a cozy, private place to check out any get togethers
+      p.
+          To find out more about how this all works in the back-end (or to host your own instance) view
+          #[a(href="https://github.com/Denperidge/community-pinboard/") the repository on GitHub]
