@@ -39,6 +39,12 @@ export class Pin {
         return this.title + ".json";
     }
 
+    elapsed() : boolean {
+        const dayAfterPinDatetime = this.datetime;
+        dayAfterPinDatetime.setDate(this.datetime.getDate() + 1);
+        return (new Date()) >= dayAfterPinDatetime;
+    }
+
     get thumbnailPath() { 
         // If no thumbnail, return same undefined value
         if (!this.thumbnail) {

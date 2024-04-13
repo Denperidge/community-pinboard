@@ -12,25 +12,44 @@ const router = express.Router();
 const upload: ReturnType<typeof multer> = multer({storage: multer.memoryStorage()});
 // See https://github.com/DefinitelyTyped/DefinitelyTyped/issues/41970
 
-/* GET home page. */
-router.get('/', async function(req, res, next) {
-  console.log(await data.getPins())
+async function renderIndex(res: express.Response, returnElapsedPins=false, returnUpcomingPins=true) {
   res.render('index', {
     WEBSITE_TITLE: WEBSITE_TITLE,
     WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
     HOST_DOMAIN: HOST_DOMAIN,
-    pinArray: await data.getPins()
+    pinArray: await data.getPins(returnElapsedPins, returnUpcomingPins)
   });
-});
+}
 
-router.get("/upcoming.ics", async function (req, res, next) {
-  const pins = await data.getPins();
+async function renderIcs(res: express.Response, returnElapsedPins=false, returnUpcomingPins=true) {
+  const pins = await data.getPins(returnElapsedPins, returnUpcomingPins);
   const events = pins.map((pin) => { return pin.getIcsAttributes() });
   createEvents(events, (err, icsString) => {
     if (err) { throw err };
     res.append("Content-Type", "text/calendar")
     res.send(icsString);
-  })
+  });
+}
+
+/* GET home page. */
+router.get('/', async function(req, res, next) {
+  renderIndex(res, false, true);
+});
+
+router.get('/archive', async function(req, res, next) {
+  renderIndex(res, true, false);
+});
+
+router.get("/all.ics", async function (req, res, next) {
+  renderIcs(res, true, true);
+});
+
+router.get("/upcoming.ics", async function (req, res, next) {
+  renderIcs(res, false, true);
+});
+
+router.get("/archive.ics", async function (req, res, next) {
+  renderIcs(res, true, false);
 });
 
 router.get(PUBLIC_UPLOADS_PATH + ":file", function (req, res, next) {

@@ -46,9 +46,9 @@ export async function saveImage(filename: string, buffer: Buffer, path=UPLOADS_D
 }
 
 
-export async function getPins(dir=PINS_DIR): Promise<Array<Pin>> {
+export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, pinsDir=PINS_DIR): Promise<Array<Pin>> {
     return new Promise((resolve, reject) => {
-        fs.readdir(dir, async (err, pinFiles) => {
+        fs.readdir(pinsDir, async (err, pinFiles) => {
             if (err) { 
                 reject(err);
                 return;
@@ -58,7 +58,16 @@ export async function getPins(dir=PINS_DIR): Promise<Array<Pin>> {
             for (let i=0; i < pinFiles.length; i++) {
                 const pinFile = PINS_DIR + pinFiles[i];
                 const pin = await readPin(pinFile);
-                pins.push(pin)
+                let addPin = false;
+                if (pin.elapsed() && returnElapsedPins) {
+                    addPin = true;
+                }
+                if (!pin.elapsed() && returnUpcomingPins) {
+                    addPin = true;
+                }
+                if (addPin) {
+                    pins.push(pin)
+                }
             }
             resolve(pins);
         });
