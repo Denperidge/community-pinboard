@@ -121,6 +121,7 @@ So, before we go over to implementation, here is some base-things you have to ke
 - Datetime local returns 0 timezone information. The value seems to be `YYYY-MM-DDTHH:MM`, with no timezone information.
   - This means that the user will just input values from their timezone point of view
 - JavaScript new Date() seems to be able to parse offset
+  - Every JavaScript Date is stored in UTC
   - This means that, when creating a JavaScript date object
 
 ## Reference
@@ -131,6 +132,7 @@ So, before we go over to implementation, here is some base-things you have to ke
 | DATA_DIR | Where to store data uploaded by users | `data/` | `/app/data/` |
 | WEBSITE_TITLE | The title for your website, displayed in HTML, OpenGraph, [views/index](views/index.pug) h1 | `Community Pinboard!` | not set |
 | WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
+| TZ | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
 
 ### Project structure
 - [.github/workflows/](.github/workflows/): Worksflows that run on the CI/CD system of GitHub, [GitHub Actions](https://docs.github.com/en/actions). In this project it is used to deploy [Docker images](https://hub.docker.com/r/denperidge/community-pinboard)

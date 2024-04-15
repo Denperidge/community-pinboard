@@ -1,7 +1,7 @@
 import * as express from "express";
 import { check, validationResult, matchedData, FieldValidationError, oneOf } from "express-validator";
 
-import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN } from "./conf";
+import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN, TIMEZONE_SHORTHAND, TIMEZONE, utcAdjust } from "./conf";
 import * as data from "./data";
 import { Pin } from "./Pin";
 import multer from "multer";
@@ -17,6 +17,8 @@ async function renderIndex(res: express.Response, returnElapsedPins=false, retur
     WEBSITE_TITLE: WEBSITE_TITLE,
     WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
     HOST_DOMAIN: HOST_DOMAIN,
+    TIMEZONE: TIMEZONE,
+    utcAdjust: utcAdjust,
     pinArray: await data.getPins(returnElapsedPins, returnUpcomingPins)
   });
 }

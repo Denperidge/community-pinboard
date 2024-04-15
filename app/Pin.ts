@@ -32,7 +32,7 @@ export class Pin {
             obj.title,
             obj.description,
             obj.location,
-            new Date(obj.datetime, ),
+            new Date(obj.datetime),
             obj.postedBy,
             obj.thumbnail,
             obj.thumbnailImageDescr
@@ -59,14 +59,12 @@ export class Pin {
         return end;
     }
 
-
-
     _formatAtcbDate(dt: Date): string {
-        return `${dt.getFullYear()}-${pad(dt.getMonth())}-${pad(dt.getDay())}`
+        return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth())}-${pad(dt.getUTCDay())}`
     }
 
     _formatAtcbTime(dt: Date): string {
-        return `${pad(dt.getHours())}:${pad(dt.getMinutes())}`
+        return `${pad(dt.getUTCHours())}:${pad(dt.getUTCMinutes())}`
     }
     
     get atcbStartDate(): string {
