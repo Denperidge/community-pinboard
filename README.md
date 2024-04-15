@@ -143,8 +143,10 @@ All of the following moving parts are in play here:
 | DATA_DIR | Where to store data uploaded by users | `data/` | `/app/data/` |
 | WEBSITE_TITLE | The title for your website, displayed in HTML, OpenGraph, [views/index](views/index.pug) h1 | `Community Pinboard!` | not set |
 | WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
-| WEBSITE_TIMEZONE | The timezone in `Area/City` notation (see `TZ identifier` on [Wikipedia list of database tz time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)). This will determine in what timezone datetimes added to calendar | `TZ` **environment variable** through Node.js' [`process.env.TZ`](https://nodejs.org/docs/v20.12.1/api/cli.html#tz). If `TZ` is also undefined, `Europe/Brussels` | not set |
-| WEBSITE_LOCALE | The locale for your website. This will determine in what format datetimes are displayed in the rendered HTML/within [app/Pin.ts](app/Pin.ts) | `en-BE` | not set |
+| **\*** WEBSITE_LOCALE | The locale for your website. This will determine in what format datetimes are displayed in the rendered HTML/within [app/Pin.ts](app/Pin.ts) | `en-BE` | not set |
+| **\*** TZ | The timezone in `Area/City` notation (see `TZ identifier` on [Wikipedia list of database tz time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)). This will determine in what timezone datetimes are added to calendar. Additionally, view the [`process.env.TZ` Node.js docs](https://nodejs.org/docs/v20.12.1/api/cli.html#tz) | `Europe/Brussels` | not set |
+
+*(**\***: recommended)*
 
 For an example setup, see [.env.example](.env.example)
 
