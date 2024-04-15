@@ -1,6 +1,6 @@
 import { EventAttributes } from "ics";
 
-import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN } from "./conf";
+import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
 
 export function pad(number: Number): string {
     return number.toString().padStart(2, "0");
@@ -95,6 +95,14 @@ export class Pin {
         else {
             return PUBLIC_UPLOADS_PATH + this.thumbnail;
         }
+    }
+
+    get timeAndDay() {
+        return this.datetime.toLocaleString(WEBSITE_LOCALE);
+    }
+
+    get date() {
+        return this.datetime.toLocaleDateString(WEBSITE_LOCALE);
     }
 
     /*toJSON() : object {
