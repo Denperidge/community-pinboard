@@ -1,4 +1,4 @@
-import { createEvent, DateTime, EventAttributes } from "ics";
+import { EventAttributes } from "ics";
 
 import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN } from "./conf";
 
@@ -81,9 +81,6 @@ export class Pin {
     get atcbEndTime(): string {
         return this._formatAtcbTime(this._datetimePlusTwoHours)
     }
-
-    
-
 
     get thumbnailPath() { 
         // If no thumbnail, return same undefined value
