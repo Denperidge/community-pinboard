@@ -115,6 +115,14 @@ This application was built to replace fragmented organising through multiple Fac
 - **Cross-platform:** Everything has an app, but not everything should be. People barely get around to installing a calendar/scheduling app for people they live or work with, let alone this! A simple, clearview website.
 - **Accessible:** Care should be put into the accessibility of the project. Mandatory image descriptions is a measure that - even though it might have to get a toggle down the line - an attempt at a step to making user-generated content more accessible, or at least thought about. Further care should also be put in providing as well-polished accessibility from the get-go.
 
+### Timezone handling
+So, before we go over to implementation, here is some base-things you have to keep in mind:
+- For native HTML date(time) input, you have `date` (which doesn't include time) and `datetime-local`, no `datetime`.
+- Datetime local returns 0 timezone information. The value seems to be `YYYY-MM-DDTHH:MM`, with no timezone information.
+  - This means that the user will just input values from their timezone point of view
+- JavaScript new Date() seems to be able to parse offset
+  - This means that, when creating a JavaScript date object
+
 ## Reference
 ### Environment variables
 | Key                 | Explanation | [default](app/conf.ts) | default (Docker) |

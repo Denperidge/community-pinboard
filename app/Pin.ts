@@ -27,11 +27,12 @@ export class Pin {
     }
 
     static fromObject(obj: {[key: string]: string}): Pin {
+        console.log(obj.datetime)
         return new Pin(
             obj.title,
             obj.description,
             obj.location,
-            new Date(obj.datetime),
+            new Date(obj.datetime, ),
             obj.postedBy,
             obj.thumbnail,
             obj.thumbnailImageDescr
