@@ -116,13 +116,24 @@ This application was built to replace fragmented organising through multiple Fac
 - **Accessible:** Care should be put into the accessibility of the project. Mandatory image descriptions is a measure that - even though it might have to get a toggle down the line - an attempt at a step to making user-generated content more accessible, or at least thought about. Further care should also be put in providing as well-polished accessibility from the get-go.
 
 ### Timezone handling
-So, before we go over to implementation, here is some base-things you have to keep in mind:
-- For native HTML date(time) input, you have `date` (which doesn't include time) and `datetime-local`, no `datetime`.
-- Datetime local returns 0 timezone information. The value seems to be `YYYY-MM-DDTHH:MM`, with no timezone information.
-  - This means that the user will just input values from their timezone point of view
-- JavaScript new Date() seems to be able to parse offset
-  - Every JavaScript Date is stored in UTC
-  - This means that, when creating a JavaScript date object
+All of the following moving parts are in play here:
+- For native `HTML` date(time) input, you have `date` (which doesn't include time) and `datetime-local`. No timezone-based `datetime` is available.
+  - This returns **no timezone** information. The value seems to be `YYYY-MM-DDTHH:MM`
+  - This means that the input values will be ** timezone point of view**
+- `JavaScript Date()` also includes time
+  - Stored in **UTC**, specifically ms since a consistent startpoint
+  - Can **parse (UTC) strings with timezone** information, but will *still* store this as UTC internally
+- `data/pins/*.json`
+  - Stores the date based on JavaScript's JSON.stringify
+  - Stores as an UTC string with **no timezone** information
+  - Example: "2024-04-17T12:32:00.000Z"
+- `Node.js`
+  - `process.env.tz` Returns a `Area/City` format. See the [Node.js docs](https://nodejs.org/docs/v20.12.1/api/cli.html#tz) for more information
+- `add-to-calendar-button`
+  - Has {start,end}Date & {start,end}Time, both seemingly assuming the values to be **UTC**
+  - If you define timeZone to 
+  - This uses a library of the same developer for inputs for timeZone. See a few of the [available notations in the source code here](https://github.com/add2cal/timezones-ical-library/blob/308756344dc314a1499e298b9e99ad0377244c3e/src/zonesdb.js)
+  - The best results were with using `Area/City`. This is what is expected to be set the `WEBSITE_TIMEZONE` environment file. If that doesn't work, process.env.TZ tries to get used. If that doesn't work, Europe/Brussels will be used
 
 ## Reference
 ### Environment variables
@@ -132,7 +143,7 @@ So, before we go over to implementation, here is some base-things you have to ke
 | DATA_DIR | Where to store data uploaded by users | `data/` | `/app/data/` |
 | WEBSITE_TITLE | The title for your website, displayed in HTML, OpenGraph, [views/index](views/index.pug) h1 | `Community Pinboard!` | not set |
 | WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
-| TZ | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
+| WEBSITE_TIMEZONE | The timezone in `Area/City` notation (see `TZ identifier` on [Wikipedia list of database tz time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)). This will determine in what timezone datetimes are displayed & added to calendar | `TZ` **environment variable** through Node.js' [`process.env.TZ`](https://nodejs.org/docs/v20.12.1/api/cli.html#tz). If `TZ` is also undefined, `Europe/Brussels` | not set |
 
 ### Project structure
 - [.github/workflows/](.github/workflows/): Worksflows that run on the CI/CD system of GitHub, [GitHub Actions](https://docs.github.com/en/actions). In this project it is used to deploy [Docker images](https://hub.docker.com/r/denperidge/community-pinboard)
