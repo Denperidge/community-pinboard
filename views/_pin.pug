@@ -47,6 +47,22 @@ mixin pinView(pin)
     span=pin.datetime.toLocaleString()
     h4 #[+icon("celeste")] Posted by:
     span=pin.postedBy
+
+    // TODO: hide branding for aesthetic reasons, shout out in about page & repo
+    add-to-calendar-button(
+      name=pin.title
+      description=pin.description
+      location=pin.location
+      startDate=pin.atcbStartDate
+      endDate=pin.atcbEndDate
+      startTime=pin.atcbStartTime
+      endTime=pin.atcbEndTime
+      timeZone="Europe/Brussels"
+      options=[ "Apple", "Google", "iCal", "Microsoft365", "MicrosoftTeams", "Outlook.com", "Yahoo" ]
+      trigger="click"
+      listStyle="modal"
+      hideBranding="true"
+    )
   hr
 
 

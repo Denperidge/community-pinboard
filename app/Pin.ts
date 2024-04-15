@@ -2,6 +2,9 @@ import { createEvent, DateTime, EventAttributes } from "ics";
 
 import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN } from "./conf";
 
+export function pad(number: Number): string {
+    return number.toString().padStart(2, "0");
+}
 
 export class Pin {
     title: string;
@@ -44,6 +47,44 @@ export class Pin {
         dayAfterPinDatetime.setDate(this.datetime.getDate() + 1);
         return (new Date()) >= dayAfterPinDatetime;
     }
+
+    // The following functions are for use with add-to-calendar buttons syntax
+    // See https://add-to-calendar-button.com/configuration#event-parameters
+    // {start,end}Date: YYYY-MM-DD
+    // {start,end}Time: HH:MM
+    get _datetimePlusTwoHours() {
+        const end = this.datetime;
+        end.setHours(end.getHours() + 2);
+        return end;
+    }
+
+
+
+    _formatAtcbDate(dt: Date): string {
+        return `${dt.getFullYear()}-${pad(dt.getMonth())}-${pad(dt.getDay())}`
+    }
+
+    _formatAtcbTime(dt: Date): string {
+        return `${pad(dt.getHours())}:${pad(dt.getMinutes())}`
+    }
+    
+    get atcbStartDate(): string {
+        return this._formatAtcbDate(this.datetime);
+    }
+    get atcbEndDate(): string {
+        return this._formatAtcbDate(this._datetimePlusTwoHours);
+    }
+
+    get atcbStartTime(): string {
+        return this._formatAtcbTime(this.datetime);
+    }
+
+    get atcbEndTime(): string {
+        return this._formatAtcbTime(this._datetimePlusTwoHours)
+    }
+
+    
+
 
     get thumbnailPath() { 
         // If no thumbnail, return same undefined value
