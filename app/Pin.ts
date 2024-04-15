@@ -98,7 +98,7 @@ export class Pin {
     }
 
     get timeAndDay() {
-        return this.datetime.toLocaleString(WEBSITE_LOCALE);
+        return this.datetime.toLocaleString(WEBSITE_LOCALE, {dateStyle: "short", timeStyle: "short"});
     }
 
     get date() {
