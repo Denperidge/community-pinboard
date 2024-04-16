@@ -4,23 +4,23 @@ $woodenBorder: repeating-linear-gradient(40deg, hsl(30, 50%, 15%), hsl(20, 50%, 
 aside {
   height: 80vh;
   overflow-y: hidden;
+  
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: scroll;
 
   border: 25px solid hsl(30, 50%, 15%);
   border-image: $woodenBorder;
   background-color: #c1f1f1;
-
-
-  box-sizing: border-box;
 
   h2 {
     margin: 0;
   }
 
   .pins {
-    height: 100%;
-
-    overflow-y: scroll;
     scroll-behavior: smooth;
+    flex-grow: 1;
   }
 
   h4 {
