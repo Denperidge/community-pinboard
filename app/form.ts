@@ -1,11 +1,12 @@
+import { Pin } from "./Pin";
 import { MAX_UPLOAD_MB as MAX_UPLOAD_MB, PIN_MAXLENGTHS } from "./conf";
 
-interface IInputOptions {id: string, required: boolean, labelText?: string, icon?: string, labelSrOnly?: boolean}
+interface IInputOptions {name: string, required: boolean, labelText?: string, icon?: string, id?:string, labelSrOnly?: boolean}
 
 class Input implements IInputOptions {
     readonly type: string;
-    id: string;
     name: string;
+    id: string;
     required: boolean
     labelText: string;
     labelSrOnly: boolean;
@@ -13,10 +14,10 @@ class Input implements IInputOptions {
 
     constructor(type: string, options: IInputOptions) {
         this.type = type;
-        this.id = options.id;
-        this.name = this.id;
+        this.name = options.name;
+        this.id = options.id || this.name;
         this.required = options.required;
-        this.labelText = options.labelText || this.id[0].toUpperCase() + this.id.substring(1);
+        this.labelText = options.labelText || this.name[0].toUpperCase() + this.name.substring(1);
         this.icon = options.icon;
         this.labelSrOnly = Boolean(options.labelSrOnly);
     }
@@ -67,7 +68,7 @@ export class FileInput extends Input {
 
 
 function FullFileInput(
-    id: string,
+    name: string,
     labelTextFile: string, 
 
     labelTextUrl: string, 
@@ -78,13 +79,13 @@ function FullFileInput(
     return {
         inputField: true,
         file: new FileInput({
-            id: id + "File",
+            name: name + "File",
             required: false,
             labelText: labelTextFile,
             labelSrOnly: true
         }),
         url: new TextInput({
-            id: id + "Url", 
+            name: name + "Url", 
             required: false, 
             labelText: labelTextUrl,
             maxLength: PIN_MAXLENGTHS.thumbnailUrl,
@@ -92,7 +93,7 @@ function FullFileInput(
             labelSrOnly: true
         }),
         imageDescription: new TextInput({
-            id: id + "ImageDescr",
+            name: name + "ImageDescr",
             required: false,
             labelText: labelTextImageDescr,
             placeholder: placeholderImageDescr,
@@ -101,49 +102,80 @@ function FullFileInput(
     }
 }
 
+function pinForm(
+    idSuffix="",
+    values: {[name: string]: string}={}
+) {
+    return {
+        title: new TextInput({
+            name: "title",
+            id: "title" + idSuffix,
+            labelText: "Title:",
+            placeholder: "The name of the event",
+            required: true,
+            maxLength: PIN_MAXLENGTHS.title,
+            icon: undefined,
+            value: values.title
+        }),
+        description: new TextInput({
+            name: "description",
+            id: "description" + idSuffix,
+            labelText: "Description:",
+            placeholder: "Description...",
+            required: false,
+            maxLength: PIN_MAXLENGTHS.description,
+            icon: "egg"
+        }),
+        location: new TextInput({
+            name: "location",
+            id: "location" + idSuffix,
+            labelText: "Location:",
+            placeholder: "Where your event takes place...",
+            required: true,
+            maxLength: PIN_MAXLENGTHS.location,
+            icon: "suitcase"
+        }),
+        datetime: new DatetimeInput({
+            name: "datetime",
+            id: "datetime" + idSuffix,
+            labelText: "Time/day:",
+            required: true,
+            icon: "time"
+        }),
+        postedBy: new TextInput({
+            name: "postedBy",
+            id: "postedBy" + idSuffix,
+            labelText: "Posted by:",
+            placeholder: "Your name",
+            required: true,
+            maxLength: PIN_MAXLENGTHS.postedBy,
+            icon: "celeste"
+        }),
+        thumbnail: FullFileInput(
+            "thumbnail", 
+            "Thumbnail (file):", 
+            "Thumbnail (upload):", "https://example.com/image.png",
+            "Thumbnail alt text:", "A black-red flyer for a Newgrounds Death Rugby concert. It reads 24/11, 19:30"
+        ),
+    }
+}
 
-export const indexForm = {
-    title: new TextInput({
-        id: "title",
-        labelText: "Title:",
-        placeholder: "The name of the event",
-        required: true,
-        maxLength: PIN_MAXLENGTHS.title,
-        icon: undefined
-    }),
-    description: new TextInput({
-        id: "description",
-        labelText: "Description:",
-        placeholder: "Description...",
-        required: false,
-        maxLength: PIN_MAXLENGTHS.description,
-        icon: "egg"
-    }),
-    location: new TextInput({
-        id: "location",
-        labelText: "Location:",
-        placeholder: "Where your event takes place...",
-        required: true,
-        maxLength: PIN_MAXLENGTHS.location,
-        icon: "suitcase"
-    }),
-    datetime: new DatetimeInput({
-        id: "datetime",
-        labelText: "Time/day:",
-        required: true,
-        icon: "time"
-    }),
-    postedBy: new TextInput({
-        id: "postedBy",
-        labelText: "Posted by:",
-        placeholder: "Your name",
-        required: true,
-        maxLength: PIN_MAXLENGTHS.postedBy,
-        icon: "celeste"
-    }),
-    thumbnail: FullFileInput(
-        "thumbnail", 
-        "Thumbnail (file):", 
-        "Thumbnail (upload):", "https://example.com/image.png",
-        "Thumbnail alt text:", "A black-red flyer for a Newgrounds Death Rugby concert. It reads 24/11, 19:30")
+export const indexForm = pinForm();
+
+
+export function editForms(pins: {[slug: string]: Pin}) {
+    const pinSlugs = Object.keys(pins);
+    for (let i=0; i < pinSlugs.length; i++) {
+        const pinSlug = pinSlugs[i];
+        const pin = pins[pinSlug];
+        pinForm(pinSlug, {
+            title: pin.title,
+            description: pin.description,
+            datetime: pin.datetime,
+            
+            
+        })
+    }
+
+    return ((pin) => return pinForm())
 }
