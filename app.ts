@@ -7,7 +7,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require("node-sass-middleware");
 
-var indexRouter = require('./app/routes');
+var getRouter = require('./app/routes.get');
+var editRouter = require('./app/routes.edit');
 
 
 var app = express();
@@ -29,7 +30,8 @@ app.use(sassMiddleware({
   prefix: "/stylesheets/"
 }));
 
-app.use('/', indexRouter);
+app.use('/', getRouter);
+app.use('/', editRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req: Request, res: Response, next: NextFunction) {

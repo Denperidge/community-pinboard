@@ -92,7 +92,7 @@ form.pin.view(action="/pin" method="POST" enctype="multipart/form-data")
       "text",
       "Title:",
       "The name of the event",
-      20,
+      PIN_MAXLENGTHS.title,
       null,
       true)
     +input(
@@ -100,7 +100,7 @@ form.pin.view(action="/pin" method="POST" enctype="multipart/form-data")
       "text",
       "Description:",
       "Description...",
-      200, 
+      PIN_MAXLENGTHS.description, 
       "egg",
       false)
     //-
@@ -116,7 +116,7 @@ form.pin.view(action="/pin" method="POST" enctype="multipart/form-data")
       "text", 
       "Location:",
       "Where your event takes place...",
-      50,
+      PIN_MAXLENGTHS.location,
       "suitcase",
       true)
     +input(
@@ -132,7 +132,7 @@ form.pin.view(action="/pin" method="POST" enctype="multipart/form-data")
       "text",
       "Posted by:",
       "Your name",
-      20,
+      PIN_MAXLENGTHS.postedBy,
       "celeste",
       true)
     +fileInput()
