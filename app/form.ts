@@ -1,10 +1,11 @@
-import { PIN_MAXLENGTHS } from "./conf";
+import { MAX_UPLOAD_MB as MAX_UPLOAD_MB, PIN_MAXLENGTHS } from "./conf";
 
 interface IInputOptions {id: string, required: boolean, labelText?: string, icon?: string, labelSrOnly?: boolean}
 
 class Input implements IInputOptions {
     readonly type: string;
     id: string;
+    name: string;
     required: boolean
     labelText: string;
     labelSrOnly: boolean;
@@ -13,14 +14,11 @@ class Input implements IInputOptions {
     constructor(type: string, options: IInputOptions) {
         this.type = type;
         this.id = options.id;
+        this.name = this.id;
         this.required = options.required;
         this.labelText = options.labelText || this.id[0].toUpperCase() + this.id.substring(1);
         this.icon = options.icon;
-        this.labelSrOnly = options.labelSrOnly || false;
-    }
-
-    get name() {
-        return this.id;
+        this.labelSrOnly = Boolean(options.labelSrOnly);
     }
 }
 
@@ -53,9 +51,53 @@ export class DatetimeInput extends Input {
             const timezoneOffset = (new Date()).getTimezoneOffset() * 60000;
             date = (new Date(Date.now() - timezoneOffset));
         }
+        date.setSeconds(0);
+        date.setMilliseconds(0);
         
-        date.setDate(date.getDate() + 1)
+        date.setDate(date.getDate() + 1);
         this.value = date.toISOString().slice(0, -1);
+    }
+}
+
+export class FileInput extends Input {
+    constructor(options: IInputOptions) {
+        super("file", options)
+    }
+}
+
+
+function FullFileInput(
+    id: string,
+    labelTextFile: string, 
+
+    labelTextUrl: string, 
+    placeholderUrl: string,
+
+    labelTextImageDescr: string,
+    placeholderImageDescr: string) {
+    return {
+        inputField: true,
+        file: new FileInput({
+            id: id + "File",
+            required: false,
+            labelText: labelTextFile,
+            labelSrOnly: true
+        }),
+        url: new TextInput({
+            id: id + "Url", 
+            required: false, 
+            labelText: labelTextUrl,
+            maxLength: PIN_MAXLENGTHS.thumbnailUrl,
+            placeholder: placeholderUrl,
+            labelSrOnly: true
+        }),
+        imageDescription: new TextInput({
+            id: id + "ImageDescr",
+            required: false,
+            labelText: labelTextImageDescr,
+            placeholder: placeholderImageDescr,
+            maxLength: 300
+        })
     }
 }
 
@@ -98,6 +140,10 @@ export const indexForm = {
         required: true,
         maxLength: PIN_MAXLENGTHS.postedBy,
         icon: "celeste"
-    })
-    // fileinput 
+    }),
+    thumbnail: FullFileInput(
+        "thumbnail", 
+        "Thumbnail (file):", 
+        "Thumbnail (upload):", "https://example.com/image.png",
+        "Thumbnail alt text:", "A black-red flyer for a Newgrounds Death Rugby concert. It reads 24/11, 19:30")
 }

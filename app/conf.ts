@@ -12,8 +12,11 @@ export const PIN_MAXLENGTHS = {
     "title": process.env.MAX_TITLE ? parseInt(process.env.MAX_TITLE) : 80,
     "description": process.env.MAX_DESCRIPTION ? parseInt(process.env.MAX_DESCRIPTION) : 400,
     "location": process.env.MAX_LOCATION ? parseInt(process.env.MAX_LOCATION) : 150,
-    "postedBy": process.env.MAX_POSTEDBY ? parseInt(process.env.MAX_POSTEDBY) : 50
+    "postedBy": process.env.MAX_POSTEDBY ? parseInt(process.env.MAX_POSTEDBY) : 50,
+    "thumbnailUrl": process.env.MAX_THUMBNAILURL ? parseInt(process.env.MAX_THUMBNAILURL) : 50
 };
+export const MAX_UPLOAD_MB = process.env.MAX_UPLOAD_MB ? parseInt(process.env.MAX_UPLOAD_MB) : 20
+
 
 export const PINS_DIR = DATA_DIR + "pins/";
 export const UPLOADS_DIR = DATA_DIR + "uploads";

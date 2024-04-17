@@ -1,75 +1,40 @@
-mixin inputLabel(inputId, text, required=false, error=false, icon=null, srOnly=false)
-  label(for=inputId role=error ? "alert" : "" class=srOnly ? "sr-only" : "")
-    if required
-      span *&nbsp;
-    if icon
-      +icon(icon)
-    span=text
-
-
 mixin input(conf)
   - let errorHappened = false;
   - let role = "";
 
   if errors
-    if errors[id]
+    if errors[conf.id]
       - errorHappened = true;
     
-  +inputLabel(id, labelText, isRequired, errorHappened, icon, labelSrOnly)
-  // Todo input file accept
+  label(for=conf.id role=errorHappened ? "alert" : "" class=conf.labelSrOnly ? "sr-only" : "")
+    if conf.required
+      span *&nbsp;
+    if conf.icon
+      +icon(conf.icon)
+    span=conf.labelText
   input(
     accept=(inputType == "file") ? "image/*" : undefined,
-    aria-describedby=errorHappened ? `${id}-error` : null
+    aria-describedby=errorHappened ? `${conf.id}-error` : null
     aria-invalid=errorHappened)&attributes(conf)
   if errorHappened
-    p.error(id=`${id}-error` role="alert")=errors[id]
+    p.error(id=`${conf.id}-error` role="alert")=errors[conf.id]
 
-mixin fileInput(idUrlField, idFileField)
-    - const id = idUrlField + "Span";
-    p(for=id) If you have a flyer / thumbnail, you can add it using...
-    span.fileInput(id=id)
-        +input(
-            "thumbnailFile", 
-            "file",
-            "Thumbnail (upload):",
-            null,
-            null,
-            null,
-            false,
-            true)
-        span &nbsp;or&nbsp;&nbsp;
-        //-
-            id
-            inputType
-            Label text
-            Placeholder
-            maxlength
-            icon
-            isRequired
-            labelSrOnly
-        +input(
-            "thumbnailUrl",
-            "url",
-            "Thumbnail (url):",
-            "https://example.com/image.png",
-            null,
-            null,
-            false,
-            true)
-    +input(
-        "thumbnailImageDescr",
-        "text",
-        "Thumbnail alt text:",
-        "A black-red flyer for a Newgrounds Death Rugby concert. It reads 24/11, 19:30",
-        300,
-        null,
-        false
-      )
+mixin fileInput(conf)
+  - const id = conf.id + "Span";
+  p(for=id) If you have a flyer / thumbnail, you can add it using...
+  span.fileInput(id=id)
+    +input(conf.file)
+    span &nbsp;or&nbsp;&nbsp;
+    +input(conf.url)
+
+  +input(conf.imageDescription)
 
 
 mixin form(fields, url="/pin", method="POST")
   form.pin.view(action=url method=method enctype="multipart/form-data")
     each field in fields
-      +input(field)
-    +fileInput()
+      if !field.inputField
+        +input(field)
+      else
+        +fileInput(field)
     input(type="submit" value="Pin!")
