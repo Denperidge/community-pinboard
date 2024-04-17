@@ -6,6 +6,7 @@ import * as data from "./data";
 import { Pin } from "./Pin";
 import multer from "multer";
 import { createEvents } from "ics";
+import slug from "slug";
 
 /** Express Router, allows assigning routes*/ 
 const router = express.Router();
@@ -88,95 +89,130 @@ router.get(PUBLIC_UPLOADS_PATH + ":file", function (req, res, next) {
   });
 });
 
-/** Route to create new pins */
-router.post(
-  "/new-event", 
-  [
-    // Enable multer for a singe file upload
-    upload.single("thumbnailFile"),
-    check("title")
-      .notEmpty().withMessage("The title must not be empty")
-      .trim()
-      .isLength({max: 20}).withMessage("The title has to be 20 characters or shorter"),
-    check("description").optional()
-      .isLength({max: 200})
-      .withMessage("The description has to be 200 characters or shorter"),
-    check("location")
-      .notEmpty()
-      .withMessage("The location needs to be filled in")
-      .isLength({max: 50})
-      .withMessage("The location has to be 50 characters or shorter"),
-    check("datetime")
-      .notEmpty()
-      .withMessage("A date/time has to be provided")
-      // TOdo: regex based date format?
-      //.isDate()
-      //.withMessage("Provided date/time incorrect format")
-      ,
-    check("postedBy")
-      .notEmpty()
-      .withMessage("Posted by cannot be empty")
-      .isLength({max: 20})
-      .withMessage("Posted by has to be 20 characters or shorter"),
-    check("thumbnailUrl").optional(),
-    check("thumbnailFile").optional(),
-    check("thumbnailImageDescr").optional()
-  ],
-  async function(req: express.Request, res: express.Response, next: express.NextFunction) {
+/** Routes to create or edit pins */
+const saveOrEditPinMiddleware = [
+  // Enable multer for a singe file upload
+  upload.single("thumbnailFile"),
+  check("title")
+    .notEmpty().withMessage("The title must not be empty")
+    .trim()
+    .isLength({max: 20}).withMessage("The title has to be 20 characters or shorter"),
+  check("description").optional()
+    .isLength({max: 200})
+    .withMessage("The description has to be 200 characters or shorter"),
+  check("location")
+    .notEmpty()
+    .withMessage("The location needs to be filled in")
+    .isLength({max: 50})
+    .withMessage("The location has to be 50 characters or shorter"),
+  check("datetime")
+    .notEmpty()
+    .withMessage("A date/time has to be provided")
+    // TOdo: regex based date format?
+    //.isDate()
+    //.withMessage("Provided date/time incorrect format")
+    ,
+  check("postedBy")
+    .notEmpty()
+    .withMessage("Posted by cannot be empty")
+    .isLength({max: 20})
+    .withMessage("Posted by has to be 20 characters or shorter"),
+  check("thumbnailUrl").optional(),
+  check("thumbnailFile").optional(),
+  check("thumbnailImageDescr").optional()
+]
+async function saveOrEditPin(req: express.Request, res: express.Response, writeToSpecificSlug?:string) {
     /** All errors caught by Express-Validator */
     const errors = validationResult(req);
     /** The error field keys & messages to display ot the user */
     const returnErrors: {[fieldId:string]: string} = {};
     /** Express-Validator processed data */
-    const pinData = matchedData(req);
+  const pinData = matchedData(req);
 
-    // If any Express-Validator errors have been detected, add to returnErrors variable
-    if (!errors.isEmpty()) {
-      (errors.array() as FieldValidationError[]).forEach((err: FieldValidationError) => {
-        returnErrors[err.path] = `${err.msg} (provided value: "${err.value}")`;
-      });
+  // If any Express-Validator errors have been detected, add to returnErrors variable
+  if (!errors.isEmpty()) {
+    (errors.array() as FieldValidationError[]).forEach((err: FieldValidationError) => {
+      returnErrors[err.path] = `${err.msg} (provided value: "${err.value}")`;
+    });
+  }
+
+  // Multer thumbnail max filesize check, otherwise add to returnErrors
+  if (req.file) {
+    // From https://stackoverflow.com/a/61791720
+    // For MB: amountInMegabytes * 1024 * 1024
+    const MBLimit = 10;
+    if (req.file.buffer.byteLength >= MBLimit * 1024 * 1024) {
+      returnErrors["thumbnailFile"] = `Provided thumbnail is larger than ${MBLimit}MB. Please compress it, or try another image`;
     }
 
-    // Multer thumbnail max filesize check, otherwise add to returnErrors
-    if (req.file) {
-      // From https://stackoverflow.com/a/61791720
-      // For MB: amountInMegabytes * 1024 * 1024
-      const MBLimit = 10;
-      if (req.file.buffer.byteLength >= MBLimit * 1024 * 1024) {
-        returnErrors["thumbnailFile"] = `Provided thumbnail is larger than ${MBLimit}MB. Please compress it, or try another image`;
-      }
-
-      if (!pinData.thumbnailImageDescr) {
-        returnErrors["thumbnailImageDescr"] = "Please enter an image description/transcription for the thumbnail";
-      }
+    if (!pinData.thumbnailImageDescr) {
+      returnErrors["thumbnailImageDescr"] = "Please enter an image description/transcription for the thumbnail";
     }
+  }
 
-    // If any errors are added to returnErrors, don't save the pin. Instead, render the index page with returnErrors
-    if (Object.keys(returnErrors).length != 0) {
-      // TODO: go to #new on load
-      res.render("index", {
-        pinArray: await data.getPins(),
-        errors: returnErrors,
-      });
-      return;
-    }
+  // If any errors are added to returnErrors, don't save the pin. Instead, render the index page with returnErrors
+  if (Object.keys(returnErrors).length != 0) {
+    // TODO: go to #new on load
+    res.render("index", {
+      pinArray: await data.getPins(),
+      errors: returnErrors,
+    });
+    return;
+  }
 
-    // If a thumbnail url is provided, use that
-    if (pinData.thumbnailUrl) {
-      pinData.thumbnail = pinData.thumbnailUrl;
-    }
-    // Otherwise, if a file provided, use that
-    else if (req.file) {
-      const extension = req.file.originalname.substring(req.file.originalname.lastIndexOf("."))
-      const filename = await data.saveImage(pinData.title + extension, req.file?.buffer)
-      pinData.thumbnail = filename;
-    }
+  let pinSlug: string;
+  let overwrite = false;
+  // If a specific slug is targeted, it's an edit
+  if (writeToSpecificSlug) {
+    pinSlug = writeToSpecificSlug;
+    overwrite = true;
+  }
+  // If no specific slug is targeted, it's new, and should not overwrite anything
+  else {
+    pinSlug = slug(pinData.title);
+    overwrite = false;
+  }
 
-    // Save pin
-    data.writePin(Pin.fromObject(pinData));
-    // Redirect to index
-    res.redirect("/");
-});
+  // If a thumbnail url is provided, use that
+  if (pinData.thumbnailUrl) {
+    pinData.thumbnail = pinData.thumbnailUrl;
+  }
+  // Otherwise, if a file provided, use that
+  else if (req.file) {
+    const extension = req.file.originalname.substring(req.file.originalname.lastIndexOf("."))
+    const filename = await data.saveImage(pinSlug + extension, req.file?.buffer)
+    pinData.thumbnail = filename;
+  }
+
+  // Insert slug here!!
+  // No slug here or in the Pin? 
+  // The pin doesn't need it for internal design reasons
+  // but that's not always necessary
+  // What do i do here !!!
+  // bc I can put it in the writePin too and let that make a slug
+
+
+  // Save pin
+  data.writePin(Pin.fromObject(pinData), pinSlug, overwrite);
+  // Redirect to index
+  res.redirect("/");
+}
+
+router.post(
+  "/pin",
+  saveOrEditPinMiddleware,
+  async function(req: express.Request, res: express.Response, next: express.NextFunction) {
+    saveOrEditPin(req, res, );
+  }
+);
+
+router.put(
+  "/pin/:slug",
+  saveOrEditPinMiddleware,
+  async function(req: express.Request, res: express.Response, next: express.NextFunction) {
+    saveOrEditPin(req, res, req.params.slug);
+  }
+);
 
 // Export router for ../app.ts
 module.exports = router;

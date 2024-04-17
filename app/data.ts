@@ -1,8 +1,8 @@
 import * as fs from "fs";
-import { join } from "path";
-
+import { join, parse as pathParse, format as pathToString, ParsedPath } from "path";
 import { DATA_DIR, PINS_DIR, UPLOADS_DIR } from "./conf";
 import { Pin } from "./Pin";
+import * as slug from "slug";
 
 
 async function makeDirs() {
@@ -25,10 +25,34 @@ export async function readPin(jsonPath: string): Promise<Pin> {
     });
 }
 
-export async function writePin(pin: Pin): Promise<void> {
+
+function _returnUniquePath(filePath: string, fileBasename: string, index: number=0) {
+    // If file exists
+    if (fs.existsSync(filePath)) {
+        // Extract 
+        const {dir, ext} = pathParse(filePath);
+        filePath = `${dir}/${fileBasename}-${index}${ext}`;
+        return _returnUniquePath(filePath, fileBasename, index + 1);
+    } else {
+        return filePath;
+    }
+}
+
+async function _write(providedPath: string, data: string|Buffer, overwrite=false) : Promise<string> {
     return new Promise((resolve, reject) => {
-        fs.writeFile(PINS_DIR + pin.filename(), pin.toString(), ()=>{resolve();})
+        let writePath: string;
+        if (overwrite) {
+            writePath = providedPath;
+        } else {
+            writePath = _returnUniquePath(providedPath, pathParse(providedPath).name);
+        }
+        
+        fs.writeFile(writePath, data, () => { resolve(writePath); });
     });
+}
+
+export async function writePin(pin: Pin, slug: string, overwrite=false, dir=PINS_DIR): Promise<string> {
+    return _write(join(dir, slug + ".json"), pin.toString(), overwrite);
 }
 
 
@@ -36,13 +60,9 @@ export function uploadPath(filename: string, path=UPLOADS_DIR) {
     return path + filename;
 }
 
-export async function saveImage(filename: string, buffer: Buffer, path=UPLOADS_DIR): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const dest = join(path, filename);
-        fs.writeFile(dest, buffer, () => {
-            resolve(filename);
-        });
-    });
+export async function saveImage(filename: string, buffer: Buffer, dir=UPLOADS_DIR): Promise<string> {
+    const dest = join(dir, filename);
+    return pathParse(await _write(dest, buffer, false)).base;
 }
 
 
