@@ -128,8 +128,17 @@ router.post(
   }
 );
 
-router.get("/edit", function(req, res, next) {
-  res.render("edit", {});
+router.get("/edit", async function(req, res, next) {
+  const errorParams = req.query;
+  res.render("edit", {
+    WEBSITE_TITLE: WEBSITE_TITLE,
+    WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
+    HOST_DOMAIN: HOST_DOMAIN,
+    WEBSITE_TIMEZONE: WEBSITE_TIMEZONE,
+    PIN_MAXLENGTHS: PIN_MAXLENGTHS,
+    errors: errorParams,
+    pinDict: await data.getPins(false, true, false)
+  });
 });
 
 router.put(

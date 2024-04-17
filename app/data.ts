@@ -1,7 +1,8 @@
 import * as fs from "fs";
-import { join, parse as pathParse, format as pathToString, ParsedPath } from "path";
+import { join, parse as pathParse, format as pathToString, ParsedPath, parse } from "path";
 import { DATA_DIR, PINS_DIR, UPLOADS_DIR } from "./conf";
 import { Pin } from "./Pin";
+import { parse as parsePath } from "path";
 import * as slug from "slug";
 
 
@@ -65,8 +66,9 @@ export async function saveImage(filename: string, buffer: Buffer, dir=UPLOADS_DI
     return pathParse(await _write(dest, buffer, false)).base;
 }
 
-
-export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, pinsDir=PINS_DIR): Promise<Array<Pin>> {
+export async function getPins(returnElapsedPins: boolean, returnUpcomingPins: boolean, returnArray: true): Promise<Array<Pin>>
+export async function getPins(returnElapsedPins: boolean, returnUpcomingPins: boolean, returnArray: false): Promise<{[slug: string]: Pin}>
+export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, returnArray=true, pinsDir=PINS_DIR): Promise<Array<Pin>|{[slug: string]: Pin}> {
     return new Promise((resolve, reject) => {
         fs.readdir(pinsDir, async (err, pinFiles) => {
             if (err) { 
@@ -74,10 +76,14 @@ export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, 
                 return;
             }
     
-            const pins: Array<Pin> = [];
+
+            let pins: Array<Pin>|{[slug:string]: Pin} = returnArray ? [] : {};
             for (let i=0; i < pinFiles.length; i++) {
-                const pinFile = PINS_DIR + pinFiles[i];
-                const pin = await readPin(pinFile);
+                const pinFilename = pinFiles[i];
+                const pinSlug = parsePath(pinFilename).name;
+                const pinPath = join(PINS_DIR, pinFilename);
+
+                const pin = await readPin(pinPath);
                 let addPin = false;
                 if (pin.elapsed() && returnElapsedPins) {
                     addPin = true;
@@ -86,7 +92,7 @@ export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, 
                     addPin = true;
                 }
                 if (addPin) {
-                    pins.push(pin)
+                    pins instanceof Array ? pins.push(pin) : pins[pinSlug] = pin;
                 }
             }
             resolve(pins);

@@ -7,6 +7,7 @@ import { Pin } from "./Pin";
 import multer from "multer";
 import { createEvents } from "ics";
 import slug from "slug";
+import { indexForm } from "./form";
 
 /** Express Router, allows assigning routes*/ 
 const router = express.Router();
@@ -29,7 +30,8 @@ async function renderIndex(req: express.Request, res: express.Response, returnEl
     WEBSITE_TIMEZONE: WEBSITE_TIMEZONE,
     PIN_MAXLENGTHS: PIN_MAXLENGTHS,
     errors: errorParams,
-    pinArray: await data.getPins(returnElapsedPins, returnUpcomingPins)
+    form: indexForm,
+    pinArray: await data.getPins(returnElapsedPins, returnUpcomingPins, true)
   });
 }
 
@@ -40,8 +42,8 @@ async function renderIndex(req: express.Request, res: express.Response, returnEl
  * @param returnUpcomingPins whether to send upcoming pins. Default=true
  */
 async function renderIcs(res: express.Response, returnElapsedPins=false, returnUpcomingPins=true) {
-  const pins = await data.getPins(returnElapsedPins, returnUpcomingPins);
-  const events = pins.map((pin) => { return pin.getIcsAttributes() });
+  const pins = await data.getPins(returnElapsedPins, returnUpcomingPins, true);
+  const events = pins.map((pin: Pin) => { return pin.getIcsAttributes() });
   createEvents(events, (err, icsString) => {
     if (err) { throw err };
     res.append("Content-Type", "text/calendar")

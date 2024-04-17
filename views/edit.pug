@@ -16,8 +16,11 @@ block content
       a(href="/about") Calendar sync (and about)
     
     h2 Pin view
-    each pin in pinArray
+    each pin, slug in pinDict
       h3#new-pin New pin
-      +form()
+      - 
+      +form(
+        {},
+        "/pin/" + slug
+      )
 
-      p meow

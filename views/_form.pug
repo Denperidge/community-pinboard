@@ -7,39 +7,20 @@ mixin inputLabel(inputId, text, required=false, error=false, icon=null, srOnly=f
     span=text
 
 
-mixin input(id="", inputType="text", labelText=null, optionalPlaceholder=null, optionalMaxlength=null, icon=null, isRequired=false, labelSrOnly=false, defaultHide=false)
-  if !labelText
-    - labelText = id[0].toUpperCase() + id.substring(1);
+mixin input(conf)
   - let errorHappened = false;
   - let role = "";
-  - let value = "";
 
   if errors
     if errors[id]
       - errorHappened = true;
     
-  if inputType == "datetime-local"
-    // https://stackoverflow.com/a/28149561
-    - const timezoneOffset = (new Date()).getTimezoneOffset() * 60000;
-    - const date = (new Date(Date.now() - timezoneOffset))
-    - date.setDate(date.getDate() + 1)
-    - date.setSeconds(null);
-    - date.setMilliseconds(null);
-    - value = date.toISOString().slice(0, -1);
-
   +inputLabel(id, labelText, isRequired, errorHappened, icon, labelSrOnly)
   // Todo input file accept
   input(
-    type=inputType
-    name=id id=id
-    maxlength=optionalMaxlength
-    required=isRequired
-    placeholder=optionalPlaceholder
-    value=value
-    class=defaultHide ? "defaultHide" : "",
     accept=(inputType == "file") ? "image/*" : undefined,
     aria-describedby=errorHappened ? `${id}-error` : null
-    aria-invalid=errorHappened)
+    aria-invalid=errorHappened)&attributes(conf)
   if errorHappened
     p.error(id=`${id}-error` role="alert")=errors[id]
 
@@ -86,55 +67,9 @@ mixin fileInput(idUrlField, idFileField)
       )
 
 
-mixin form(url="/pin", method="POST")
+mixin form(fields, url="/pin", method="POST")
   form.pin.view(action=url method=method enctype="multipart/form-data")
-    +input(
-      "title",
-      "text",
-      "Title:",
-      "The name of the event",
-      PIN_MAXLENGTHS.title,
-      null,
-      true)
-    +input(
-      "description",
-      "text",
-      "Description:",
-      "Description...",
-      PIN_MAXLENGTHS.description, 
-      "egg",
-      false)
-    //-
-        id
-        inputType
-        Label text
-        Placeholder
-        maxlength
-        icon
-        isRequired
-    +input(
-      "location",  
-      "text", 
-      "Location:",
-      "Where your event takes place...",
-      PIN_MAXLENGTHS.location,
-      "suitcase",
-      true)
-    +input(
-      "datetime",
-      "datetime-local",
-      "Time/day:",
-      "",
-      false,
-      "time",
-      true)
-    +input(
-      "postedBy",
-      "text",
-      "Posted by:",
-      "Your name",
-      PIN_MAXLENGTHS.postedBy,
-      "celeste",
-      true)
+    each field in fields
+      +input(field)
     +fileInput()
     input(type="submit" value="Pin!")
