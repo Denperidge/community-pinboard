@@ -20,13 +20,15 @@ const upload: ReturnType<typeof multer> = multer({storage: multer.memoryStorage(
  * @param returnElapsedPins whether to send elapsed pins. Default=false
  * @param returnUpcomingPins whether to send upcoming pins. Default=true
  */
-async function renderIndex(res: express.Response, returnElapsedPins=false, returnUpcomingPins=true) {
+async function renderIndex(req: express.Request, res: express.Response, returnElapsedPins=false, returnUpcomingPins=true) {
+  const errorParams = req.query;
   res.render('index', {
     WEBSITE_TITLE: WEBSITE_TITLE,
     WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
     HOST_DOMAIN: HOST_DOMAIN,
     WEBSITE_TIMEZONE: WEBSITE_TIMEZONE,
     PIN_MAXLENGTHS: PIN_MAXLENGTHS,
+    errors: errorParams,
     pinArray: await data.getPins(returnElapsedPins, returnUpcomingPins)
   });
 }
@@ -49,12 +51,12 @@ async function renderIcs(res: express.Response, returnElapsedPins=false, returnU
 
 /** Home page. Send index of upcoming pins */
 router.get('/', async function(req, res, next) {
-  renderIndex(res, false, true);
+  renderIndex(req, res, false, true);
 });
 
 /** Archive page. Send index of past pins */
 router.get('/archive', async function(req, res, next) {
-  renderIndex(res, true, false);
+  renderIndex(req, res, true, false);
 });
 
 /** Ics feed for all pins */

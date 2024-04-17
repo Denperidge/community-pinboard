@@ -77,12 +77,8 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
 
   // If any errors are added to returnErrors, don't save the pin. Instead, render the index page with returnErrors
   if (Object.keys(returnErrors).length != 0) {
-    // TODO: go to #new on load
-    res.render("index", {
-      pinArray: await data.getPins(),
-      PIN_MAXLENGTHS: PIN_MAXLENGTHS,
-      errors: returnErrors,
-    });
+    const par = new URLSearchParams(returnErrors);
+    res.redirect(`/?${par.toString()}#${Array.from(par.keys())[0]}`);
     return;
   }
 
@@ -128,7 +124,7 @@ router.post(
   "/pin",
   saveOrEditPinMiddleware,
   async function(req: express.Request, res: express.Response, next: express.NextFunction) {
-    saveOrEditPin(req, res, );
+    saveOrEditPin(req, res);
   }
 );
 
