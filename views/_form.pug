@@ -86,7 +86,8 @@ mixin fileInput(idUrlField, idFileField)
       )
 
 
-form.pin.view(action="/pin" method="POST" enctype="multipart/form-data")
+mixin form(url="/pin", method="POST")
+  form.pin.view(action=url method=method enctype="multipart/form-data")
     +input(
       "title",
       "text",

@@ -1,0 +1,23 @@
+extends layout
+
+include _icon.pug
+include _pin.pug
+include _form.pug
+
+
+block content
+  script(async defer src="https://cdn.jsdelivr.net/npm/add-to-calendar-button@2")
+
+  header
+    h1=WEBSITE_TITLE
+  main#edit
+    h2 Pages
+    nav(style="text-align: center;")
+      a(href="/about") Calendar sync (and about)
+    
+    h2 Pin view
+    each pin in pinArray
+      h3#new-pin New pin
+      +form()
+
+      p meow

@@ -128,6 +128,10 @@ router.post(
   }
 );
 
+router.get("/edit", function(req, res, next) {
+  res.render("edit", {});
+});
+
 router.put(
   "/pin/:slug",
   saveOrEditPinMiddleware,
