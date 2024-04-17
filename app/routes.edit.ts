@@ -80,6 +80,7 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
     // TODO: go to #new on load
     res.render("index", {
       pinArray: await data.getPins(),
+      PIN_MAXLENGTHS: PIN_MAXLENGTHS,
       errors: returnErrors,
     });
     return;
