@@ -104,7 +104,8 @@ function FullFileInput(
 
 function pinForm(
     idSuffix="",
-    values: {[name: string]: string}={}
+    values: {[name: string]: string}={},
+    valueDatetime?: Date
 ) {
     return {
         title: new TextInput({
@@ -124,7 +125,8 @@ function pinForm(
             placeholder: "Description...",
             required: false,
             maxLength: PIN_MAXLENGTHS.description,
-            icon: "egg"
+            icon: "egg",
+            value: values.description
         }),
         location: new TextInput({
             name: "location",
@@ -133,14 +135,16 @@ function pinForm(
             placeholder: "Where your event takes place...",
             required: true,
             maxLength: PIN_MAXLENGTHS.location,
-            icon: "suitcase"
+            icon: "suitcase",
+            value: values.location
         }),
         datetime: new DatetimeInput({
             name: "datetime",
             id: "datetime" + idSuffix,
             labelText: "Time/day:",
             required: true,
-            icon: "time"
+            icon: "time",
+            value: valueDatetime
         }),
         postedBy: new TextInput({
             name: "postedBy",
@@ -149,7 +153,8 @@ function pinForm(
             placeholder: "Your name",
             required: true,
             maxLength: PIN_MAXLENGTHS.postedBy,
-            icon: "celeste"
+            icon: "celeste",
+            value: values.postedBy
         }),
         thumbnail: FullFileInput(
             "thumbnail", 
@@ -165,17 +170,21 @@ export const indexForm = pinForm();
 
 export function editForms(pins: {[slug: string]: Pin}) {
     const pinSlugs = Object.keys(pins);
+    const pinForms = [];
     for (let i=0; i < pinSlugs.length; i++) {
         const pinSlug = pinSlugs[i];
         const pin = pins[pinSlug];
-        pinForm(pinSlug, {
+        pinForms.push(pinForm(pinSlug, {
             title: pin.title,
             description: pin.description,
-            datetime: pin.datetime,
-            
-            
-        })
+            location: pin.location,
+            postedBy: pin.postedBy
+            //thumbnail: pin.thumbnail,
+            }, pin.datetime
+        ));
     }
+    
 
-    return ((pin) => return pinForm())
+    
+    return pinForms
 }
