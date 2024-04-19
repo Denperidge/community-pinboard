@@ -122,7 +122,8 @@ All of the following moving parts are in play here:
   - This means that the input values will be ** timezone point of view**
 - `JavaScript Date()` also includes time
   - Stored in **UTC**, specifically ms since a consistent startpoint
-  - Can **parse (UTC) strings with timezone** information, but will *still* store this as UTC internally
+  - ~~Can **parse (UTC) strings with timezone** information,~~ but will *still* store this as UTC internally
+  - Update: it was parsing utc string wrong.
 - `data/pins/*.json`
   - Stores the date based on JavaScript's JSON.stringify
   - Stores as an UTC string with **no timezone** information

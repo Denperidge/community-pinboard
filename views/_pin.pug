@@ -53,8 +53,8 @@ mixin pinView(pin)
       name=pin.title
       description=pin.description
       location=pin.location
-      startDate=pin.atcbStartDate
-      endDate=pin.atcbEndDate
+      startdate=pin.atcbStartDate
+      endDate=pin.atcbStartDate
       startTime=pin.atcbStartTime
       endTime=pin.atcbEndTime
       timeZone=WEBSITE_TIMEZONE
@@ -62,6 +62,7 @@ mixin pinView(pin)
       trigger="click"
       listStyle="modal"
       hideBranding="true"
+      debug=true
     )
   hr
 
