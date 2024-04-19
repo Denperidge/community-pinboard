@@ -6,107 +6,111 @@ export function pad(number: Number): string {
     return number.toString().padStart(2, "0");
 }
 
-function getDaysInMonth(month: number): number {
-    if (month == 2) { return 28; }
+function throwErr(message:string) {
+    console.log(message)
+    console.error(message)
+    const err = new Error(message);
+    throw err;
 }
 
+interface IPinUTCDatetime {
+    year: number;
+    month: number;
+    day: number;
+    hours: number;
+    minutes: number; 
+}
 
-export class PinUTCDatetime {
-    [key: string]: any;
+export interface IPinParameters {
+    title: string;
+    description: string;
+    location: string;
+    postedBy: string;
+    datetimeLocalValue?: string;
+    datetime?: IPinUTCDatetime;
+    savedDatetime?: IPinUTCDatetime;  // alias for datetime
+
+    thumbnail?: string;
+    thumbnailImageDescr?: string;
+}
+
+export class PinUTCDatetime implements IPinUTCDatetime {
     year: number=0;
-    _month: number=0;
-    _date: number=0;
-    _hours: number=0;
-    _minutes: number=0;
-
-    enforceLimit(
-        thresholdMin: number,
-        thresholdMax: number, 
-        setterValue: number,
-        varToChange: string,
-        varToChangeIfThreshold: string) {
-            // If within or on thresholds
-            if (thresholdMin <= setterValue && setterValue <= thresholdMax) {
-                this[varToChange] = setterValue;
-            }
-            // If below min
-            else if (setterValue < thresholdMin) {
-                this[varToChange] = thresholdMax;
-                //this[varToChangeIfThreshold] = (this[varToChangeIfThreshold]) - 1;
-                (this[varToChangeIfThreshold] as number) -= 1;
-
-            }
-            // If above max
-            else if (setterValue > thresholdMax) {
-                this[varToChange] = thresholdMin;
-                (this[varToChangeIfThreshold] as number) += 1;
-            }
-        
-    }
-
-    get month(): number {
-        return this._month
-    }
-    set month(value: number) {
-        this.enforceLimit(1, 12, value, "_month", "year");
-    }
-
-    get date(): number {
-        return this._date
-    }
-    set date(value: number) {
-        this.enforceLimit(1, this.month, value, "_date", "month");
-    }
-
-    get hours(): number {
-        return this._month
-    }
-    set hours(value: number) {
-        this.enforceLimit(1, 12, value, "_month", "year");
-    }
-
-    get minutes(): number {
-        return this._month
-    }
-    set minutes(value: number) {
-        this.enforceLimit(1, 12, value, "_month", "year");
-    }
+    month: number=0;
+    day: number=0;
+    hours: number=0;
+    minutes: number=0;
 
     // This expects a datetime-local input
     // YYYY-MM-DDTHH:MM
-    constructor(datetimelocalValue: string) {
-        const results = 
+    constructor(datetimelocalValue?: string, values?: IPinUTCDatetime) {
+        const datetimelocalValues: {[key: string]: Number} = {};
+
+        console.log("&&&")
+        console.log(values)
+
+        // if datetimelocalValue is provided, fill in values using that
+        if (datetimelocalValue) {
+            const results = 
             /(?<year>\d{4})-(?<month>\d{1,2})-(?<date>\d{1,2})T(?<hours>\d{1,2}):(?<minutes>\d{1,2})/
             .exec(datetimelocalValue);
-            
-        if (!results) {
-            console.error(`Could not parse PinUTCDatetime! (Provided value: '${datetimelocalValue}')`)
-            console.error(results);
-            return;
+
+            if (!results) {
+                throwErr(`Could not parse datetimelocalValue for PinUTCDatetime! (Provided value: '${datetimelocalValue}')`);
+                return;
+            }
+            if (!results.groups) {
+                throwErr(`Could not parse GROUPS from PinUTCDatetime! (Provided value: '${datetimelocalValue}')`);
+                return;
+            }
+            const groups : {[key: string]: string} = results.groups;
+            Object.keys(groups).forEach((key)=> {
+                datetimelocalValues[key] = parseInt(groups[key]);
+            });
+        }
+        if (!values && datetimelocalValues) {
+            values = datetimelocalValues as unknown as IPinUTCDatetime;
+            console.log("---")
+            console.log(datetimelocalValues)
+            console.log(values)
+        }
+
+        console.log(values)
+        if (!values) {
+            console.error("!values == true !");
+            console.error(values)
+            throwErr("Throwing...");
+            return;    
         }
         
-        const values = results.groups;
-        if (!values) {
-            console.error(`Could not parse GROUPS from PinUTCDatetime! (Provided value: '${datetimelocalValue}')`);
+        const providedDataCount = Object.keys(values).length;
+        // If not one thing is provided for every variable in this class
+        if (providedDataCount != 5) {
+            console.error("Provided data count incorrect: " + providedDataCount);
             console.error(values);
+            throwErr("Throwing...")
             return;            
         }
         // Todo: cleaner solution
         // Couldn't get expansion-based value assignments to work
-        this.year = parseInt(values.year);
-        this.month = parseInt(values.month);
-        this.date = parseInt(values.date);
-        this.hours = parseInt(values.hours);
-        this.minutes = parseInt(values.minutes);
+        this.year = values.year;
+        this.month = values.month;
+        this.day = values.day;
+        this.hours = values.hours;
+        this.minutes = values.minutes;
+
+        if (!this.year) {
+            throwErr("MEOW")
+        }
     }
 
     toDate(): Date {
         // UTC asks month index (0-11) instead of a regular month notation
-        return new Date(Date.UTC(this.year, this.month - 1, this._date, this.hours, this.minutes));
+        return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hours, this.minutes));
     }
 
     formatAtcbDate(): string {
-        return `${this.year}-${pad(this.month)}-${pad(this.minutes)}`;
+        return `${this.year}-${pad(this.month)}-${pad(this.day)}`;
     }
 
     formatAtcbTime(): string {
@@ -123,30 +127,30 @@ export class Pin {
     thumbnail?: string;
     thumbnailImageDescr?: string;
 
-    constructor(pTitle: string, pDescription: string, pLocation: string, pDatetimelocalValue: string, pPostedBy: string, pThumbnail?: string, pthumbnailImageDescr?: string) {
-        this.title = pTitle;
-        this.description = pDescription;
-        this.location = pLocation;
-        this.datetime = new PinUTCDatetime(pDatetimelocalValue);
-        this.postedBy = pPostedBy;
+    constructor(params: IPinParameters) {
+        this.title = params.title;
+        this.description = params.description;
+        this.location = params.location;
+        this.postedBy = params.postedBy;
 
-        this.thumbnail = pThumbnail ? pThumbnail : undefined;
-        this.thumbnailImageDescr = pthumbnailImageDescr ? pthumbnailImageDescr : undefined;
-    }
+        this.thumbnail = params.thumbnail;
+        this.thumbnailImageDescr = params.thumbnailImageDescr;
 
-    static fromObject(obj: {[key: string]: string}): Pin {
-        console.log(obj.datetime)
-        console.log("---")
-        console.log(Date.UTC(2024, 5, 21, 21, 10, 0, 0))
-        return new Pin(
-            obj.title,
-            obj.description,
-            obj.location,
-            obj.datetime,
-            obj.postedBy,
-            obj.thumbnail,
-            obj.thumbnailImageDescr
-        );
+        const savedDatetime = params.savedDatetime || params.datetime;
+
+        let err = null;
+        if (savedDatetime) {
+            this.datetime = new PinUTCDatetime(undefined, savedDatetime);
+        } else if (params.datetimeLocalValue) {
+            this.datetime = new PinUTCDatetime(params.datetimeLocalValue);
+        } else {
+            const err = Error("no datetime nor datetimelocalValue provided!");
+            console.error(err)
+            throw err;
+        }
+        console.log("@@@")
+        console.log(this.datetime)
+
     }
 
     filename() : string {
@@ -155,7 +159,7 @@ export class Pin {
 
     elapsed() : boolean {
         const dayAfterPinDatetime = this.datetime.toDate();
-        dayAfterPinDatetime.setDate(this.datetime.date + 1);
+        dayAfterPinDatetime.setDate(this.datetime.day + 1);
         return (new Date()) >= dayAfterPinDatetime;
     }
 
@@ -223,7 +227,7 @@ export class Pin {
             title: this.title,
             description: this.description,
             location: this.location,
-            start: [this.datetime.year, this.datetime.month, this.datetime.date, this.datetime.hours, this.datetime.minutes],  // See above docs
+            start: [this.datetime.year, this.datetime.month, this.datetime.day, this.datetime.hours, this.datetime.minutes],  // See above docs
             // postedBy, thumbnail & thumbnailImageDescr not used as of yet
             url: "https://" + HOST_DOMAIN
         } as EventAttributes;

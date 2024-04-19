@@ -20,7 +20,7 @@ export async function readPin(jsonPath: string): Promise<Pin> {
             if (err) {    
                 reject(err);
             } else {
-                resolve(Pin.fromObject(JSON.parse(data.toString())));
+                resolve(new Pin(JSON.parse(data.toString())));
             }
         })
     });

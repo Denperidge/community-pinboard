@@ -3,7 +3,7 @@ import { check, validationResult, matchedData, FieldValidationError } from "expr
 
 import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, PIN_MAXLENGTHS } from "./conf";
 import * as data from "./data";
-import { Pin } from "./Pin";
+import { IPinParameters, Pin } from "./Pin";
 import multer from "multer";
 import { createEvents } from "ics";
 import slug from "slug";
@@ -116,7 +116,7 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
 
 
   // Save pin
-  data.writePin(Pin.fromObject(pinData), pinSlug, overwrite);
+  data.writePin(new Pin(pinData as IPinParameters), pinSlug, overwrite);
   // Redirect to index
   res.redirect("/");
 }
