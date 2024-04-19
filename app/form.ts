@@ -180,7 +180,7 @@ export function editForms(pins: {[slug: string]: Pin}) {
             location: pin.location,
             postedBy: pin.postedBy
             //thumbnail: pin.thumbnail,
-            }, pin.datetime
+            }, pin.datetime.toDate()
         ));
     }
     

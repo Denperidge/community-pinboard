@@ -6,7 +6,13 @@ export function pad(number: Number): string {
     return number.toString().padStart(2, "0");
 }
 
-class PinUTCDatetime {
+function getDaysInMonth(month: number): number {
+    if (month == 2) { return 28; }
+}
+
+
+export class PinUTCDatetime {
+    [key: string]: any;
     year: number=0;
     _month: number=0;
     _date: number=0;
@@ -15,17 +21,55 @@ class PinUTCDatetime {
 
     enforceLimit(
         thresholdMin: number,
-        thresholdMax: number,
-        key: number, 
-        setterValue: number) {
+        thresholdMax: number, 
+        setterValue: number,
+        varToChange: string,
+        varToChangeIfThreshold: string) {
+            // If within or on thresholds
+            if (thresholdMin <= setterValue && setterValue <= thresholdMax) {
+                this[varToChange] = setterValue;
+            }
+            // If below min
+            else if (setterValue < thresholdMin) {
+                this[varToChange] = thresholdMax;
+                //this[varToChangeIfThreshold] = (this[varToChangeIfThreshold]) - 1;
+                (this[varToChangeIfThreshold] as number) -= 1;
+
+            }
+            // If above max
+            else if (setterValue > thresholdMax) {
+                this[varToChange] = thresholdMin;
+                (this[varToChangeIfThreshold] as number) += 1;
+            }
         
     }
 
+    get month(): number {
+        return this._month
+    }
     set month(value: number) {
-        
+        this.enforceLimit(1, 12, value, "_month", "year");
     }
-    get month() {
 
+    get date(): number {
+        return this._date
+    }
+    set date(value: number) {
+        this.enforceLimit(1, this.month, value, "_date", "month");
+    }
+
+    get hours(): number {
+        return this._month
+    }
+    set hours(value: number) {
+        this.enforceLimit(1, 12, value, "_month", "year");
+    }
+
+    get minutes(): number {
+        return this._month
+    }
+    set minutes(value: number) {
+        this.enforceLimit(1, 12, value, "_month", "year");
     }
 
     // This expects a datetime-local input
@@ -58,7 +102,7 @@ class PinUTCDatetime {
 
     toDate(): Date {
         // UTC asks month index (0-11) instead of a regular month notation
-        return new Date(Date.UTC(this.year, this.month - 1, this.date, this.hours, this.minutes));
+        return new Date(Date.UTC(this.year, this.month - 1, this._date, this.hours, this.minutes));
     }
 
     formatAtcbDate(): string {
