@@ -140,11 +140,12 @@ router.get("/edit", async function(req, res, next) {
     PIN_MAXLENGTHS: PIN_MAXLENGTHS,
     errors: errorParams,
     forms: editForms(pinDict),
+    formSlugs: Object.keys(pinDict),
     pinDict: pinDict 
   });
 });
 
-router.put(
+router.post(
   "/pin/:slug",
   saveOrEditPinMiddleware,
   async function(req: express.Request, res: express.Response, next: express.NextFunction) {
