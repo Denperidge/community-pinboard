@@ -104,11 +104,27 @@ export class PinUTCDatetime implements IPinUTCDatetime {
         return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hours, this.minutes));
     }
 
-    toLocaldatetimeValue(): string {
+    toLocalisedLocaldatetimeValue(): string {
         // TODO: adjust for timezone
-        // .toDate().toLocaleString().replace("Z", "")
-        //return `${this.year}-${pad(this.month)}-${pad(this.day)}T${pad(this.hours)}:${pad(this.minutes)}`
-
+        /**
+         * We're using the TZ environment variable
+         * combined with .getTimezoneOffset()
+         * to calculate the hour difference
+         * to convert a UTC to a localised ISO string
+         * for datetime-local inputs
+         * 
+         * - Japan = 9 hours ahead of UTC
+         * - TZ=Japan
+         * - .getTimezoneOffset(): -540 minutes
+         * - /60: -9 hours
+         * - *-1: +9 hours
+         * - LOCALE=UTC+9 hours
+         */
+        const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
+        const localeDate = this.toDate();
+        localeDate.setHours(localeDate.getHours() + utcToLocaleModifier);
+        // Don't ask me why it doesn't like the Z
+        return localeDate.toISOString().replace("Z", ""); 
     }
 
     formatAtcbDate(): string {

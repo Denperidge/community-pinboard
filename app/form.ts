@@ -165,7 +165,7 @@ export function editForms(pins: {[slug: string]: Pin}) {
             description: pin.description,
             location: pin.location,
             postedBy: pin.postedBy,
-            datetime: pin.datetime.toDate().toLocaleString().replace("Z", "")
+            datetime: pin.datetime.toLocalisedLocaldatetimeValue()
             //thumbnail: pin.thumbnail,
             }
         ));
