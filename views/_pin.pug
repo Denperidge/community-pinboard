@@ -48,11 +48,6 @@ mixin pinView(pin)
     h4 #[+icon("celeste")] Posted by:
     span=pin.postedBy
 
-    p=pin.atcbStartDate
-    p=pin.atcbStartDate
-    p=pin.atcbStartTime
-    p=pin.atcbEndTime
-
     // TODO: hide branding for aesthetic reasons, shout out in about page & repo
     add-to-calendar-button(
       name=pin.title

@@ -115,9 +115,6 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
   // bc I can put it in the writePin too and let that make a slug
 
 
-  console.log(pinData)
-  console.log("@@@")
-  console.log(pinData as IPinParameters)
   // Save pin
   data.writePin(new Pin(pinData as IPinParameters), pinSlug, overwrite);
   // Redirect to index
