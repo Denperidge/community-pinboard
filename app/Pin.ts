@@ -28,7 +28,6 @@ export interface IPinParameters {
     postedBy: string;
     datetimeLocalValue?: string;
     datetime?: IPinUTCDatetime;
-    savedDatetime?: IPinUTCDatetime;  // alias for datetime
 
     thumbnail?: string;
     thumbnailImageDescr?: string;
@@ -43,46 +42,7 @@ export class PinUTCDatetime implements IPinUTCDatetime {
 
     // This expects a datetime-local input
     // YYYY-MM-DDTHH:MM
-    constructor(datetimelocalValue?: string, values?: IPinUTCDatetime) {
-        const datetimelocalValues: {[key: string]: Number} = {};
-
-        console.log("&&&")
-        console.log(values)
-
-        // if datetimelocalValue is provided, fill in values using that
-        if (datetimelocalValue) {
-            const results = 
-            /(?<year>\d{4})-(?<month>\d{1,2})-(?<date>\d{1,2})T(?<hours>\d{1,2}):(?<minutes>\d{1,2})/
-            .exec(datetimelocalValue);
-
-            if (!results) {
-                throwErr(`Could not parse datetimelocalValue for PinUTCDatetime! (Provided value: '${datetimelocalValue}')`);
-                return;
-            }
-            if (!results.groups) {
-                throwErr(`Could not parse GROUPS from PinUTCDatetime! (Provided value: '${datetimelocalValue}')`);
-                return;
-            }
-            const groups : {[key: string]: string} = results.groups;
-            Object.keys(groups).forEach((key)=> {
-                datetimelocalValues[key] = parseInt(groups[key]);
-            });
-        }
-        if (!values && datetimelocalValues) {
-            values = datetimelocalValues as unknown as IPinUTCDatetime;
-            console.log("---")
-            console.log(datetimelocalValues)
-            console.log(values)
-        }
-
-        console.log(values)
-        if (!values) {
-            console.error("!values == true !");
-            console.error(values)
-            throwErr("Throwing...");
-            return;    
-        }
-        
+    constructor(values: IPinUTCDatetime) {        
         const providedDataCount = Object.keys(values).length;
         // If not one thing is provided for every variable in this class
         if (providedDataCount != 5) {
@@ -103,6 +63,41 @@ export class PinUTCDatetime implements IPinUTCDatetime {
             throwErr("MEOW")
         }
     }
+    
+    static FromLocaldatetimeValue(datetimelocalValue: string) {
+        const datetimelocalValues: {[key: string]: Number} = {};
+        let groups;
+
+        // if datetimelocalValue is provided, fill in values using that
+        if (datetimelocalValue) {
+            const results = 
+            /(?<year>\d{4})-(?<month>\d{1,2})-(?<date>\d{1,2})T(?<hours>\d{1,2}):(?<minutes>\d{1,2})/
+            .exec(datetimelocalValue);
+
+            if (!results) {
+                throwErr(`Could not parse datetimelocalValue for PinUTCDatetime! (Provided value: '${datetimelocalValue}')`);
+                return;
+            }
+            if (!results.groups) {
+                throwErr(`Could not parse GROUPS from PinUTCDatetime! (Provided value: '${datetimelocalValue}')`);
+                return;
+            }
+            groups = results.groups;
+        }
+
+        if (!groups) {
+            throwErr("No groups in FromLocaldatetimeValue")
+            return;
+        }
+
+        return new PinUTCDatetime({
+            year: parseInt(groups.year),
+            month: parseInt(groups.month),
+            day: parseInt(groups.day),
+            hours: parseInt(groups.hours),
+            minutes: parseInt(groups.minutes)
+        });
+    }
 
     toDate(): Date {
         // UTC asks month index (0-11) instead of a regular month notation
@@ -122,7 +117,7 @@ export class Pin {
     title: string;
     description: string;
     location: string;
-    datetime: PinUTCDatetime;
+    datetime?: PinUTCDatetime;
     postedBy: string;
     thumbnail?: string;
     thumbnailImageDescr?: string;
@@ -136,21 +131,24 @@ export class Pin {
         this.thumbnail = params.thumbnail;
         this.thumbnailImageDescr = params.thumbnailImageDescr;
 
-        const savedDatetime = params.savedDatetime || params.datetime;
-
-        let err = null;
-        if (savedDatetime) {
-            this.datetime = new PinUTCDatetime(undefined, savedDatetime);
+        let foundDatetime = false;
+        if (params.datetime) {
+            this.datetime = new PinUTCDatetime(params.datetime);
+            foundDatetime = true;
         } else if (params.datetimeLocalValue) {
-            this.datetime = new PinUTCDatetime(params.datetimeLocalValue);
-        } else {
-            const err = Error("no datetime nor datetimelocalValue provided!");
-            console.error(err)
-            throw err;
+            const localdatetimeValue = PinUTCDatetime.FromLocaldatetimeValue(params.datetimeLocalValue);
+            if (localdatetimeValue) {
+                this.datetime = localdatetimeValue;
+                foundDatetime = true;
+            } else {
+                throwErr("localdatetimeValue could not be parsed: " + localdatetimeValue);
+                foundDatetime = false;
+            }
+        } 
+        if (!this.datetime) {
+            throwErr("no datetime nor datetimelocalValue provided!");
+            throw Error();
         }
-        console.log("@@@")
-        console.log(this.datetime)
-
     }
 
     filename() : string {
