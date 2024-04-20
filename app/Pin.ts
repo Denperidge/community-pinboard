@@ -104,6 +104,13 @@ export class PinUTCDatetime implements IPinUTCDatetime {
         return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hours, this.minutes));
     }
 
+    toLocaldatetimeValue(): string {
+        // TODO: adjust for timezone
+        // .toDate().toLocaleString().replace("Z", "")
+        //return `${this.year}-${pad(this.month)}-${pad(this.day)}T${pad(this.hours)}:${pad(this.minutes)}`
+
+    }
+
     formatAtcbDate(): string {
         return `${this.year}-${pad(this.month)}-${pad(this.day)}`;
     }

@@ -41,22 +41,9 @@ export class TextInput extends Input {
 export class DatetimeInput extends Input {
     value?: string;
 
-    constructor(options: IInputOptions & {value?: Date}) {
+    constructor(options: IInputOptions & { value?: string }) {
         super("datetime-local", options);
-        
-        let date;
-        if (options.value) {
-            date = options.value; 
-        } else {
-            // https://stackoverflow.com/a/28149561
-            const timezoneOffset = (new Date()).getTimezoneOffset() * 60000;
-            date = (new Date(Date.now() - timezoneOffset));
-        }
-        date.setSeconds(0);
-        date.setMilliseconds(0);
-        
-        date.setDate(date.getDate() + 1);
-        this.value = date.toISOString().slice(0, -1);
+        this.value = options.value;
     }
 }
 
@@ -105,7 +92,6 @@ function FullFileInput(
 function pinForm(
     idSuffix="",
     values: {[name: string]: string}={},
-    valueDatetime?: Date
 ) {
     return {
         title: new TextInput({
@@ -144,7 +130,7 @@ function pinForm(
             labelText: "Time/day:",
             required: true,
             icon: "time",
-            value: valueDatetime
+            value: values.datetime
         }),
         postedBy: new TextInput({
             name: "postedBy",
@@ -178,9 +164,10 @@ export function editForms(pins: {[slug: string]: Pin}) {
             title: pin.title,
             description: pin.description,
             location: pin.location,
-            postedBy: pin.postedBy
+            postedBy: pin.postedBy,
+            datetime: pin.datetime.toDate().toLocaleString().replace("Z", "")
             //thumbnail: pin.thumbnail,
-            }, pin.datetime.toDate()
+            }
         ));
     }
     
