@@ -31,7 +31,7 @@ const saveOrEditPinMiddleware = [
     .withMessage("The location needs to be filled in")
     .isLength({max: PIN_MAXLENGTHS.location})
     .withMessage(`The location has to be ${PIN_MAXLENGTHS.location} characters or shorter`),
-  check("datetime")
+  check("datetimelocalValue")
     .notEmpty()
     .withMessage("A date/time has to be provided")
     // TOdo: regex based date format?
@@ -115,6 +115,9 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
   // bc I can put it in the writePin too and let that make a slug
 
 
+  console.log(pinData)
+  console.log("@@@")
+  console.log(pinData as IPinParameters)
   // Save pin
   data.writePin(new Pin(pinData as IPinParameters), pinSlug, overwrite);
   // Redirect to index

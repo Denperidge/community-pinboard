@@ -139,8 +139,8 @@ function pinForm(
             value: values.location
         }),
         datetime: new DatetimeInput({
-            name: "datetime",
-            id: "datetime" + idSuffix,
+            name: "datetimelocalValue",
+            id: "datetimelocalValue" + idSuffix,
             labelText: "Time/day:",
             required: true,
             icon: "time",

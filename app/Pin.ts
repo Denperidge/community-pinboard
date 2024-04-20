@@ -26,7 +26,7 @@ export interface IPinParameters {
     description: string;
     location: string;
     postedBy: string;
-    datetimeLocalValue?: string;
+    datetimelocalValue?: string;
     datetime?: IPinUTCDatetime;
 
     thumbnail?: string;
@@ -71,7 +71,7 @@ export class PinUTCDatetime implements IPinUTCDatetime {
         // if datetimelocalValue is provided, fill in values using that
         if (datetimelocalValue) {
             const results = 
-            /(?<year>\d{4})-(?<month>\d{1,2})-(?<date>\d{1,2})T(?<hours>\d{1,2}):(?<minutes>\d{1,2})/
+            /(?<year>\d{4})-(?<month>\d{1,2})-(?<day>\d{1,2})T(?<hours>\d{1,2}):(?<minutes>\d{1,2})/
             .exec(datetimelocalValue);
 
             if (!results) {
@@ -117,7 +117,7 @@ export class Pin {
     title: string;
     description: string;
     location: string;
-    datetime?: PinUTCDatetime;
+    datetime: PinUTCDatetime;
     postedBy: string;
     thumbnail?: string;
     thumbnailImageDescr?: string;
@@ -131,23 +131,22 @@ export class Pin {
         this.thumbnail = params.thumbnail;
         this.thumbnailImageDescr = params.thumbnailImageDescr;
 
-        let foundDatetime = false;
+        const checkDatetime = new PinUTCDatetime({year: 1938, month: 1, day: 2, hours: 12, minutes: 0});
+        this.datetime = checkDatetime;
+
         if (params.datetime) {
             this.datetime = new PinUTCDatetime(params.datetime);
-            foundDatetime = true;
-        } else if (params.datetimeLocalValue) {
-            const localdatetimeValue = PinUTCDatetime.FromLocaldatetimeValue(params.datetimeLocalValue);
+        } else if (params.datetimelocalValue) {
+            const localdatetimeValue = PinUTCDatetime.FromLocaldatetimeValue(params.datetimelocalValue);
             if (localdatetimeValue) {
                 this.datetime = localdatetimeValue;
-                foundDatetime = true;
             } else {
                 throwErr("localdatetimeValue could not be parsed: " + localdatetimeValue);
-                foundDatetime = false;
             }
         } 
-        if (!this.datetime) {
-            throwErr("no datetime nor datetimelocalValue provided!");
-            throw Error();
+
+        if (this.datetime == checkDatetime) {
+            throwErr("no datetime nor datetimelocalValue provided/could be parsed!");
         }
     }
 
