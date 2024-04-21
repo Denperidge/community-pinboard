@@ -128,7 +128,8 @@ All of the following moving parts are in play here:
 - `data/pins/*.json`
   - Stores the date based on JavaScript's JSON.stringify
   - Stores as an UTC string with **no timezone** information
-  - Example: "2024-04-17T12:32:00.000Z"
+  - Example: "2024-04-17T12:32:00.000Z" returns 2024-02-02T01:00:00.000Z
+  `new Date(Date.UTC(2024, 1, 1, 25, 0))` returns 
 - `Node.js`
   - `process.env.tz` Returns a `Area/City` format. See the [Node.js docs](https://nodejs.org/docs/v20.12.1/api/cli.html#tz) for more information
 - `add-to-calendar-button`

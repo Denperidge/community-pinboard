@@ -13,6 +13,32 @@ function throwErr(message:string) {
     throw err;
 }
 
+
+/**
+     * We're using the TZ environment variable
+     * combined with .getTimezoneOffset()
+     * to calculate the hour difference
+     * to convert a UTC to a localised ISO string
+     * for datetime-local inputs
+     * 
+     * - Japan = 9 hours ahead of UTC
+     * - TZ=Japan
+     * - .getTimezoneOffset(): -540 minutes
+     * - /60: -9 hours
+     * - *-1: +9 hours
+     * - LOCALE=UTC+9 hours
+     * - utcToLocaleModifier = +9
+     */
+const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
+
+/**
+ * This is a reversal of @function utcToLocaleModifier
+ * localeDatetime + localeToUtcModifier = utcDatetime
+ */
+const localeToUtcModifier = utcToLocaleModifier * -1;
+
+console.log(utcToLocaleModifier, localeToUtcModifier)
+
 interface IPinUTCDatetime {
     year: number;
     month: number;
@@ -65,8 +91,8 @@ export class PinUTCDatetime implements IPinUTCDatetime {
     }
     
     static FromLocaldatetimeValue(datetimelocalValue: string) {
-        const datetimelocalValues: {[key: string]: Number} = {};
         let groups;
+        let hoursModifier = 0;
 
         // if datetimelocalValue is provided, fill in values using that
         if (datetimelocalValue) {
@@ -83,6 +109,7 @@ export class PinUTCDatetime implements IPinUTCDatetime {
                 return;
             }
             groups = results.groups;
+            hoursModifier = localeToUtcModifier;
         }
 
         if (!groups) {
@@ -94,7 +121,7 @@ export class PinUTCDatetime implements IPinUTCDatetime {
             year: parseInt(groups.year),
             month: parseInt(groups.month),
             day: parseInt(groups.day),
-            hours: parseInt(groups.hours),
+            hours: parseInt(groups.hours) + hoursModifier,  // Adjust utc
             minutes: parseInt(groups.minutes)
         });
     }
@@ -106,21 +133,6 @@ export class PinUTCDatetime implements IPinUTCDatetime {
 
     toLocalisedLocaldatetimeValue(): string {
         // TODO: adjust for timezone
-        /**
-         * We're using the TZ environment variable
-         * combined with .getTimezoneOffset()
-         * to calculate the hour difference
-         * to convert a UTC to a localised ISO string
-         * for datetime-local inputs
-         * 
-         * - Japan = 9 hours ahead of UTC
-         * - TZ=Japan
-         * - .getTimezoneOffset(): -540 minutes
-         * - /60: -9 hours
-         * - *-1: +9 hours
-         * - LOCALE=UTC+9 hours
-         */
-        const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
         const localeDate = this.toDate();
         localeDate.setHours(localeDate.getHours() + utcToLocaleModifier);
         // Don't ask me why it doesn't like the Z
@@ -162,6 +174,7 @@ export class Pin {
         } else if (params.datetimelocalValue) {
             const localdatetimeValue = PinUTCDatetime.FromLocaldatetimeValue(params.datetimelocalValue);
             if (localdatetimeValue) {
+                // iso string from perspective of user
                 this.datetime = localdatetimeValue;
             } else {
                 throwErr("localdatetimeValue could not be parsed: " + localdatetimeValue);
@@ -223,12 +236,13 @@ export class Pin {
         }
     }
 
-    get timeAndDay() {
-        return this.datetime.toDate().toLocaleString(WEBSITE_LOCALE, {dateStyle: "short", timeStyle: "short"});
-    }
-
     get date() {
         return this.datetime.toDate().toLocaleDateString(WEBSITE_LOCALE);
+    }
+
+    get timeAndDay() {
+        return this.date + `, ${this.datetime.hours + utcToLocaleModifier}:${this.datetime.minutes}` 
+        //return Intl.DateTimeFormat(WEBSITE_LOCALE, {dateStyle: "short", timeStyle: "short"}).format(this.datetime.toDate().getTime());
     }
 
     /*toJSON() : object {
