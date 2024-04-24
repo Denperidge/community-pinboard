@@ -2,12 +2,14 @@ import { EventAttributes } from "ics";
 import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone"
 import localizedFormat from "dayjs/plugin/localizedFormat";
 
 require(`dayjs/locale/${WEBSITE_LOCALE}`);
 dayjs.extend(utc);
+dayjs.extend(timezone);
 dayjs.extend(localizedFormat);
-dayjs.locale(WEBSITE_LOCALE)
+dayjs.locale(WEBSITE_LOCALE);
 
 export function pad(number: Number): string {
     return number.toString().padStart(2, "0");
@@ -18,6 +20,15 @@ function throwErr(message:string) {
     console.error(message)
     const err = new Error(message);
     throw err;
+}
+
+export interface IPinDatetime {
+    [key: string]: number,
+    year: number,
+    month: number,
+    date: number,
+    hours: number,
+    minutes: number
 }
 
 
@@ -53,11 +64,28 @@ export class Pin {
         this.postedBy = params.postedBy;
         this.datetime = dayjs(params.datetime);
 
-        console.log(params.datetime)
-        console.log(this.datetime)
-
         this.thumbnail = params.thumbnail;
         this.thumbnailImageDescr = params.thumbnailImageDescr;
+    }
+
+    _returnDatetime(datetime: dayjs.Dayjs): IPinDatetime {
+        return {
+            year: datetime.get("year"),
+            month: datetime.get("month") + 1,
+            date: datetime.get("date"),
+            hours: datetime.get("hours"),
+            minutes: datetime.get("minutes")
+        }
+    }
+
+    get utc() {
+        return this._returnDatetime(this.datetime.utc(false));
+    }
+
+    get local() {
+        console.log(WEBSITE_TIMEZONE)
+        console.log(this.datetime.tz(WEBSITE_TIMEZONE))
+        return this._returnDatetime(this.datetime.tz(WEBSITE_TIMEZONE));
     }
 
     get localYear() {
