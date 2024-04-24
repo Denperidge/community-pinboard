@@ -53,7 +53,7 @@ async function _write(providedPath: string, data: string|Buffer, overwrite=false
 }
 
 export async function writePin(pin: Pin, slug: string, overwrite=false, dir=PINS_DIR): Promise<string> {
-    return _write(join(dir, slug + ".json"), pin.toString(), overwrite);
+    return _write(join(dir, slug + ".json"), JSON.stringify(pin.asObject()), overwrite);
 }
 
 
