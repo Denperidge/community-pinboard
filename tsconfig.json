@@ -12,7 +12,8 @@
     // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     "types": [                                           /* Specify type package names to be included without being referenced in a source file. */
-      "node"  // Included to prevent Cannot find type definition file for 'mime'
+      "node",  // Included to prevent Cannot find type definition file for 'mime'
+      "jest"
     ],
     // "resolveJsonModule": true,                        /* Enable importing .json files. */
     // "allowArbitraryExtensions": true,                 /* Enable importing files with any extension, provided a declaration file is present. */

@@ -162,7 +162,7 @@ export class Pin {
             start: [
                 this.localYear, 
                 this.month,
-                this.,
+                this.datetime.get("date"),
                 this.datetime.get("hours"),
                 this.datetime.get("minutes")],  // See above docs
             // postedBy, thumbnail & thumbnailImageDescr not used as of yet
