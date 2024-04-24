@@ -1,15 +1,13 @@
 import { EventAttributes } from "ics";
+import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
 
 require(`dayjs/locale/${WEBSITE_LOCALE}`);
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.locale(WEBSITE_LOCALE)
-
-
 
 export function pad(number: Number): string {
     return number.toString().padStart(2, "0");
@@ -24,6 +22,7 @@ function throwErr(message:string) {
 
 
 export interface IPinParameters {
+    [key: string]: any;
     title: string;
     description: string;
     location: string;
@@ -37,6 +36,8 @@ export interface IPinParameters {
 
 
 export class Pin {
+    [key: string]: any;
+
     title: string;
     description: string;
     location: string;
