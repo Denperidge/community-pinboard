@@ -1,38 +1,26 @@
-import { WEBSITE_LOCALE, WEBSITE_TIMEZONE } from "../conf";
-import { pad, Pin, IPinParameters, IPinDatetime } from "../Pin";
+import { WEBSITE_LOCALE } from "../conf";
+import { pad, Pin, IPinParameters } from "../Pin";
 // Find better solution for dayjs than copy pasting the import & setup from Pin?
 import dayjs, { UnitType } from "dayjs";
 import timezone from "dayjs/plugin/timezone"
 
-require(`dayjs/locale/${WEBSITE_LOCALE}`);
-dayjs.extend(timezone);
-dayjs.locale(WEBSITE_LOCALE)
-
-
-const testDatetime: IPinDatetime = {
-    year: 1938,
-    month: 1,
-    date: 2,
-    hours: 0,
-    minutes: 0
-}
-
-const pinParameters: IPinParameters = {
+let pin: Pin;
+const testPinParams: IPinParameters = {
     title: "Example",
     description: "Example description!",
-    datetime: dayjs(`${testDatetime.year}-${pad(testDatetime.month)}-${pad(testDatetime.date)}T${pad(testDatetime.hours)}:${pad(testDatetime.minutes)}Z`),
+    datetime: "1938-01-02T00:00-05:00",
     location: "New York",
     postedBy: "Cat",
     thumbnail: "https://raw.githubusercontent.com/Denperidge/community-pinboard/9399721d5f731706e78b94cbf7ba3c4998af6272/public/images/cork.jpg",
     thumbnailImageDescr: "A square cork texture",
 }
-const stringParameters = ["title", "description", "location", "postedBy", "thumbnail", "thumbnailImageDescr"]
-const testDatetimeParams = ["year", "month", "date", "hours", "minutes"]
+const pinStringParams = ["title", "description", "location", "postedBy", "thumbnail", "thumbnailImageDescr"]
 
-let pin: Pin;
+const nowPlusTwoHours = new Date();
+nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 2)
 
 beforeEach(() => {
-    pin = new Pin(pinParameters);
+    pin = new Pin(testPinParams);
 })
 
 test("Pad pads when it needs to pad", () => {
@@ -42,32 +30,37 @@ test("Pad pads when it needs to pad", () => {
 });
 
 test("Pin constructor", () => {
-    stringParameters.forEach((param) => {
+    pinStringParams.forEach((param) => {
         expect(pin[param]).toBeDefined();
-        expect(pin[param]).toBe(pinParameters[param]);
+        expect(pin[param]).toBe(testPinParams[param]);
     })
 
-    testDatetimeParams.forEach((param) => {
-        expect(pin.datetime.get(param as UnitType)).toBeDefined()
-        // Adjust month index!
-        expect(pin.datetime.get(param as UnitType)).toBe(param == "month" ? testDatetime[param] - 1 : testDatetime[param]);
-    });
+    expect(pin.datetime.toISOString() == testPinParams.datetime);
 });
 
-test("Pin utc & local", () => {
-    // UTC
-    testDatetimeParams.forEach((param: keyof IPinDatetime) => {
-        expect(pin.utc[param]).toBe(testDatetime[param])
-    });
+test("Pin.asObject()", () => {
+    const expectedProperties = testPinParams;
+    expectedProperties.datetime = new Date(expectedProperties.datetime).toISOString();
+    expect(pin.asObject()).toStrictEqual(expectedProperties);
 
-
-    // Local
-    const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
-    if (utcToLocaleModifier == 0) {
-        throw new Error("Error, difference between UTC and local timezone (configured through TZ env) is 0 hours. Please run this test with TZ set differently (see README.md)")
-    }
-    testDatetimeParams.forEach((param: keyof IPinDatetime) => {
-        console.log(pin.local[param], param)
-        expect(pin.local[param]).toBe(param == "hours" ? testDatetime[param] + utcToLocaleModifier : testDatetime[param])
-    });
 })
+
+test("Pin.filename()", () => {
+    expect(pin.filename()).toStrictEqual(pin.title + ".json")
+});
+
+test("Pin.elapsed(): true & false", () => {
+    // elapsed: true
+    expect(pin.elapsed()).toStrictEqual(true);
+
+    // elapsed: false
+    const expectedProperties = testPinParams;
+    expectedProperties.datetime = nowPlusTwoHours;
+    expect(new Pin(expectedProperties).elapsed()).toStrictEqual(false);
+});
+
+test("Pin._datetimePlusTwoHours", () => {
+    const expectedDatetime = new Date(testPinParams.datetime);
+    expectedDatetime.setHours( expectedDatetime.getHours() + 2);
+    expect(pin._datetimePlusTwoHours).toStrictEqual(expectedDatetime);
+});

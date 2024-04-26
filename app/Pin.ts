@@ -1,36 +1,11 @@
 import { EventAttributes } from "ics";
 import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone"
-import localizedFormat from "dayjs/plugin/localizedFormat";
 
-require(`dayjs/locale/${WEBSITE_LOCALE}`);
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(localizedFormat);
-dayjs.locale(WEBSITE_LOCALE);
+const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
 
 export function pad(number: Number): string {
     return number.toString().padStart(2, "0");
 }
-
-function throwErr(message:string) {
-    console.log(message)
-    console.error(message)
-    const err = new Error(message);
-    throw err;
-}
-
-export interface IPinDatetime {
-    [key: string]: number,
-    year: number,
-    month: number,
-    date: number,
-    hours: number,
-    minutes: number
-}
-
 
 export interface IPinParameters {
     [key: string]: any;
@@ -38,12 +13,11 @@ export interface IPinParameters {
     description: string;
     location: string;
     postedBy: string;
-    datetime: string|dayjs.Dayjs;
+    datetime: string|Date;
 
     thumbnail?: string;
     thumbnailImageDescr?: string;
 }
-
 
 
 export class Pin {
@@ -52,7 +26,7 @@ export class Pin {
     title: string;
     description: string;
     location: string;
-    datetime: dayjs.Dayjs;
+    datetime: Date;
     postedBy: string;
     thumbnail?: string;
     thumbnailImageDescr?: string;
@@ -62,57 +36,18 @@ export class Pin {
         this.description = params.description;
         this.location = params.location;
         this.postedBy = params.postedBy;
-        this.datetime = dayjs(params.datetime);
+
+        this.datetime = (params.datetime instanceof Date) ? params.datetime : new Date(params.datetime);
 
         this.thumbnail = params.thumbnail;
         this.thumbnailImageDescr = params.thumbnailImageDescr;
-    }
-
-    _returnDatetime(datetime: dayjs.Dayjs): IPinDatetime {
-        return {
-            year: datetime.get("year"),
-            month: datetime.get("month") + 1,
-            date: datetime.get("date"),
-            hours: datetime.get("hours"),
-            minutes: datetime.get("minutes")
-        }
-    }
-
-    get utc() {
-        return this._returnDatetime(this.datetime.utc(false));
-    }
-
-    get local() {
-        console.log(WEBSITE_TIMEZONE)
-        console.log(this.datetime.tz(WEBSITE_TIMEZONE))
-        return this._returnDatetime(this.datetime.tz(WEBSITE_TIMEZONE));
-    }
-
-    get localYear() {
-        return this.datetime.get("year");
-    }
-
-    get monthIndex() {
-        return this.datetime.get("month")
-    }
-
-    get month() {
-        return this.monthIndex + 1;
-    }
-
-    get hours() {
-        return this.datetime.get("hour");
-    }
-
-    get minutes() {
-        return this.datetime.get("minute");
     }
 
     asObject() : IPinParameters {
         return {
             title: this.title,
             description: this.description,
-            datetime: this.datetime.utc(false).format(),
+            datetime: this.datetime.toISOString(),  // UTC
             location: this.location,
             postedBy: this.postedBy,
             thumbnail: this.thumbnail,
@@ -125,11 +60,13 @@ export class Pin {
     }
 
     elapsed() : boolean {
-        return this.datetime.isBefore();
+        return (new Date()) > this._datetimePlusTwoHours;
     }
 
     get _datetimePlusTwoHours() {
-        return this.datetime.add(2, "hours");
+        const twoExtra = this.datetime;
+        twoExtra.setHours(twoExtra.getHours() + 2)
+        return twoExtra;
     }
     
     // The following functions are for use with add-to-calendar buttons syntax
@@ -139,22 +76,22 @@ export class Pin {
     
 
     get atcbStartDate(): string {
-        return this.datetime.format("YYYY-MM-DD");
+        return `${this.datetime.getFullYear()}-${this.datetime.getMonth() + 1}-${this.datetime.getDate()}`;
     }
     get atcbEndDate(): string {
-        return this._datetimePlusTwoHours.format("YYYY-MM-DD");
+        return `${this.datetime.getFullYear()}-${this.datetime.getMonth() + 1}-${this.datetime.getDate()}`;
     }
 
     get atcbStartTime(): string {
-        return this.datetime.format("HH:mm");
+        return `${this.datetime.getHours()}:${this.datetime.getMinutes()}`;
     }
 
     get atcbEndTime(): string {
-        return this._datetimePlusTwoHours.format("HH:mm");
+        return `${this.datetime.getHours()}:${this.datetime.getMinutes()}`;
     }
 
     get localdatetimeValue(): string {
-        return this.datetime.local().format("YYYY-MM-DDTHH:mm")
+        return this.atcbStartDate + "T" + this.atcbStartTime;
     }
 
     get thumbnailPath() { 
@@ -173,11 +110,11 @@ export class Pin {
     }
 
     get date() {
-        return this.datetime.local().format("L");
+        return this.datetime.toLocaleDateString();
     }
 
     get timeAndDay() {
-        return this.datetime.local().format("llll");//this.date + `, ${this.datetime.hours + utcToLocaleModifier}:${this.datetime.minutes}` 
+        return this.datetime.toLocaleString();//this.date + `, ${this.datetime.hours + utcToLocaleModifier}:${this.datetime.minutes}` 
         //return Intl.DateTimeFormat(WEBSITE_LOCALE, {dateStyle: "short", timeStyle: "short"}).format(this.datetime.toDate().getTime());
     }
 
@@ -188,12 +125,13 @@ export class Pin {
             title: this.title,
             description: this.description,
             location: this.location,
+            startInputType: "local",
             start: [
-                this.localYear, 
-                this.month,
-                this.datetime.get("date"),
-                this.datetime.get("hours"),
-                this.datetime.get("minutes")],  // See above docs
+                this.datetime.getFullYear(), 
+                this.datetime.getMonth() + 1,
+                this.datetime.getDate(),
+                this.datetime.getHours(),
+                this.datetime.getMinutes()],  // See above docs
             // postedBy, thumbnail & thumbnailImageDescr not used as of yet
             url: "https://" + HOST_DOMAIN
         } as EventAttributes;
