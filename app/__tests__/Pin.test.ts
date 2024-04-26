@@ -8,7 +8,7 @@ let pin: Pin;
 const testPinParams: IPinParameters = {
     title: "Example",
     description: "Example description!",
-    datetime: "1938-01-02T00:00-05:00",
+    datetime: "1938-01-02T00:00-05:00",  // Before unix, might not work
     location: "New York",
     postedBy: "Cat",
     thumbnail: "https://raw.githubusercontent.com/Denperidge/community-pinboard/9399721d5f731706e78b94cbf7ba3c4998af6272/public/images/cork.jpg",
@@ -16,8 +16,11 @@ const testPinParams: IPinParameters = {
 }
 const pinStringParams = ["title", "description", "location", "postedBy", "thumbnail", "thumbnailImageDescr"]
 
+const pinDatetimePlusTwo = new Date(testPinParams.datetime);
+pinDatetimePlusTwo.setHours(pinDatetimePlusTwo.getHours() + 2);
+
 const nowPlusTwoHours = new Date();
-nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 2)
+nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 2),
 
 beforeEach(() => {
     pin = new Pin(testPinParams);
@@ -60,7 +63,28 @@ test("Pin.elapsed(): true & false", () => {
 });
 
 test("Pin._datetimePlusTwoHours", () => {
-    const expectedDatetime = new Date(testPinParams.datetime);
-    expectedDatetime.setHours( expectedDatetime.getHours() + 2);
-    expect(pin._datetimePlusTwoHours).toStrictEqual(expectedDatetime);
+    expect(pin._datetimePlusTwoHours).toStrictEqual(pinDatetimePlusTwo);
+});
+
+test("Pin.atcb{Start,End}{Date,Time}", () => {
+    function date(dt: string) {
+        return dt.split("T")[0];
+    }
+    function time(dt: string) {
+        const time = dt.split("T")[1];
+        return time.substring(0, time.lastIndexOf(":"));
+    }
+    
+    const expected: {[key:string]: string} = {
+        atcbStartDate: date(new Date(testPinParams.datetime).toISOString()),
+        atcbEndDate: date(pinDatetimePlusTwo.toISOString()),
+        atcbStartTime: time(new Date(testPinParams.datetime).toISOString()),
+        atcbEndTime: time(pinDatetimePlusTwo.toISOString())
+    }
+
+    const keys = ["atcbStartDate", "atcbEndDate", "atcbStartTime", "atcbEndTime"];
+    keys.forEach((key: string) => {
+        console.log(key)
+        expect(pin[key]).toStrictEqual(expected[key])
+    });
 });

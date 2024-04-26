@@ -37,7 +37,10 @@ export class Pin {
         this.location = params.location;
         this.postedBy = params.postedBy;
 
+        console.log("@@@@")
+        console.log(params.datetime)
         this.datetime = (params.datetime instanceof Date) ? params.datetime : new Date(params.datetime);
+        console.log(this.datetime)
 
         this.thumbnail = params.thumbnail;
         this.thumbnailImageDescr = params.thumbnailImageDescr;
@@ -76,18 +79,18 @@ export class Pin {
     
 
     get atcbStartDate(): string {
-        return `${this.datetime.getFullYear()}-${this.datetime.getMonth() + 1}-${this.datetime.getDate()}`;
+        return `${this.datetime.getFullYear()}-${pad(this.datetime.getMonth() + 1)}-${pad(this.datetime.getDate())}`;
     }
     get atcbEndDate(): string {
-        return `${this.datetime.getFullYear()}-${this.datetime.getMonth() + 1}-${this.datetime.getDate()}`;
+        return `${this.datetime.getFullYear()}-${pad(this.datetime.getMonth() + 1)}-${pad(this.datetime.getDate())}`;
     }
 
     get atcbStartTime(): string {
-        return `${this.datetime.getHours()}:${this.datetime.getMinutes()}`;
+        return `${pad(this.datetime.getHours())}:${pad(this.datetime.getMinutes())}`;
     }
 
     get atcbEndTime(): string {
-        return `${this.datetime.getHours()}:${this.datetime.getMinutes()}`;
+        return `${pad(this.datetime.getHours())}:${pad(this.datetime.getMinutes())}`;
     }
 
     get localdatetimeValue(): string {
