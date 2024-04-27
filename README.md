@@ -4,7 +4,7 @@
 A public event pinboard webapp for your local community, meant to be even lighter on the client devices than on the server!
 
 <img style="max-width: 800px;" src="public/images/screenshot-landscape.png" alt="A screenshot of the community pinboard application. It says 'Custom pinboard title!' on the top, with 3 pins on the board and one item previewed on the right. The 3 pins are: 'Gloss concert, 4/30/2024, Brussels, Cat' and 'Queer punk DIY day!, 4/27/2024, Ash's place, Ash' and 'going out, 4/30/2024, near Rue Royale 236, Bruxelles, Quinn'. On the right is the 'Pin view' panel, with the gloss concert pin background image displayed fully, the title + location shown, and the time/day entry is now expanded to include both date and time" />
-<img style="max-width: 800px;" src="public/images/screenshot-portrait.png" alt="A portrait version of the landscape screenshot of before, displaying the pinboard in full width with the same title"/>
+<img style="max-height: 800px;" src="public/images/screenshot-portrait.png" alt="A portrait version of the landscape screenshot of before, displaying the pinboard in full width with the same title"/>
 
 - To get this project up and running, you can view [How-to](#how-to)
 - For the design decision behind this project, see [Explanation](#explanation)
