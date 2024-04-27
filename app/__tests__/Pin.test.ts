@@ -16,9 +16,8 @@ const testPinParams: IPinParameters = {
 }
 const pinStringParams = ["title", "description", "location", "postedBy", "thumbnail", "thumbnailImageDescr"]
 
-const pinDatetimePlusTwo = new Date(testPinParams.datetime);
+const pinDatetimePlusTwo = new Date(testPinParams.datetime as string);
 pinDatetimePlusTwo.setHours(pinDatetimePlusTwo.getHours() + 2);
-
 const nowPlusTwoHours = new Date();
 nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 2),
 
@@ -43,9 +42,8 @@ test("Pin constructor", () => {
 
 test("Pin.asObject()", () => {
     const expectedProperties = testPinParams;
-    expectedProperties.datetime = new Date(expectedProperties.datetime).toISOString();
+    expectedProperties.datetime = dayjs(expectedProperties.datetime).toISOString();
     expect(pin.asObject()).toStrictEqual(expectedProperties);
-
 })
 
 test("Pin.filename()", () => {
@@ -57,8 +55,9 @@ test("Pin.elapsed(): true & false", () => {
     expect(pin.elapsed()).toStrictEqual(true);
 
     // elapsed: false
+    // expiration 2 hours from now
     const expectedProperties = testPinParams;
-    expectedProperties.datetime = nowPlusTwoHours;
+    expectedProperties.datetime = dayjs(nowPlusTwoHours);
     expect(new Pin(expectedProperties).elapsed()).toStrictEqual(false);
 });
 
@@ -76,14 +75,14 @@ test("Pin.atcb{Start,End}{Date,Time}", () => {
     }
     
     const expected: {[key:string]: string} = {
-        atcbStartDate: date(new Date(testPinParams.datetime).toISOString()),
+        atcbStartDate: date(new Date(testPinParams.datetime as string).toISOString()),
         atcbEndDate: date(pinDatetimePlusTwo.toISOString()),
-        atcbStartTime: time(new Date(testPinParams.datetime).toISOString()),
+        atcbStartTime: time(new Date(testPinParams.datetime as string).toISOString()),
         atcbEndTime: time(pinDatetimePlusTwo.toISOString())
     }
+    console.log(expected)
 
-    const keys = ["atcbStartDate", "atcbEndDate", "atcbStartTime", "atcbEndTime"];
-    keys.forEach((key: string) => {
+    Object.keys(expected).forEach((key: string) => {
         console.log(key)
         expect(pin[key]).toStrictEqual(expected[key])
     });

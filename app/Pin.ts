@@ -1,5 +1,9 @@
 import { EventAttributes } from "ics";
 import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
+import dayjs, { Dayjs } from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+dayjs.extend(localizedFormat);
+dayjs.locale(WEBSITE_LOCALE)
 
 const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
 
@@ -13,7 +17,7 @@ export interface IPinParameters {
     description: string;
     location: string;
     postedBy: string;
-    datetime: string|Date;
+    datetime: string|Dayjs;
 
     thumbnail?: string;
     thumbnailImageDescr?: string;
@@ -26,7 +30,7 @@ export class Pin {
     title: string;
     description: string;
     location: string;
-    datetime: Date;
+    datetime: Dayjs;
     postedBy: string;
     thumbnail?: string;
     thumbnailImageDescr?: string;
@@ -37,10 +41,8 @@ export class Pin {
         this.location = params.location;
         this.postedBy = params.postedBy;
 
-        console.log("@@@@")
-        console.log(params.datetime)
-        this.datetime = (params.datetime instanceof Date) ? params.datetime : new Date(params.datetime);
-        console.log(this.datetime)
+        // dayjs gave better results for parsing
+        this.datetime = (typeof params.datetime === "string") ? dayjs(params.datetime) : params.datetime;
 
         this.thumbnail = params.thumbnail;
         this.thumbnailImageDescr = params.thumbnailImageDescr;
@@ -63,34 +65,44 @@ export class Pin {
     }
 
     elapsed() : boolean {
-        return (new Date()) > this._datetimePlusTwoHours;
+        // empty dayjs constructor gives now
+        return this._datetimePlusTwoHours.isBefore(dayjs());
     }
 
     get _datetimePlusTwoHours() {
-        const twoExtra = this.datetime;
-        twoExtra.setHours(twoExtra.getHours() + 2)
-        return twoExtra;
+        return this.datetime.add(2, "hours");
     }
     
     // The following functions are for use with add-to-calendar buttons syntax
     // See https://add-to-calendar-button.com/configuration#event-parameters
     // {start,end}Date: YYYY-MM-DD
     // {start,end}Time: HH:MM
-    
+
+    formatAtcbDate(plusTwoHours=false): string {
+        const datetime = plusTwoHours ? this._datetimePlusTwoHours : this.datetime;
+        return `${datetime.year()}-${pad(datetime.month() + 1)}-${pad(datetime.date())}`;
+    }
+
+    formatAtcbTime(plusTwoHours=false): string {
+        const datetime = plusTwoHours ? this._datetimePlusTwoHours : this.datetime;
+        return `${pad(datetime.hour())}:${pad(datetime.minute())}`;
+    }
 
     get atcbStartDate(): string {
-        return `${this.datetime.getFullYear()}-${pad(this.datetime.getMonth() + 1)}-${pad(this.datetime.getDate())}`;
+        console.log(this.datetime)
+        
+        return this.formatAtcbDate();
     }
     get atcbEndDate(): string {
-        return `${this.datetime.getFullYear()}-${pad(this.datetime.getMonth() + 1)}-${pad(this.datetime.getDate())}`;
+        return this.formatAtcbDate(true);
     }
 
     get atcbStartTime(): string {
-        return `${pad(this.datetime.getHours())}:${pad(this.datetime.getMinutes())}`;
+        return this.formatAtcbTime();
     }
 
     get atcbEndTime(): string {
-        return `${pad(this.datetime.getHours())}:${pad(this.datetime.getMinutes())}`;
+        return this.formatAtcbTime(false);
     }
 
     get localdatetimeValue(): string {
@@ -113,11 +125,11 @@ export class Pin {
     }
 
     get date() {
-        return this.datetime.toLocaleDateString();
+        return this.datetime.format("LL");
     }
 
     get timeAndDay() {
-        return this.datetime.toLocaleString();//this.date + `, ${this.datetime.hours + utcToLocaleModifier}:${this.datetime.minutes}` 
+        return this.datetime.format("LLL");//this.date + `, ${this.datetime.hours + utcToLocaleModifier}:${this.datetime.minutes}` 
         //return Intl.DateTimeFormat(WEBSITE_LOCALE, {dateStyle: "short", timeStyle: "short"}).format(this.datetime.toDate().getTime());
     }
 
@@ -130,11 +142,11 @@ export class Pin {
             location: this.location,
             startInputType: "local",
             start: [
-                this.datetime.getFullYear(), 
-                this.datetime.getMonth() + 1,
-                this.datetime.getDate(),
-                this.datetime.getHours(),
-                this.datetime.getMinutes()],  // See above docs
+                this.datetime.year(), 
+                this.datetime.month() + 1,
+                this.datetime.date(),
+                this.datetime.hour(),
+                this.datetime.minute()],  // See above docs
             // postedBy, thumbnail & thumbnailImageDescr not used as of yet
             url: "https://" + HOST_DOMAIN
         } as EventAttributes;
