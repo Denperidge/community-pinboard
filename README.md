@@ -124,24 +124,17 @@ This application was built to replace fragmented organising through multiple Fac
 Datetime and timezones are relevant in the following parts of the application
 
 Legend:
-- 💚: UTC Value
+- 💚: ISO String
 - 🕒: Adjusted for timezone
 - 🏠: Adjusted for locale
 
 | Functionality | Should be displayed/passed as | Relevant files |
 | ------------- | ----------------------------- | -------------- |
 | View Pin date & datetime strings | 🕒🏠 | [Pin (pre)views](views/_pin.pug), [index page](views/index.pug) |
-| Fill in edit form pin existing value | 🕒 | [form page](views/_form.pug), [form back-end](app/form.ts), [edit page](views/edit.pug), [edit routes](app/routes.edit.ts) |
-| Read & write `data/pins/*.json` | 💚 | [Pin class](app/Pin.ts), [ICS feeds](app/routes.get.ts) |
-| Add-To-Calendar-Button | 💚? TODO | [Pin class](app/Pin.ts), [Pin (pre)views](views/_pin.pug) |
-| ICS feeds | TODO: double check | [Pin class](app/Pin.ts), [ICS Feed get routes](app/routes.get.ts) |
-
-#### Pins
-Every datetime stored in `data/pins/` is in **UTC**. See the [PinUTCDatetime class in app/Pin.ts](app/Pin.ts).
-This was originally handled by saving and parsing from JavaScript's JSON.stringify, but [Javascript Date handling](#javascript-date) got the better of me.
-
-This method of storing ensures a base certainty: the Pin class and JSON only contain **UTC**.
-
+| Fill in edit form pin existing value | 💚🕒 | [form page](views/_form.pug), [form back-end](app/form.ts), [edit page](views/edit.pug), [edit routes](app/routes.edit.ts) |
+| Read & write `data/pins/*.json` | 💚(🕒) | [Pin class](app/Pin.ts), [ICS feeds](app/routes.get.ts) |
+| Add-To-Calendar-Button | 🕒 (seemingly) | [Pin class](app/Pin.ts), [Pin (pre)views](views/_pin.pug) |
+| ICS feeds | 🕒 | [Pin class](app/Pin.ts), [ICS Feed get routes](app/routes.get.ts) |
 
 #### HTML Forms
 For native `HTML` date(time) input, you have...
@@ -155,7 +148,6 @@ To ensure compatibility with more devices and lower client-side footprint, the n
 - This returns **no timezone** information. The returned value is in the format of `YYYY-MM-DDTHH:MM`
 - This means that the input values will be from the **users timezone point of view**
 
-
 #### Javascript Date()
 - `JavaScript Date()` also includes time
 - Stored in **UTC**, specifically ms since January 1, 1970 00:00:00 UTC ([see w3schools](https://www.w3schools.com/js/js_dates.asp))
@@ -163,15 +155,21 @@ To ensure compatibility with more devices and lower client-side footprint, the n
 - `new Date().getTimezoneOffset()` is based on [TZ environment variable](#environment-variables).
 - JavaScripts UTC constructor can deal with too many hours being provided. `new Date(Date.UTC(2024, 1, 1, 25, 0)).toISOString()` returns `"2024-02-02T01:00:00.000Z"`
 
+#### dayjs
+- Wrapper for JS Date(), but with better parsing and formatting.
+- Should output according to the `WEBSITE_LOCALE` & `WEBSITE_TIMEZONE` [environment variables](#environment-variables)
+
 #### Node.js
 - `process.env.tz` Returns a `Area/City` format. See the [Node.js docs](https://nodejs.org/docs/v20.12.1/api/cli.html#tz) for more information
 
 #### add-to-calendar-button
-- Has `{start,end}Date` & `{start,end}Time`, both *seemingly* assuming the values to be **UTC**
+- Has `{start,end}Date` & `{start,end}Time`, both *seemingly* assuming the values to be local
 - [timeZone config](https://add-to-calendar-button.com/configuration#event-parameters) 
-  - This uses a library of the same developer for valid inputs for timeZone. See a few of the [available notations in the source code here](https://github.com/add2cal/timezones-ical-library/blob/308756344dc314a1499e298b9e99ad0377244c3e/src/zonesdb.js)
+  - ATCB uses a library of the same developer for valid inputs for timeZone. See a few of the [available notations in the source code here](https://github.com/add2cal/timezones-ical-library/blob/308756344dc314a1499e298b9e99ad0377244c3e/src/zonesdb.js)
   - My best results were with using `Area/City`. This will be set in the `WEBSITE_TIMEZONE` [environment variable](#environment-variables)
 
+#### ics.js/ics feed
+TODO
 
 ## Reference
 ### Environment variables
