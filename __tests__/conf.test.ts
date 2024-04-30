@@ -1,4 +1,4 @@
-import { _DEFAULTS } from "../conf";
+import { _DEFAULTS } from "../app/conf";
 
 const envVarNames = Object.keys(_DEFAULTS);
 

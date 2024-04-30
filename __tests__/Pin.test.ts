@@ -1,5 +1,5 @@
-import { WEBSITE_LOCALE } from "../conf";
-import { pad, Pin, IPinParameters } from "../Pin";
+import { WEBSITE_LOCALE } from "../app/conf";
+import { pad, Pin, IPinParameters } from "../app/Pin";
 // Find better solution for dayjs than copy pasting the import & setup from Pin?
 import dayjs, { UnitType } from "dayjs";
 import timezone from "dayjs/plugin/timezone"
@@ -16,10 +16,8 @@ const testPinParams: IPinParameters = {
 }
 const pinStringParams = ["title", "description", "location", "postedBy", "thumbnail", "thumbnailImageDescr"]
 
-const pinDatetimePlusTwo = new Date(testPinParams.datetime as string);
-pinDatetimePlusTwo.setHours(pinDatetimePlusTwo.getHours() + 2);
-const nowPlusTwoHours = new Date();
-nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 2),
+const pinDatetimePlusTwo = dayjs(testPinParams.datetime).add(2, "hours");
+const nowPlusTwoHours = dayjs().add(2, "hours");
 
 beforeEach(() => {
     pin = new Pin(testPinParams);
@@ -75,9 +73,9 @@ test("Pin.atcb{Start,End}{Date,Time}", () => {
     }
     
     const expected: {[key:string]: string} = {
-        atcbStartDate: date(new Date(testPinParams.datetime as string).toISOString()),
+        atcbStartDate: date(dayjs(testPinParams.datetime).toISOString()),
         atcbEndDate: date(pinDatetimePlusTwo.toISOString()),
-        atcbStartTime: time(new Date(testPinParams.datetime as string).toISOString()),
+        atcbStartTime: time(dayjs(testPinParams.datetime).toISOString()),
         atcbEndTime: time(pinDatetimePlusTwo.toISOString())
     }
     console.log(expected)
