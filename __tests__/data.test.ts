@@ -2,7 +2,7 @@ import { tmpdir } from "os";
 import { rmSync, access, existsSync, writeFileSync, readdirSync, readFileSync } from "fs";
 import { join } from "path";
 import { DATA_DIR as DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR } from "../app/conf";
-import { _makeDirs, _readPin, _returnUniquePath, _write } from "../app/data";
+import { _makeDirs, _readPin, _returnUniquePath, _write, uploadPath, writePin } from "../app/data";
 import { IPinParameters, Pin } from "../app/Pin";
 
 beforeEach(() => {
@@ -19,6 +19,17 @@ function pathsExist(paths: Array<string>, shouldExist: boolean) {
 
 const dirs = [ DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR ];
 
+const pinData: IPinParameters = {
+    title: "Meow",
+    description: "test",
+    datetime: "2024-04-30T16:00:00.000Z",
+    location: "Meoa",
+    postedBy: "Mfsdg",
+    thumbnail: "http://example.com/image.png",
+    thumbnailImageDescr: "Image"
+}
+const pinPath = join(DATA_DIR_TESTING, "pin.json");
+
 const testFileBasename = "meow"
 const testFileExtension = ".txt"
 const testFilePath = join(DATA_DIR_TESTING, testFileBasename + testFileExtension);
@@ -26,8 +37,7 @@ const testFileIndex4 = join(DATA_DIR_TESTING, testFileBasename + "-4" + testFile
 
 test("_returnUniquePath: no index added if already unique", () => {
     expect(_returnUniquePath(testFilePath, testFileBasename)).toBe(testFilePath);
-})
-
+});
 
 test("_returnUniquePath: index added beyond 0 if not unique", () => {
     _makeDirs();
@@ -39,6 +49,11 @@ test("_returnUniquePath: index added beyond 0 if not unique", () => {
     expect(_returnUniquePath(testFilePath, testFileBasename)).toBe(testFileIndex4);
 });
 
+test("uploadPath: returns path with default & provided dir", () => {
+    expect(uploadPath("meow.txt")).toBe(join(UPLOADS_DIR, "meow.txt"));
+    expect(uploadPath("meow.txt", PINS_DIR)).toBe(join(PINS_DIR, "meow.txt"));
+});
+
 test("_makeDirs: {DATA,PINS,UPLOADS}_DIR", () => {
     pathsExist(dirs, false);
     _makeDirs();
@@ -47,16 +62,7 @@ test("_makeDirs: {DATA,PINS,UPLOADS}_DIR", () => {
 
 test("_readPin: reads json from path correctly", async () => {
     _makeDirs();
-    const pinData: IPinParameters = {
-        title: "Meow",
-        description: "test",
-        datetime: "2024-04-30T16:00:00.000Z",
-        location: "Meoa",
-        postedBy: "Mfsdg",
-        thumbnail: "http://example.com/image.png",
-        thumbnailImageDescr: "Image"
-    }
-    const pinPath = join(DATA_DIR_TESTING, "pin.json");
+
     writeFileSync(pinPath, JSON.stringify(pinData));
 
     expect(await _readPin(pinPath)).toStrictEqual(new Pin(pinData));
@@ -107,4 +113,9 @@ test("_write: when output path exists & overwrite is false, write to & return un
     testFileContents(secondWritePath, "Second file");
 
     expect(firstWritePath == secondWritePath).toBe(false);
+});
+
+test("_writePin: works", async () => {
+    // TODO: better testing needed? This is in the end a wrapper for _write
+    expect(await writePin(new Pin(pinData), "meow")).toBe(join(PINS_DIR, "meow.json"));
 });

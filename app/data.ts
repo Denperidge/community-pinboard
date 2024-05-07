@@ -16,6 +16,10 @@ export function _returnUniquePath(filePath: string, fileBasename: string, index:
     }
 }
 
+export function uploadPath(filename: string, path=UPLOADS_DIR) {
+    return join(path, filename);
+}
+
 export async function _makeDirs() {
     return Promise.all([
         fs.mkdir(DATA_DIR, { recursive: true }, ()=>{}),
@@ -51,11 +55,6 @@ export async function _write(providedPath: string, data: string|Buffer, overwrit
 
 export async function writePin(pin: Pin, slug: string, overwrite=false, dir=PINS_DIR): Promise<string> {
     return _write(join(dir, slug + ".json"), JSON.stringify(pin.asObject()), overwrite);
-}
-
-
-export function uploadPath(filename: string, path=UPLOADS_DIR) {
-    return path + filename;
 }
 
 export async function saveImage(filename: string, buffer: Buffer, dir=UPLOADS_DIR): Promise<string> {
