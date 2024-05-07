@@ -14,7 +14,6 @@ beforeEach(() => {
 
 function testPathsExist(paths: Array<string>, shouldExist: boolean) {
     paths.forEach((dir) => {
-        console.log(`${dir}: ${existsSync(dir)}, should be ${shouldExist}`)
         expect(existsSync(dir)).toBe(shouldExist);
     });
 }
@@ -212,10 +211,6 @@ describe("getPins...", () => {
     pinTomorrow.datetime = dayjs().add(1, "day");
     const pinYesterday = new Pin(pinData);
     pinYesterday.datetime = dayjs().subtract(1, "day");
-
-    console.log(`today: ${pinToday.elapsed()}`)
-    console.log(`tomorrow: ${pinTomorrow.elapsed()}`)
-    console.log(`yesterday: ${pinYesterday.elapsed()}`)
 
     async function makePins(dir?: string): Promise<{[key:string]: string}> {
         return { 
