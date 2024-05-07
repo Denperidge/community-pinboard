@@ -3,8 +3,18 @@ import { join, parse as pathParse, format as pathToString, ParsedPath, parse } f
 import { DATA_DIR, PINS_DIR, UPLOADS_DIR } from "./conf";
 import { Pin } from "./Pin";
 import { parse as parsePath } from "path";
-import * as slug from "slug";
 
+export function _returnUniquePath(filePath: string, fileBasename: string, index: number=0) {
+    // If file exists
+    if (fs.existsSync(filePath)) {
+        // Extract 
+        const {dir, ext} = pathParse(filePath);
+        filePath = join(dir, `${fileBasename}-${index}${ext}`);
+        return _returnUniquePath(filePath, fileBasename, index + 1);
+    } else {
+        return filePath;
+    }
+}
 
 export async function _makeDirs() {
     return Promise.all([
@@ -24,19 +34,6 @@ export async function _readPin(jsonPath: string): Promise<Pin> {
             }
         })
     });
-}
-
-
-export function _returnUniquePath(filePath: string, fileBasename: string, index: number=0) {
-    // If file exists
-    if (fs.existsSync(filePath)) {
-        // Extract 
-        const {dir, ext} = pathParse(filePath);
-        filePath = join(dir, `${fileBasename}-${index}${ext}`);
-        return _returnUniquePath(filePath, fileBasename, index + 1);
-    } else {
-        return filePath;
-    }
 }
 
 async function _write(providedPath: string, data: string|Buffer, overwrite=false) : Promise<string> {
