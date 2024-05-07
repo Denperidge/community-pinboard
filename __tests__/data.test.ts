@@ -35,18 +35,20 @@ const testFileExtension = ".txt"
 const testFilePath = join(DATA_DIR_TESTING, testFileBasename + testFileExtension);
 const testFileIndex4 = join(DATA_DIR_TESTING, testFileBasename + "-4" + testFileExtension);
 
-test("_returnUniquePath: no index added if already unique", () => {
-    expect(_returnUniquePath(testFilePath, testFileBasename)).toBe(testFilePath);
-});
-
-test("_returnUniquePath: index added beyond 0 if not unique", () => {
-    _makeDirs();
-
-    writeFileSync(testFilePath, "");
-    [0, 1, 2, 3].forEach((index) => {
-        writeFileSync(join(DATA_DIR_TESTING, `${testFileBasename}-${index}${testFileExtension}`), "");
+describe("_returnUniquePath...", () => {
+    test("returns the provided filename if already unique", () => {
+        expect(_returnUniquePath(testFilePath, testFileBasename)).toBe(testFilePath);
     });
-    expect(_returnUniquePath(testFilePath, testFileBasename)).toBe(testFileIndex4);
+    
+    test("if provided filename is not unique, return `${filename}-${nextUnusedIndex}`", () => {
+        _makeDirs();
+    
+        writeFileSync(testFilePath, "");
+        [0, 1, 2, 3].forEach((index) => {
+            writeFileSync(join(DATA_DIR_TESTING, `${testFileBasename}-${index}${testFileExtension}`), "");
+        });
+        expect(_returnUniquePath(testFilePath, testFileBasename)).toBe(testFileIndex4);
+    });
 });
 
 test("uploadPath: returns path with default & provided dir", () => {
@@ -60,18 +62,20 @@ test("_makeDirs: {DATA,PINS,UPLOADS}_DIR", () => {
     pathsExist(dirs, true);
 });
 
-test("_readPin: reads json from path correctly", async () => {
-    _makeDirs();
+describe("_readPin...", () => {
+    test("reads pin from json file path correctly", async () => {
+        _makeDirs();
 
-    writeFileSync(pinPath, JSON.stringify(pinData));
+        writeFileSync(pinPath, JSON.stringify(pinData));
 
-    expect(await _readPin(pinPath)).toStrictEqual(new Pin(pinData));
-});
+        expect(await _readPin(pinPath)).toStrictEqual(new Pin(pinData));
+    });
 
-test("_readPin: reject promise on non-existing path", async () => {
-    return _readPin(join(DATA_DIR_TESTING, "nonexistant.txt")).catch(error => {
-        expect(error.code).toBe("ENOENT");
-    })
+    test("returns error on non-existing path", async () => {
+        return _readPin(join(DATA_DIR_TESTING, "nonexistant.txt")).catch(error => {
+            expect(error.code).toBe("ENOENT");
+        })
+    });
 });
 
 
@@ -89,40 +93,43 @@ function pinFromFile(path: string) {
     return new Pin(JSON.parse(readFileSync(path, {encoding: "utf-8"})));
 }
 
-test("_write: writes correctly and returns resulting path", async () => {
-    _makeDirs();
-    const resultFilePath = await _write(testFilePath, "Exact data!");
-    testFileContents(resultFilePath, "Exact data!");
-    expect(resultFilePath).toBe(testFilePath);
-});
-
-test("_write: does not overwrite by default", async () => {
-    _makeDirs();
-    const firstWritePath = await _write(testFilePath, "First file");
-    const secondWritePath = await _write(testFilePath, "Second file");
-    testFileContents(firstWritePath, "First file");
-    testFileContents(secondWritePath, "Second file");
-});
-
-test("_write: overwrites when specified", async () => {
-    _makeDirs();
-    const firstWritePath = await _write(testFilePath, "First file", true);
-    testFileContents(firstWritePath, "First file");
-    const secondWritePath = await _write(testFilePath, "Second file", true);
-    testFileContents(firstWritePath, "Second file");
-
-    expect(firstWritePath).toBe(secondWritePath);
-});
-
-
-test("_write: when output path exists & overwrite is false, write to & return unique path", async () => {
-    _makeDirs();
-    const firstWritePath = await _write(testFilePath, "First file", false);
-    const secondWritePath = await _write(testFilePath, "Second file", false);
-    testFileContents(firstWritePath, "First file");
-    testFileContents(secondWritePath, "Second file");
-
-    expect(firstWritePath == secondWritePath).toBe(false);
+describe("_write...", () => {
+    test("writes correctly and returns resulting path", async () => {
+        _makeDirs();
+        const resultFilePath = await _write(testFilePath, "Exact data!");
+        testFileContents(resultFilePath, "Exact data!");
+        expect(resultFilePath).toBe(testFilePath);
+    });
+    
+    test("does not overwrite by default", async () => {
+        _makeDirs();
+        const firstWritePath = await _write(testFilePath, "First file");
+        const secondWritePath = await _write(testFilePath, "Second file");
+        testFileContents(firstWritePath, "First file");
+        testFileContents(secondWritePath, "Second file");
+    });
+    
+    test("overwrites when specified", async () => {
+        _makeDirs();
+        const firstWritePath = await _write(testFilePath, "First file", true);
+        testFileContents(firstWritePath, "First file");
+        const secondWritePath = await _write(testFilePath, "Second file", true);
+        testFileContents(firstWritePath, "Second file");
+    
+        expect(firstWritePath).toBe(secondWritePath);
+    });
+    
+    
+    test("when output path exists & overwrite is false, write to & return unique path", async () => {
+        _makeDirs();
+        const firstWritePath = await _write(testFilePath, "First file", false);
+        const secondWritePath = await _write(testFilePath, "Second file", false);
+        testFileContents(firstWritePath, "First file");
+        testFileContents(secondWritePath, "Second file");
+    
+        expect(firstWritePath == secondWritePath).toBe(false);
+    });
+    
 });
 
 describe("_writePin...", () => {
