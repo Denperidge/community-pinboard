@@ -39,21 +39,21 @@ function envOrDefault(key: string) {
     }
 }
 
-export const HOST_DOMAIN = envOrDefault("HOST_DOMAIN");
-export const DATA_DIR = envOrDefault("DATA_DIR");
-export const WEBSITE_TITLE = envOrDefault("WEBSITE_TITLE");
-export const WEBSITE_DESCRIPTION = envOrDefault("WEBSITE_DESCRIPTION");
-export const WEBSITE_TIMEZONE = envOrDefault("TZ");
-export const WEBSITE_LOCALE = envOrDefault("WEBSITE_LOCALE");
+export const HOST_DOMAIN = envOrDefault("HOST_DOMAIN") as string;
+export const DATA_DIR = envOrDefault("DATA_DIR") as string;
+export const WEBSITE_TITLE = envOrDefault("WEBSITE_TITLE") as string;
+export const WEBSITE_DESCRIPTION = envOrDefault("WEBSITE_DESCRIPTION") as string;
+export const WEBSITE_TIMEZONE = envOrDefault("TZ") as string;
+export const WEBSITE_LOCALE = envOrDefault("WEBSITE_LOCALE") as string;
 
 export const PIN_MAXLENGTHS = {
-    "title": envOrDefault("MAX_TITLE"),
-    "description": envOrDefault("MAX_DESCRIPTION"),
-    "location": envOrDefault("MAX_LOCATION"),
-    "postedBy": envOrDefault("MAX_POSTEDBY"),
-    "thumbnailUrl": envOrDefault("MAX_THUMBNAILURL")
+    "title": envOrDefault("MAX_TITLE") as number,
+    "description": envOrDefault("MAX_DESCRIPTION") as number,
+    "location": envOrDefault("MAX_LOCATION") as number,
+    "postedBy": envOrDefault("MAX_POSTEDBY") as number,
+    "thumbnailUrl": envOrDefault("MAX_THUMBNAILURL") as number
 };
-export const MAX_UPLOAD_MB = envOrDefault("MAX_UPLOAD_MB");
+export const MAX_UPLOAD_MB = envOrDefault("MAX_UPLOAD_MB") as number;
 
 
 export const PINS_DIR = DATA_DIR + "pins/";
