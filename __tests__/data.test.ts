@@ -1,7 +1,7 @@
 import { tmpdir } from "os";
 import { rmSync, access, existsSync, writeFileSync, readdirSync, readFileSync } from "fs";
 import { join } from "path";
-import { DATA_DIR as DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR } from "../app/conf";
+import { DATA_DIR, DATA_DIR as DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR } from "../app/conf";
 import { _makeDirs, _readPin, _returnUniquePath, _write, uploadPath, writePin } from "../app/data";
 import { IPinParameters, Pin } from "../app/Pin";
 
@@ -79,6 +79,16 @@ function testFileContents(path: string, expectedContents: string) {
     expect(readFileSync(path, {encoding: "utf-8"})).toBe(expectedContents);
 }
 
+/**
+ * Custom read Pin from file function for testing
+ * 
+ * @param path 
+ * @returns 
+ */
+function pinFromFile(path: string) {
+    return new Pin(JSON.parse(readFileSync(path, {encoding: "utf-8"})));
+}
+
 test("_write: writes correctly and returns resulting path", async () => {
     _makeDirs();
     const resultFilePath = await _write(testFilePath, "Exact data!");
@@ -115,7 +125,63 @@ test("_write: when output path exists & overwrite is false, write to & return un
     expect(firstWritePath == secondWritePath).toBe(false);
 });
 
-test("_writePin: works", async () => {
-    // TODO: better testing needed? This is in the end a wrapper for _write
-    expect(await writePin(new Pin(pinData), "meow")).toBe(join(PINS_DIR, "meow.json"));
+describe("_writePin...", () => {
+    _makeDirs()
+
+    test("saves pin correctly", async () => {
+        _makeDirs();
+        const pinJsonPath = await writePin(new Pin(pinData), "meow");
+
+        const pinFromWritePinJson = pinFromFile(pinJsonPath);
+
+        expect(pinFromWritePinJson).toStrictEqual(new Pin(pinData));
+        expect(pinJsonPath).toBe(join(PINS_DIR, "meow.json"));
+    });
+
+    test("does not overwrite by default", async () => {
+        _makeDirs();
+
+        const pinTwoData = pinData;
+        pinTwoData.title += "Different!";
+        pinTwoData.thumbnailImageDescr += "Different!";
+
+        const pinOne = new Pin(pinData);
+        const pinTwo = new Pin(pinTwoData);
+
+        const pinPathOne = await writePin(pinOne, "meow");
+        const pinPathTwo = await writePin(pinTwo, "meow");
+
+        expect(pinFromFile(pinPathOne)).toStrictEqual(pinOne);
+        expect(pinFromFile(pinPathTwo)).toStrictEqual(pinTwo);
+
+        expect(pinPathOne).toBe(join(PINS_DIR, "meow.json"));
+        expect(pinPathTwo).toBe(join(PINS_DIR, "meow-0.json"));
+    })
+
+    test("does overwrite when specified", async () => {
+        _makeDirs();
+
+        const pinOne = new Pin(pinData);
+        const pinTwo = new Pin(pinData);
+        pinTwo.thumbnail += "different!";
+
+        const pinPathOne = await writePin(pinOne, "meow");
+        expect(pinFromFile(pinPathOne)).toStrictEqual(pinOne);
+        expect(pinPathOne).toBe(join(PINS_DIR, "meow.json"));
+        
+        const pinPathTwo = await writePin(pinTwo, "meow", true);
+        expect(pinFromFile(pinPathTwo)).toStrictEqual(pinTwo);
+        expect(pinPathTwo).toBe(join(PINS_DIR, "meow.json"));
+        expect(pinPathOne).toBe(pinPathTwo);
+    })
+
+    test("default dir is PINS_DIR", async () => {
+        _makeDirs();
+        expect(((await writePin(new Pin(pinData), "meow")))).toBe(join(PINS_DIR, "meow.json"));
+    })
+
+    test("dir used when specified", async () => {
+        _makeDirs();
+        expect(await writePin(new Pin(pinData), "meow", false, DATA_DIR)).toBe(join(DATA_DIR, "meow.json"));
+    })
 });
