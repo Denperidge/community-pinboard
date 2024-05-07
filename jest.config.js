@@ -113,7 +113,7 @@ const config = {
   // resetMocks: false,
 
   // Reset the module registry before running each individual test
-  // resetModules: false,
+  resetModules: true,
 
   // A path to a custom resolver
   // resolver: undefined,
@@ -186,7 +186,7 @@ const config = {
   // unmockedModulePathPatterns: undefined,
 
   // Indicates whether each individual test should be reported during the run
-  // verbose: undefined,
+  verbose: true,
 
   // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
   // watchPathIgnorePatterns: [],

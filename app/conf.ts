@@ -1,8 +1,10 @@
 import { config } from "dotenv";
 
 // Don't set defaults automatically when testing
+// Additionally, exclude this if from code coverage
+/* c8 ignore next 3 */
 if (process.env.NODE_ENV != "test") {
-    config();
+    config();   
 }
 
 /**
@@ -11,7 +13,7 @@ if (process.env.NODE_ENV != "test") {
  * 
  * @example conf.WEBSITE_TIMEZONE = process.env.TZ || _DEFAULTS.TZ
  */
-export const _DEFAULTS = {
+export const _DEFAULTS: {[key: string]: string|number} = {
     HOST_DOMAIN: "localhost:3000",
     DATA_DIR: "data/",
     WEBSITE_TITLE: "Community Pinboard!",
@@ -26,21 +28,32 @@ export const _DEFAULTS = {
     MAX_UPLOAD_MB: 20
 }
 
-export const HOST_DOMAIN = process.env.HOST_DOMAIN || _DEFAULTS.HOST_DOMAIN;
-export const DATA_DIR = process.env.DATA_DIR || _DEFAULTS.DATA_DIR;
-export const WEBSITE_TITLE = process.env.WEBSITE_TITLE || _DEFAULTS.WEBSITE_TITLE;
-export const WEBSITE_DESCRIPTION = process.env.WEBSITE_DESCRIPTION || _DEFAULTS.WEBSITE_DESCRIPTION;
-export const WEBSITE_TIMEZONE = process.env.TZ || _DEFAULTS.TZ;
-export const WEBSITE_LOCALE = process.env.WEBSITE_LOCALE || _DEFAULTS.WEBSITE_LOCALE;
+function envOrDefault(key: string) {
+    const returnAsNumber = typeof _DEFAULTS[key] === "number";
+    const envValue = process.env[key]
+
+    if (envValue === undefined || !envValue) {
+        return _DEFAULTS[key]
+    } else if (envValue) {
+        return returnAsNumber ? parseInt(envValue) : envValue;
+    }
+}
+
+export const HOST_DOMAIN = envOrDefault("HOST_DOMAIN");
+export const DATA_DIR = envOrDefault("DATA_DIR");
+export const WEBSITE_TITLE = envOrDefault("WEBSITE_TITLE");
+export const WEBSITE_DESCRIPTION = envOrDefault("WEBSITE_DESCRIPTION");
+export const WEBSITE_TIMEZONE = envOrDefault("TZ");
+export const WEBSITE_LOCALE = envOrDefault("WEBSITE_LOCALE");
 
 export const PIN_MAXLENGTHS = {
-    "title": process.env.MAX_TITLE ? parseInt(process.env.MAX_TITLE) : _DEFAULTS.MAX_TITLE,
-    "description": process.env.MAX_DESCRIPTION ? parseInt(process.env.MAX_DESCRIPTION) : _DEFAULTS.MAX_DESCRIPTION,
-    "location": process.env.MAX_LOCATION ? parseInt(process.env.MAX_LOCATION) : _DEFAULTS.MAX_LOCATION,
-    "postedBy": process.env.MAX_POSTEDBY ? parseInt(process.env.MAX_POSTEDBY) : _DEFAULTS.MAX_POSTEDBY,
-    "thumbnailUrl": process.env.MAX_THUMBNAILURL ? parseInt(process.env.MAX_THUMBNAILURL) : _DEFAULTS.MAX_THUMBNAILURL
+    "title": envOrDefault("MAX_TITLE"),
+    "description": envOrDefault("MAX_DESCRIPTION"),
+    "location": envOrDefault("MAX_LOCATION"),
+    "postedBy": envOrDefault("MAX_POSTEDBY"),
+    "thumbnailUrl": envOrDefault("MAX_THUMBNAILURL")
 };
-export const MAX_UPLOAD_MB = process.env.MAX_UPLOAD_MB ? parseInt(process.env.MAX_UPLOAD_MB) : _DEFAULTS.MAX_UPLOAD_MB
+export const MAX_UPLOAD_MB = envOrDefault("MAX_UPLOAD_MB");
 
 
 export const PINS_DIR = DATA_DIR + "pins/";
