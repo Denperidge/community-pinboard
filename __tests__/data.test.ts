@@ -2,8 +2,9 @@ import { tmpdir } from "os";
 import { rmSync, access, existsSync, writeFileSync, readdirSync, readFileSync } from "fs";
 import { join } from "path";
 import { DATA_DIR, DATA_DIR as DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR } from "../app/conf";
-import { _makeDirs, _readPin, _returnUniquePath, _write, saveImage, uploadPath, writePin } from "../app/data";
+import { _makeDirs, _readPin, _returnUniquePath, _write, getPins, saveImage, uploadPath, writePin } from "../app/data";
 import { IPinParameters, Pin } from "../app/Pin";
+import dayjs from "dayjs";
 
 beforeEach(() => {
     rmSync(DATA_DIR_TESTING, { recursive: true, force: true });
@@ -200,5 +201,99 @@ describe("saveImage...", () => {
         testPathsExist([imagePath], false);
         await saveImage("image.jpeg", imageBuffer, DATA_DIR_TESTING);
         testPathsExist([imagePath], true);
+    });
+});
+
+
+describe("getPins...", () => {
+    const pinToday = new Pin(pinData);
+    pinToday.datetime = dayjs();
+    const pinTomorrow = new Pin(pinData);
+    pinTomorrow.datetime = dayjs().add(1, "day");
+    const pinYesterday = new Pin(pinData);
+    pinYesterday.datetime = dayjs().subtract(1, "day");
+
+    console.log(`today: ${pinToday.elapsed()}`)
+    console.log(`tomorrow: ${pinTomorrow.elapsed()}`)
+    console.log(`yesterday: ${pinYesterday.elapsed()}`)
+
+    async function makePins(dir?: string): Promise<{[key:string]: string}> {
+        return { 
+            "today": await writePin(pinToday, "today", false, dir),
+            "tomorrow": await writePin(pinTomorrow, "tomorrow", false, dir),
+            "yesterday": await writePin(pinYesterday, "yesterday", false, dir)
+        };
+    }
+
+    test("ELAPSED: true  | UPCOMING: true", async () => {
+        await makePins();
+        const pins = await getPins(true, true, false);
+        
+        expect(pins["today"]).toStrictEqual(pinToday);
+        expect(pins["tomorrow"]).toStrictEqual(pinTomorrow);
+        expect(pins["yesterday"]).toStrictEqual(pinYesterday);
+    });
+    test("ELAPSED: true  | UPCOMING: false", async () => {
+        await makePins();
+        const pins = await getPins(true, false, false);
+        
+        expect(pins["today"]).toBeUndefined();
+        expect(pins["tomorrow"]).toBeUndefined();
+        expect(pins["yesterday"]).toStrictEqual(pinYesterday);
+    });
+
+    test("ELAPSED: false | UPCOMING: true", async () => {
+        await makePins();
+        const pins = await getPins(false, true, false);
+
+        expect(pins["today"]).toStrictEqual(pinToday);
+        expect(pins["tomorrow"]).toStrictEqual(pinTomorrow);
+        expect(pins["yesterday"]).toBeUndefined();
+    })
+    test("ELAPSED: false | UPCOMING: false", async () => {
+        await makePins();
+        const pins = await getPins(false, false, false);
+
+        expect(pins["today"]).toBeUndefined();
+        expect(pins["tomorrow"]).toBeUndefined();
+        expect(pins["yesterday"]).toBeUndefined();
+    })
+
+    test("ARRAY: true", async () => {
+        await makePins();
+        const pinsFromDir = await getPins(true, true, true);
+        
+        let pinsFound = 0;
+
+        pinsFromDir.map(pinFromDir => {
+            [pinToday, pinTomorrow, pinYesterday].map((predefinedPin) => {
+                if (predefinedPin.datetime.toISOString() == pinFromDir.datetime.toISOString()) {
+                    pinsFound += 1;
+                }
+            });
+        })
+
+        expect(pinsFound).toBe(3);
+    });
+
+    test("default dir is PINS_DIR", async () => {
+        const paths = await makePins();
+        Object.keys(paths).forEach(pathKey => {
+            expect(paths[pathKey]).toBe(join(PINS_DIR, pathKey + ".json"));
+        });
+    })
+
+    test("dir can be provided", async () => {
+        const paths = await makePins(DATA_DIR_TESTING);
+        Object.keys(paths).forEach(pathKey => {
+            expect(paths[pathKey]).toBe(join(DATA_DIR_TESTING, pathKey + ".json"));
+        });
+    })
+
+    test("throws error if error when reading dir", async () => {
+        const nonExistantDir = join(tmpdir(), "nonexistant-community-pinboard-directory");
+        return getPins(false, true, false, nonExistantDir).catch(error => {
+            expect(error.code).toBe("ENOENT");
+        })
     });
 });
