@@ -1,11 +1,6 @@
+import { tmpdir } from "os";
+import { join } from "path";
 import { config } from "dotenv";
-
-// Don't set defaults automatically when testing
-// Additionally, exclude this if from code coverage
-/* c8 ignore next 3 */
-if (process.env.NODE_ENV != "test") {
-    config();   
-}
 
 /**
  * The keys here are in line with the environment variables,
@@ -26,6 +21,17 @@ export const _DEFAULTS: {[key: string]: string|number} = {
     MAX_POSTEDBY: 50,
     MAX_THUMBNAILURL: 50,
     MAX_UPLOAD_MB: 20
+}
+
+/**
+ * Don't load environment variables from .env when testing
+ * Additionally, exclude this if from code coverage
+ */
+/* c8 ignore next 5 */
+if (process.env.NODE_ENV != "test") {
+    config();
+} else {
+    _DEFAULTS.DATA_DIR = join(tmpdir(), "community-pinboard/");
 }
 
 function envOrDefault(key: string) {
@@ -55,7 +61,6 @@ export const PIN_MAXLENGTHS = {
 };
 export const MAX_UPLOAD_MB = envOrDefault("MAX_UPLOAD_MB") as number;
 
-
-export const PINS_DIR = DATA_DIR + "pins/";
-export const UPLOADS_DIR = DATA_DIR + "uploads";
+export const PINS_DIR = join(DATA_DIR, "pins/");
+export const UPLOADS_DIR = join(DATA_DIR, "uploads/");
 export const PUBLIC_UPLOADS_PATH = "/uploads/";

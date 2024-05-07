@@ -6,7 +6,7 @@ import { parse as parsePath } from "path";
 import * as slug from "slug";
 
 
-async function makeDirs() {
+export async function _makeDirs() {
     return Promise.all([
         fs.mkdir(DATA_DIR, { recursive: true }, ()=>{}),
         fs.mkdir(PINS_DIR, { recursive:true }, ()=>{}),
@@ -14,7 +14,7 @@ async function makeDirs() {
     ]);
 }
 
-export async function readPin(jsonPath: string): Promise<Pin> {
+export async function _readPin(jsonPath: string): Promise<Pin> {
     return new Promise((resolve, reject) => {
         fs.readFile(jsonPath, (err, data) => { 
             if (err) {    
@@ -27,12 +27,12 @@ export async function readPin(jsonPath: string): Promise<Pin> {
 }
 
 
-function _returnUniquePath(filePath: string, fileBasename: string, index: number=0) {
+export function _returnUniquePath(filePath: string, fileBasename: string, index: number=0) {
     // If file exists
     if (fs.existsSync(filePath)) {
         // Extract 
         const {dir, ext} = pathParse(filePath);
-        filePath = `${dir}/${fileBasename}-${index}${ext}`;
+        filePath = join(dir, `${fileBasename}-${index}${ext}`);
         return _returnUniquePath(filePath, fileBasename, index + 1);
     } else {
         return filePath;
@@ -83,7 +83,7 @@ export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, 
                 const pinSlug = parsePath(pinFilename).name;
                 const pinPath = join(PINS_DIR, pinFilename);
 
-                const pin = await readPin(pinPath);
+                const pin = await _readPin(pinPath);
                 let addPin = false;
                 if (pin.elapsed() && returnElapsedPins) {
                     addPin = true;
@@ -101,4 +101,4 @@ export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, 
     
 }
 
-makeDirs();
+_makeDirs();
