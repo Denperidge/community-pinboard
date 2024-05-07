@@ -23,7 +23,7 @@ beforeEach(() => {
     pin = new Pin(testPinParams);
 })
 
-test("Pad pads when it needs to pad", () => {
+test("Pad adds 0's to single digit numbers, but not to two digit ones", () => {
     expect(pad(2)).toBe("02");
     expect(pad(20)).toBe("20");
     expect(pad(0)).toBe("00");
@@ -38,7 +38,7 @@ test("Pin constructor", () => {
     expect(pin.datetime.toISOString() == testPinParams.datetime);
 });
 
-test("Pin.asObject()", () => {
+test("Pin.asObject() returns the the properties in a JSON object, with datetime as ISO string", () => {
     const expectedProperties = testPinParams;
     expectedProperties.datetime = dayjs(expectedProperties.datetime).toISOString();
     expect(pin.asObject()).toStrictEqual(expectedProperties);
@@ -48,7 +48,7 @@ test("Pin.filename()", () => {
     expect(pin.filename()).toStrictEqual(pin.title + ".json")
 });
 
-test("Pin.elapsed(): true & false", () => {
+test("Pin.elapsed() returns true when pin is ahead of time, false when it's before now", () => {
     // elapsed: true
     expect(pin.elapsed()).toStrictEqual(true);
 
@@ -59,11 +59,11 @@ test("Pin.elapsed(): true & false", () => {
     expect(new Pin(expectedProperties).elapsed()).toStrictEqual(false);
 });
 
-test("Pin._datetimePlusTwoHours", () => {
+test("Pin._datetimePlusTwoHours returns pin.datetime plus two hours", () => {
     expect(pin._datetimePlusTwoHours).toStrictEqual(pinDatetimePlusTwo);
 });
 
-test("Pin.atcb{Start,End}{Date,Time}", () => {
+test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible values", () => {
     function date(dt: string) {
         return dt.split("T")[0];
     }
@@ -78,7 +78,6 @@ test("Pin.atcb{Start,End}{Date,Time}", () => {
         atcbStartTime: time(dayjs(testPinParams.datetime).toISOString()),
         atcbEndTime: time(pinDatetimePlusTwo.toISOString())
     }
-    console.log(expected)
 
     Object.keys(expected).forEach((key: string) => {
         console.log(key)
