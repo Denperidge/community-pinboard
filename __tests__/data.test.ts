@@ -2,19 +2,34 @@ import { tmpdir } from "os";
 import { rmSync, access, existsSync, writeFileSync, readdirSync, readFileSync } from "fs";
 import { join } from "path";
 import { DATA_DIR, DATA_DIR as DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR } from "../app/conf";
-import { _makeDirs, _readPin, _returnUniquePath, _write, uploadPath, writePin } from "../app/data";
+import { _makeDirs, _readPin, _returnUniquePath, _write, saveImage, uploadPath, writePin } from "../app/data";
 import { IPinParameters, Pin } from "../app/Pin";
 
 beforeEach(() => {
     rmSync(DATA_DIR_TESTING, { recursive: true, force: true });
+    _makeDirs();
 });
 
 
-function pathsExist(paths: Array<string>, shouldExist: boolean) {
+function testPathsExist(paths: Array<string>, shouldExist: boolean) {
     paths.forEach((dir) => {
         console.log(`${dir}: ${existsSync(dir)}, should be ${shouldExist}`)
         expect(existsSync(dir)).toBe(shouldExist);
     });
+}
+
+function testFileContents(path: string, expectedContents: string) {
+    expect(readFileSync(path, {encoding: "utf-8"})).toBe(expectedContents);
+}
+
+/**
+ * Custom read Pin from file function for testing
+ * 
+ * @param path 
+ * @returns 
+ */
+function pinFromFile(path: string) {
+    return new Pin(JSON.parse(readFileSync(path, {encoding: "utf-8"})));
 }
 
 const dirs = [ DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR ];
@@ -41,8 +56,6 @@ describe("_returnUniquePath...", () => {
     });
     
     test("if provided filename is not unique, return `${filename}-${nextUnusedIndex}`", () => {
-        _makeDirs();
-    
         writeFileSync(testFilePath, "");
         [0, 1, 2, 3].forEach((index) => {
             writeFileSync(join(DATA_DIR_TESTING, `${testFileBasename}-${index}${testFileExtension}`), "");
@@ -57,15 +70,14 @@ test("uploadPath: returns path with default & provided dir", () => {
 });
 
 test("_makeDirs: {DATA,PINS,UPLOADS}_DIR", () => {
-    pathsExist(dirs, false);
+    rmSync(DATA_DIR_TESTING, { recursive: true, force: true });
+    testPathsExist(dirs, false);
     _makeDirs();
-    pathsExist(dirs, true);
+    testPathsExist(dirs, true);
 });
 
 describe("_readPin...", () => {
     test("reads pin from json file path correctly", async () => {
-        _makeDirs();
-
         writeFileSync(pinPath, JSON.stringify(pinData));
 
         expect(await _readPin(pinPath)).toStrictEqual(new Pin(pinData));
@@ -78,31 +90,14 @@ describe("_readPin...", () => {
     });
 });
 
-
-function testFileContents(path: string, expectedContents: string) {
-    expect(readFileSync(path, {encoding: "utf-8"})).toBe(expectedContents);
-}
-
-/**
- * Custom read Pin from file function for testing
- * 
- * @param path 
- * @returns 
- */
-function pinFromFile(path: string) {
-    return new Pin(JSON.parse(readFileSync(path, {encoding: "utf-8"})));
-}
-
 describe("_write...", () => {
     test("writes correctly and returns resulting path", async () => {
-        _makeDirs();
         const resultFilePath = await _write(testFilePath, "Exact data!");
         testFileContents(resultFilePath, "Exact data!");
         expect(resultFilePath).toBe(testFilePath);
     });
     
     test("does not overwrite by default", async () => {
-        _makeDirs();
         const firstWritePath = await _write(testFilePath, "First file");
         const secondWritePath = await _write(testFilePath, "Second file");
         testFileContents(firstWritePath, "First file");
@@ -110,7 +105,6 @@ describe("_write...", () => {
     });
     
     test("overwrites when specified", async () => {
-        _makeDirs();
         const firstWritePath = await _write(testFilePath, "First file", true);
         testFileContents(firstWritePath, "First file");
         const secondWritePath = await _write(testFilePath, "Second file", true);
@@ -121,7 +115,6 @@ describe("_write...", () => {
     
     
     test("when output path exists & overwrite is false, write to & return unique path", async () => {
-        _makeDirs();
         const firstWritePath = await _write(testFilePath, "First file", false);
         const secondWritePath = await _write(testFilePath, "Second file", false);
         testFileContents(firstWritePath, "First file");
@@ -133,10 +126,7 @@ describe("_write...", () => {
 });
 
 describe("_writePin...", () => {
-    _makeDirs()
-
     test("saves pin correctly", async () => {
-        _makeDirs();
         const pinJsonPath = await writePin(new Pin(pinData), "meow");
 
         const pinFromWritePinJson = pinFromFile(pinJsonPath);
@@ -146,8 +136,6 @@ describe("_writePin...", () => {
     });
 
     test("does not overwrite by default", async () => {
-        _makeDirs();
-
         const pinTwoData = pinData;
         pinTwoData.title += "Different!";
         pinTwoData.thumbnailImageDescr += "Different!";
@@ -166,8 +154,6 @@ describe("_writePin...", () => {
     })
 
     test("does overwrite when specified", async () => {
-        _makeDirs();
-
         const pinOne = new Pin(pinData);
         const pinTwo = new Pin(pinData);
         pinTwo.thumbnail += "different!";
@@ -183,12 +169,36 @@ describe("_writePin...", () => {
     })
 
     test("default dir is PINS_DIR", async () => {
-        _makeDirs();
         expect(((await writePin(new Pin(pinData), "meow")))).toBe(join(PINS_DIR, "meow.json"));
     })
 
     test("dir used when specified", async () => {
-        _makeDirs();
         expect(await writePin(new Pin(pinData), "meow", false, DATA_DIR)).toBe(join(DATA_DIR, "meow.json"));
     })
+});
+
+
+describe("saveImage...", () => {
+    
+    const imageBuffer = readFileSync("public/images/cork.jpg");
+    
+    test("writes to path and returns filename", async () => {
+        const imageFilename = await saveImage("image.jpeg", imageBuffer);
+        expect(readFileSync(join(UPLOADS_DIR, imageFilename))).toStrictEqual(imageBuffer);
+        expect(imageFilename).toBe("image.jpeg");
+    });
+
+    test("uses UPLOADS_DIR by default", async () => {
+        const imagePath = join(UPLOADS_DIR, "image.jpeg");
+        testPathsExist([imagePath], false);
+        await saveImage("image.jpeg", imageBuffer);
+        testPathsExist([imagePath], true);
+    });
+    test("allows a dir to be provided", async () => {
+        const imagePath = join(DATA_DIR_TESTING, "image.jpeg");
+
+        testPathsExist([imagePath], false);
+        await saveImage("image.jpeg", imageBuffer, DATA_DIR_TESTING);
+        testPathsExist([imagePath], true);
+    });
 });
