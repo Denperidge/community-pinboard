@@ -36,7 +36,7 @@ export async function _readPin(jsonPath: string): Promise<Pin> {
     });
 }
 
-async function _write(providedPath: string, data: string|Buffer, overwrite=false) : Promise<string> {
+export async function _write(providedPath: string, data: string|Buffer, overwrite=false) : Promise<string> {
     return new Promise((resolve, reject) => {
         let writePath: string;
         if (overwrite) {
