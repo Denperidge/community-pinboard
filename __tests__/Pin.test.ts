@@ -15,7 +15,7 @@ beforeEach(() => {
     testPinParams = {
         title: "Example",
         description: "Example description!",
-        datetime: "1938-01-02T00:00-05:00",  // Before unix, might not work
+        datetime: "1938-01-02T10:00",
         location: "New York",
         postedBy: "Cat",
         thumbnail: "https://raw.githubusercontent.com/Denperidge/community-pinboard/9399721d5f731706e78b94cbf7ba3c4998af6272/public/images/cork.jpg",
@@ -86,4 +86,22 @@ test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", (
         console.log(key)
         expect(pin[key]).toStrictEqual(expected[key])
     });
+});
+
+test("localDatetimeValue returns this.datetime in the correct format", () => {
+    expect(pin.localdatetimeValue).toBe("1938-01-02T05:00")
+});
+
+describe("thumbnailPath...", () => {
+    test("returns undefined if thumbnail is undefined", () => {
+        const params = testPinParams;
+        params.thumbnail = undefined;
+        expect(new Pin(params).thumbnail).toBeUndefined();
+    }); 
+    test("returns thumbnail if the thumbnail is an url (includes /)", () => {
+        const params = testPinParams;
+        params.thumbnail = undefined;
+        expect(new Pin(params).thumbnail).toBeUndefined();
+    }); 
+    test("returns PUBLIC_UPLOADS_PATH + thumbnail if thumbnail is a filename (does not include /)", () => {}); 
 });
