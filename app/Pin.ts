@@ -1,6 +1,6 @@
 import { EventAttributes } from "ics";
 import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 dayjs.extend(localizedFormat);
 dayjs.locale(WEBSITE_LOCALE)
@@ -17,7 +17,7 @@ export interface IPinParameters {
     description: string;
     location: string;
     postedBy: string;
-    datetime: string|Dayjs;
+    datetime: string|dayjs.Dayjs;
 
     thumbnail?: string;
     thumbnailImageDescr?: string;
@@ -30,7 +30,7 @@ export class Pin {
     title: string;
     description: string;
     location: string;
-    datetime: Dayjs;
+    datetime: dayjs.Dayjs;
     postedBy: string;
     thumbnail?: string;
     thumbnailImageDescr?: string;
@@ -102,7 +102,7 @@ export class Pin {
     }
 
     get atcbEndTime(): string {
-        return this.formatAtcbTime(false);
+        return this.formatAtcbTime(true);
     }
 
     get localdatetimeValue(): string {

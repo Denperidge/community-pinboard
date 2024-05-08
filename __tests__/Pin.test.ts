@@ -5,21 +5,23 @@ import dayjs, { UnitType } from "dayjs";
 import timezone from "dayjs/plugin/timezone"
 
 let pin: Pin;
-const testPinParams: IPinParameters = {
-    title: "Example",
-    description: "Example description!",
-    datetime: "1938-01-02T00:00-05:00",  // Before unix, might not work
-    location: "New York",
-    postedBy: "Cat",
-    thumbnail: "https://raw.githubusercontent.com/Denperidge/community-pinboard/9399721d5f731706e78b94cbf7ba3c4998af6272/public/images/cork.jpg",
-    thumbnailImageDescr: "A square cork texture",
-}
+let testPinParams: IPinParameters;
 const pinStringParams = ["title", "description", "location", "postedBy", "thumbnail", "thumbnailImageDescr"]
 
-const pinDatetimePlusTwo = dayjs(testPinParams.datetime).add(2, "hours");
+let pinDatetimePlusTwo: dayjs.Dayjs;
 const nowPlusTwoHours = dayjs().add(2, "hours");
 
 beforeEach(() => {
+    testPinParams = {
+        title: "Example",
+        description: "Example description!",
+        datetime: "1938-01-02T00:00-05:00",  // Before unix, might not work
+        location: "New York",
+        postedBy: "Cat",
+        thumbnail: "https://raw.githubusercontent.com/Denperidge/community-pinboard/9399721d5f731706e78b94cbf7ba3c4998af6272/public/images/cork.jpg",
+        thumbnailImageDescr: "A square cork texture",
+    }
+    pinDatetimePlusTwo = dayjs(testPinParams.datetime).add(2, "hours");
     pin = new Pin(testPinParams);
 })
 
@@ -60,10 +62,11 @@ test("Pin.elapsed() returns true when pin is ahead of time, false when it's befo
 });
 
 test("Pin._datetimePlusTwoHours returns pin.datetime plus two hours", () => {
+    const pin = new Pin(testPinParams)
     expect(pin._datetimePlusTwoHours).toStrictEqual(pinDatetimePlusTwo);
 });
 
-test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible values", () => {
+test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", () => {
     function date(dt: string) {
         return dt.split("T")[0];
     }
