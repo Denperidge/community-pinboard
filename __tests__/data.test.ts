@@ -1,10 +1,19 @@
 import { tmpdir } from "os";
 import { rmSync, access, existsSync, writeFileSync, readdirSync, readFileSync } from "fs";
 import { join } from "path";
-import { DATA_DIR, DATA_DIR as DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR } from "../app/conf";
+import { DATA_DIR, DATA_DIR as DATA_DIR_TESTING, PINS_DIR, UPLOADS_DIR, WEBSITE_LOCALE, WEBSITE_TIMEZONE } from "../app/conf";
 import { _makeDirs, _readPin, _returnUniquePath, _write, getPins, saveImage, uploadPath, writePin } from "../app/data";
 import { IPinParameters, Pin } from "../app/Pin";
+
 import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import timezone from "dayjs/plugin/timezone";
+
+
+dayjs.extend(localizedFormat);
+dayjs.extend(timezone);
+dayjs.locale(WEBSITE_LOCALE)
+dayjs.tz.setDefault(WEBSITE_TIMEZONE);
 
 beforeEach(() => {
     rmSync(DATA_DIR_TESTING, { recursive: true, force: true });

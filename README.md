@@ -67,10 +67,9 @@ You can now access the server from `localhost:3000`, and any pins & uploads in t
 
 Alternative commands:
 - `yarn dev` for live-reload development
-- `yarn test` to run tests
+- `yarn test` to run tests (note: see [test timezone setting](#test-timezone-setting))
 
-Check the other scripts defined in [package.json](package.json))
-
+Check the other scripts defined in [package.json](package.json)
 
 ### Build and run using Docker
 Recommended for: **development**
@@ -118,6 +117,9 @@ This application was built to replace fragmented organising through multiple Fac
 - **Easy setup & administration:** While you might need some technological know-how to get it Community Pinboard up and running at first, the server side is kept intentionally compact. The dependencies and devDepedencies in [package.json](package.json) should be split to ensure that the production version does not get overbloated. The decision to use a simple file-based hierarchy is also in support of this, so that file-based management can be done in case of mistakes or problems.
 - **Cross-platform:** Everything has an app, but not everything should be. People barely get around to installing a calendar/scheduling app for people they live or work with, let alone this! A simple, clearview website.
 - **Accessible:** Care should be put into the accessibility of the project. Mandatory image descriptions is a measure that - even though it might have to get a toggle down the line - an attempt at a step to making user-generated content more accessible, or at least thought about. Further care should also be put in providing as well-polished accessibility from the get-go.
+
+### Test timezone setting
+Currently the tests should be ran with the [`TZ` environment variable](#environment-variables) set ~~to the same timezone your machine is~~ Europe/Brussels. This is because JavaScript's `new Date().getTimezoneOffset()` (which is used to determine correct resulting hours) does not allow custom timezone insertion.
 
 ### Timezone handling
 #### Use cases

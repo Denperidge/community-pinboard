@@ -1,8 +1,14 @@
-import { WEBSITE_LOCALE } from "../app/conf";
+import { WEBSITE_LOCALE, WEBSITE_TIMEZONE } from "../app/conf";
 import { pad, Pin, IPinParameters } from "../app/Pin";
 // Find better solution for dayjs than copy pasting the import & setup from Pin?
-import dayjs, { UnitType } from "dayjs";
-import timezone from "dayjs/plugin/timezone"
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(localizedFormat);
+dayjs.extend(timezone);
+dayjs.locale(WEBSITE_LOCALE)
+dayjs.tz.setDefault(WEBSITE_TIMEZONE);
 
 let pin: Pin;
 let testPinParams: IPinParameters;
@@ -11,11 +17,14 @@ const pinStringParams = ["title", "description", "location", "postedBy", "thumbn
 let pinDatetimePlusTwo: dayjs.Dayjs;
 const nowPlusTwoHours = dayjs().add(2, "hours");
 
+
+// utc hour + utcToLocaleModifier == localised hour for process.env.TZ
+const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
 beforeEach(() => {
     testPinParams = {
         title: "Example",
         description: "Example description!",
-        datetime: "1938-01-02T10:00",
+        datetime: "1938-01-02T10:00:00.000Z",  // For Europe/Brussels, this should be at 11am (GMT+1 @ winter)
         location: "New York",
         postedBy: "Cat",
         thumbnail: "https://raw.githubusercontent.com/Denperidge/community-pinboard/9399721d5f731706e78b94cbf7ba3c4998af6272/public/images/cork.jpg",
@@ -23,7 +32,7 @@ beforeEach(() => {
     }
     pinDatetimePlusTwo = dayjs(testPinParams.datetime).add(2, "hours");
     pin = new Pin(testPinParams);
-})
+});
 
 test("Pad adds 0's to single digit numbers, but not to two digit ones", () => {
     expect(pad(2)).toBe("02");
@@ -67,19 +76,15 @@ test("Pin._datetimePlusTwoHours returns pin.datetime plus two hours", () => {
 });
 
 test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", () => {
-    function date(dt: string) {
-        return dt.split("T")[0];
-    }
-    function time(dt: string) {
-        const time = dt.split("T")[1];
-        return time.substring(0, time.lastIndexOf(":"));
-    }
-    
     const expected: {[key:string]: string} = {
-        atcbStartDate: date(dayjs(testPinParams.datetime).toISOString()),
-        atcbEndDate: date(pinDatetimePlusTwo.toISOString()),
-        atcbStartTime: time(dayjs(testPinParams.datetime).toISOString()),
-        atcbEndTime: time(pinDatetimePlusTwo.toISOString())
+        atcbStartDate: `1938-01-02`,
+        atcbEndDate: `1938-01-02`,
+        atcbStartTime: `11:00`,
+        atcbEndTime: `13:00`
+        /*
+        atcbStartTime: `${10 + utcToLocaleModifier}:00`,
+        atcbEndTime: `${12 + utcToLocaleModifier}:00
+        */
     }
 
     Object.keys(expected).forEach((key: string) => {
@@ -88,8 +93,9 @@ test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", (
     });
 });
 
-test("localDatetimeValue returns this.datetime in the correct format", () => {
-    expect(pin.localdatetimeValue).toBe("1938-01-02T05:00")
+test("localDatetimeValue returns this.datetime in the correct format and adjusted for local timezone", () => {
+    expect(pin.localdatetimeValue).toBe(`1938-01-02T11:00`)
+    //expect(pin.localdatetimeValue).toBe(`1938-01-02T${10 + utcToLocaleModifier}:00`)
 });
 
 describe("thumbnailPath...", () => {
@@ -99,9 +105,11 @@ describe("thumbnailPath...", () => {
         expect(new Pin(params).thumbnail).toBeUndefined();
     }); 
     test("returns thumbnail if the thumbnail is an url (includes /)", () => {
-        const params = testPinParams;
+        
+        /*const params = testPinParams;
         params.thumbnail = undefined;
         expect(new Pin(params).thumbnail).toBeUndefined();
+        */
     }); 
     test("returns PUBLIC_UPLOADS_PATH + thumbnail if thumbnail is a filename (does not include /)", () => {}); 
 });

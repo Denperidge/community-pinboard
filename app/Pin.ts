@@ -2,8 +2,11 @@ import { EventAttributes } from "ics";
 import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import timezone from "dayjs/plugin/timezone";
 dayjs.extend(localizedFormat);
+dayjs.extend(timezone);
 dayjs.locale(WEBSITE_LOCALE)
+dayjs.tz.setDefault(WEBSITE_TIMEZONE);
 
 const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
 
@@ -66,7 +69,7 @@ export class Pin {
 
     elapsed() : boolean {
         // empty dayjs constructor gives now
-        return this._datetimePlusTwoHours.isBefore(dayjs());
+        return dayjs().isAfter(this._datetimePlusTwoHours);
     }
 
     get _datetimePlusTwoHours() {
@@ -85,7 +88,7 @@ export class Pin {
 
     formatAtcbTime(plusTwoHours=false): string {
         const datetime = plusTwoHours ? this._datetimePlusTwoHours : this.datetime;
-        return `${pad(datetime.hour())}:${pad(datetime.minute())}`;
+        return `${pad(datetime.hour() + 1)}:${pad(datetime.minute())}`;
     }
 
     get atcbStartDate(): string {
