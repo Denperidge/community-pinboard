@@ -3,10 +3,24 @@ import { join, parse as pathParse, format as pathToString, ParsedPath, parse } f
 import { DATA_DIR, PINS_DIR, UPLOADS_DIR } from "./conf";
 import { Pin } from "./Pin";
 import { parse as parsePath } from "path";
-import * as slug from "slug";
 
+export function _returnUniquePath(filePath: string, fileBasename: string, index: number=0) {
+    // If file exists
+    if (fs.existsSync(filePath)) {
+        // Extract 
+        const {dir, ext} = pathParse(filePath);
+        filePath = join(dir, `${fileBasename}-${index}${ext}`);
+        return _returnUniquePath(filePath, fileBasename, index + 1);
+    } else {
+        return filePath;
+    }
+}
 
-async function makeDirs() {
+export function uploadPath(filename: string, path=UPLOADS_DIR) {
+    return join(path, filename);
+}
+
+export async function _makeDirs() {
     return Promise.all([
         fs.mkdir(DATA_DIR, { recursive: true }, ()=>{}),
         fs.mkdir(PINS_DIR, { recursive:true }, ()=>{}),
@@ -14,7 +28,7 @@ async function makeDirs() {
     ]);
 }
 
-export async function readPin(jsonPath: string): Promise<Pin> {
+export async function _readPin(jsonPath: string): Promise<Pin> {
     return new Promise((resolve, reject) => {
         fs.readFile(jsonPath, (err, data) => { 
             if (err) {    
@@ -26,20 +40,7 @@ export async function readPin(jsonPath: string): Promise<Pin> {
     });
 }
 
-
-function _returnUniquePath(filePath: string, fileBasename: string, index: number=0) {
-    // If file exists
-    if (fs.existsSync(filePath)) {
-        // Extract 
-        const {dir, ext} = pathParse(filePath);
-        filePath = `${dir}/${fileBasename}-${index}${ext}`;
-        return _returnUniquePath(filePath, fileBasename, index + 1);
-    } else {
-        return filePath;
-    }
-}
-
-async function _write(providedPath: string, data: string|Buffer, overwrite=false) : Promise<string> {
+export async function _write(providedPath: string, data: string|Buffer, overwrite=false) : Promise<string> {
     return new Promise((resolve, reject) => {
         let writePath: string;
         if (overwrite) {
@@ -53,12 +54,7 @@ async function _write(providedPath: string, data: string|Buffer, overwrite=false
 }
 
 export async function writePin(pin: Pin, slug: string, overwrite=false, dir=PINS_DIR): Promise<string> {
-    return _write(join(dir, slug + ".json"), pin.toString(), overwrite);
-}
-
-
-export function uploadPath(filename: string, path=UPLOADS_DIR) {
-    return path + filename;
+    return _write(join(dir, slug + ".json"), JSON.stringify(pin.asObject()), overwrite);
 }
 
 export async function saveImage(filename: string, buffer: Buffer, dir=UPLOADS_DIR): Promise<string> {
@@ -66,8 +62,8 @@ export async function saveImage(filename: string, buffer: Buffer, dir=UPLOADS_DI
     return pathParse(await _write(dest, buffer, false)).base;
 }
 
-export async function getPins(returnElapsedPins: boolean, returnUpcomingPins: boolean, returnArray: true): Promise<Array<Pin>>
-export async function getPins(returnElapsedPins: boolean, returnUpcomingPins: boolean, returnArray: false): Promise<{[slug: string]: Pin}>
+export async function getPins(returnElapsedPins: boolean, returnUpcomingPins: boolean, returnArray: true, pinsDir?: string): Promise<Array<Pin>>
+export async function getPins(returnElapsedPins: boolean, returnUpcomingPins: boolean, returnArray: false, pinsDir?: string): Promise<{[slug: string]: Pin}>
 export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, returnArray=true, pinsDir=PINS_DIR): Promise<Array<Pin>|{[slug: string]: Pin}> {
     return new Promise((resolve, reject) => {
         fs.readdir(pinsDir, async (err, pinFiles) => {
@@ -83,7 +79,7 @@ export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, 
                 const pinSlug = parsePath(pinFilename).name;
                 const pinPath = join(PINS_DIR, pinFilename);
 
-                const pin = await readPin(pinPath);
+                const pin = await _readPin(pinPath);
                 let addPin = false;
                 if (pin.elapsed() && returnElapsedPins) {
                     addPin = true;
@@ -101,4 +97,4 @@ export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, 
     
 }
 
-makeDirs();
+_makeDirs();

@@ -24,7 +24,7 @@ mixin pinPreview(pin)
       ul
         li.
           #[+icon("time")]
-          #{pin.date}
+          #{pin.humanReadableDate}
         li.
           #[+icon("suitcase")]
           #{pin.location}
@@ -44,7 +44,7 @@ mixin pinView(pin)
     h4 #[+icon("suitcase")] Location:
     span=pin.location 
     h4 #[+icon("time")] Time/day:
-    span=pin.timeAndDay
+    span=pin.humanReadableDatetime
     h4 #[+icon("celeste")] Posted by:
     span=pin.postedBy
 

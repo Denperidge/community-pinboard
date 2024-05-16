@@ -114,6 +114,28 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
   // What do i do here !!!
   // bc I can put it in the writePin too and let that make a slug
 
+  const datetimelocalValues: {[key: string]: number} = {};
+  const results = 
+    /(?<year>\d{4})-(?<month>\d{1,2})-(?<date>\d{1,2})T(?<hours>\d{1,2}):(?<minutes>\d{1,2})/
+    .exec(pinData.datetimelocalValue);
+
+  if (!results) {
+    throw new Error(`Could not parse datetimelocalValue for PinUTCDatetime! (Provided value: '${pinData.datetimelocalValue}')`);
+  }
+  if (!results.groups) {
+    throw new Error(`Could not parse GROUPS from PinUTCDatetime! (Provided value: '${pinData.datetimelocalValue}')`);
+  }
+  const groups : {[key: string]: string} = results.groups;
+  Object.keys(groups).forEach((key)=> {
+    datetimelocalValues[key] = parseInt(groups[key]);
+  });
+  pinData.datetime = new Date(
+    Date.UTC(
+      datetimelocalValues.year, 
+      (datetimelocalValues.month - 1), 
+      datetimelocalValues.date, 
+      datetimelocalValues.hours, 
+      datetimelocalValues.minutes));
 
   // Save pin
   data.writePin(new Pin(pinData as IPinParameters), pinSlug, overwrite);
