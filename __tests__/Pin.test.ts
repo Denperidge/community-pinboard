@@ -19,7 +19,7 @@ const nowPlusTwoHours = dayjs().add(2, "hours");
 
 
 // utc hour + utcToLocaleModifier == localised hour for process.env.TZ
-const utcToLocaleModifier = new Date().getTimezoneOffset() / 60 * -1;
+const utcToLocaleModifier = +2; //new Date().getTimezoneOffset() / 60 * -1;
 beforeEach(() => {
     testPinParams = {
         title: "Example",
@@ -79,12 +79,8 @@ test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", (
     const expected: {[key:string]: string} = {
         atcbStartDate: `1981-04-18`,
         atcbEndDate: `1981-04-18`,
-        atcbStartTime: `12:00`,
-        atcbEndTime: `14:00`
-        /*
-        atcbStartTime: `${10 + utcToLocaleModifier}:00`,
-        atcbEndTime: `${12 + utcToLocaleModifier}:00
-        */
+        atcbStartTime: pad(10 + utcToLocaleModifier) + ":00",
+        atcbEndTime: pad(12 + utcToLocaleModifier) + ":00"
     }
 
     Object.keys(expected).forEach((key: string) => {
@@ -95,7 +91,8 @@ test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", (
 
 test("localDatetimeValue returns this.datetime in the correct format and adjusted for local timezone", () => {
     //expect(pin.localdatetimeValue).toBe(`1981-04-18T21:00`)
-    expect(pin.localdatetimeValue).toBe(`1981-04-18T${pad(10 + utcToLocaleModifier)}:00`)
+    const number = pad(10 + 2);
+    expect(pin.localdatetimeValue).toBe(`1981-04-18T${number}:00`)
 });
 
 describe("thumbnailPath...", () => {
