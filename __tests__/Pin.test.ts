@@ -114,9 +114,9 @@ describe("thumbnailPath...", () => {
 
 describe("Human readable date(time)s...", () => {
     test("humanReadableDate returns the correct date in the correct format", () => {
-        expect(pin.humanReadableDate).toBe("April 18, 1981");
+        expect(pin.humanReadableDate).toBe("18 april 1981");
     });
     test("humanReadableDatetime returns the correct datetime in the correct format", () => {
-        expect(pin.humanReadableDatetime).toBe("April 18, 1981 12:00 PM");
+        expect(pin.humanReadableDatetime).toBe("18 april 1981 12:00");
     });
 });
