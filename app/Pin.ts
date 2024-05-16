@@ -125,11 +125,11 @@ export class Pin {
         }
     }
 
-    get date() {
+    get humanReadableDate() {
         return this.datetime.format("LL");
     }
 
-    get timeAndDay() {
+    get humanReadableDatetime() {
         return this.datetime.format("LLL");//this.date + `, ${this.datetime.hours + utcToLocaleModifier}:${this.datetime.minutes}` 
         //return Intl.DateTimeFormat(WEBSITE_LOCALE, {dateStyle: "short", timeStyle: "short"}).format(this.datetime.toDate().getTime());
     }

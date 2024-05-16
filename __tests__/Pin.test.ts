@@ -1,4 +1,4 @@
-import { WEBSITE_LOCALE, WEBSITE_TIMEZONE } from "../app/conf";
+import { WEBSITE_LOCALE, WEBSITE_TIMEZONE, PUBLIC_UPLOADS_PATH } from "../app/conf";
 import { pad, Pin, IPinParameters } from "../app/Pin";
 // Find better solution for dayjs than copy pasting the import & setup from Pin?
 import dayjs from "dayjs";
@@ -98,14 +98,25 @@ describe("thumbnailPath...", () => {
     test("returns undefined if thumbnail is undefined", () => {
         const params = testPinParams;
         params.thumbnail = undefined;
-        expect(new Pin(params).thumbnail).toBeUndefined();
+        expect(new Pin(params).thumbnailPath).toBeUndefined();
     }); 
     test("returns thumbnail if the thumbnail is an url (includes /)", () => {
-        
-        /*const params = testPinParams;
-        params.thumbnail = undefined;
-        expect(new Pin(params).thumbnail).toBeUndefined();
-        */
+        const params = testPinParams;
+        params.thumbnail = "https://raw.githubusercontent.com/Denperidge/community-pinboard/9399721d5f731706e78b94cbf7ba3c4998af6272/public/images/cork.jpg";
+        expect(new Pin(params).thumbnailPath).toBe(params.thumbnail);
     }); 
-    test("returns PUBLIC_UPLOADS_PATH + thumbnail if thumbnail is a filename (does not include /)", () => {}); 
+    test("returns PUBLIC_UPLOADS_PATH + thumbnail if thumbnail is a filename (does not include /)", () => {
+        const params = testPinParams;
+        params.thumbnail = "cork.jpg";
+        expect(new Pin(params).thumbnailPath).toBe(PUBLIC_UPLOADS_PATH + "cork.jpg");
+    });
+});
+
+describe("Human readable date(time)s...", () => {
+    test("humanReadableDate returns the correct date in the correct format", () => {
+        expect(pin.humanReadableDate).toBe("April 18, 1981");
+    });
+    test("humanReadableDatetime returns the correct datetime in the correct format", () => {
+        expect(pin.humanReadableDatetime).toBe("April 18, 1981 12:00 PM");
+    });
 });
