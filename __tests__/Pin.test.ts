@@ -84,7 +84,6 @@ test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", (
     }
 
     Object.keys(expected).forEach((key: string) => {
-        console.log(key)
         expect(pin[key]).toStrictEqual(expected[key])
     });
 });

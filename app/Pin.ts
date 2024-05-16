@@ -92,8 +92,6 @@ export class Pin {
     }
 
     get atcbStartDate(): string {
-        console.log(this.datetime)
-        
         return this.formatAtcbDate();
     }
     get atcbEndDate(): string {

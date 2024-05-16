@@ -78,10 +78,10 @@ test("uploadPath: returns path with default & provided dir", () => {
     expect(uploadPath("meow.txt", PINS_DIR)).toBe(join(PINS_DIR, "meow.txt"));
 });
 
-test("_makeDirs: {DATA,PINS,UPLOADS}_DIR", () => {
+test("_makeDirs: {DATA,PINS,UPLOADS}_DIR", async () => {
     rmSync(DATA_DIR_TESTING, { recursive: true, force: true });
     testPathsExist(dirs, false);
-    _makeDirs();
+    await _makeDirs();
     testPathsExist(dirs, true);
 });
 
