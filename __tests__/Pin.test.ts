@@ -1,4 +1,4 @@
-import { WEBSITE_LOCALE, WEBSITE_TIMEZONE, PUBLIC_UPLOADS_PATH } from "../app/conf";
+import { WEBSITE_LOCALE, WEBSITE_TIMEZONE, PUBLIC_UPLOADS_PATH, HOST_DOMAIN } from "../app/conf";
 import { pad, Pin, IPinParameters } from "../app/Pin";
 // Find better solution for dayjs than copy pasting the import & setup from Pin?
 import dayjs from "dayjs";
@@ -120,3 +120,16 @@ describe("Human readable date(time)s...", () => {
         expect(pin.humanReadableDatetime).toBe("18 april 1981 12:00");
     });
 });
+
+test("getIcsAttributes returns valid ics EventAttributes", () => {
+    expect(pin.getIcsAttributes()).toStrictEqual({
+        title: testPinParams.title,
+        description: testPinParams.description,
+        location: testPinParams.location,
+        startInputType: "local",
+        start: [
+            1981, 4, 18, 12, 0
+        ],
+        url: "https://" + HOST_DOMAIN
+    });
+})
