@@ -31,7 +31,7 @@ const saveOrEditPinMiddleware = [
     .withMessage("The location needs to be filled in")
     .isLength({max: PIN_MAXLENGTHS.location})
     .withMessage(`The location has to be ${PIN_MAXLENGTHS.location} characters or shorter`),
-  check("datetimelocalValue")
+  check("datetime")
     .notEmpty()
     .withMessage("A date/time has to be provided")
     // TOdo: regex based date format?
@@ -114,6 +114,7 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
   // What do i do here !!!
   // bc I can put it in the writePin too and let that make a slug
 
+  /*
   const datetimelocalValues: {[key: string]: number} = {};
   const results = 
     /(?<year>\d{4})-(?<month>\d{1,2})-(?<date>\d{1,2})T(?<hours>\d{1,2}):(?<minutes>\d{1,2})/
@@ -136,6 +137,7 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
       datetimelocalValues.date, 
       datetimelocalValues.hours, 
       datetimelocalValues.minutes));
+  */
 
   // Save pin
   data.writePin(new Pin(pinData as IPinParameters), pinSlug, overwrite);
