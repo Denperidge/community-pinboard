@@ -24,7 +24,7 @@ beforeEach(() => {
     testPinParams = {
         title: "Example",
         description: "Example description!",
-        datetime: "1938-01-02T10:00:00.000Z",  // For Europe/Brussels, this should be at 11am (GMT+1 @ winter)
+        datetime: "1981-04-18T10:00:00.000Z",  // For Europe/Brussels, this should be at 11am (GMT+1 @ winter)
         location: "New York",
         postedBy: "Cat",
         thumbnail: "https://raw.githubusercontent.com/Denperidge/community-pinboard/9399721d5f731706e78b94cbf7ba3c4998af6272/public/images/cork.jpg",
@@ -77,10 +77,10 @@ test("Pin._datetimePlusTwoHours returns pin.datetime plus two hours", () => {
 
 test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", () => {
     const expected: {[key:string]: string} = {
-        atcbStartDate: `1938-01-02`,
-        atcbEndDate: `1938-01-02`,
-        atcbStartTime: `11:00`,
-        atcbEndTime: `13:00`
+        atcbStartDate: `1981-04-18`,
+        atcbEndDate: `1981-04-18`,
+        atcbStartTime: `12:00`,
+        atcbEndTime: `14:00`
         /*
         atcbStartTime: `${10 + utcToLocaleModifier}:00`,
         atcbEndTime: `${12 + utcToLocaleModifier}:00
@@ -94,8 +94,8 @@ test("Pin.atcb{Start,End}{Date,Time} return atcb-compatible & correct values", (
 });
 
 test("localDatetimeValue returns this.datetime in the correct format and adjusted for local timezone", () => {
-    expect(pin.localdatetimeValue).toBe(`1938-01-02T11:00`)
-    //expect(pin.localdatetimeValue).toBe(`1938-01-02T${10 + utcToLocaleModifier}:00`)
+    //expect(pin.localdatetimeValue).toBe(`1981-04-18T21:00`)
+    expect(pin.localdatetimeValue).toBe(`1981-04-18T${pad(10 + utcToLocaleModifier)}:00`)
 });
 
 describe("thumbnailPath...", () => {

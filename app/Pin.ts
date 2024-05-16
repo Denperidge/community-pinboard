@@ -88,7 +88,7 @@ export class Pin {
 
     formatAtcbTime(plusTwoHours=false): string {
         const datetime = plusTwoHours ? this._datetimePlusTwoHours : this.datetime;
-        return `${pad(datetime.hour() + 1)}:${pad(datetime.minute())}`;
+        return `${pad(datetime.hour())}:${pad(datetime.minute())}`;
     }
 
     get atcbStartDate(): string {
