@@ -121,6 +121,9 @@ This application was built to replace fragmented organising through multiple Fac
 - **Cross-platform:** Everything has an app, but not everything should be. People barely get around to installing a calendar/scheduling app for people they live or work with, let alone this! A simple, clearview website.
 - **Accessible:** Care should be put into the accessibility of the project. Mandatory image descriptions is a measure that - even though it might have to get a toggle down the line - an attempt at a step to making user-generated content more accessible, or at least thought about. Further care should also be put in providing as well-polished accessibility from the get-go.
 
+### Randomised express-session secret
+In [app.ts](app.ts), the secret is randomly generated on startup. This is to minimize configuration by not requiring a custom string to be set, whilst ensuring the string is secure, whilst not having any noticeable impact on the user experience (as the logins are meant to be temporary).
+
 ### Test timezone setting
 Currently the tests should be ran with the [`TZ` environment variable](#environment-variables) set ~~to the same timezone your machine is~~ Europe/Brussels. This is because JavaScript's `new Date().getTimezoneOffset()` (which is used to determine correct resulting hours) does not allow custom timezone insertion.
 
