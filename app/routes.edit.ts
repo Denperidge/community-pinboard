@@ -6,7 +6,7 @@ import * as data from "./data";
 import { IPinParameters, Pin } from "./Pin";
 import multer from "multer";
 import slug from "slug";
-import { editForms } from "./form";
+import { editForms, loginForm } from "./form";
 import { rateLimit } from 'express-rate-limit';
 
 /** Express Router, allows assigning routes*/ 
@@ -24,9 +24,28 @@ const limiter = rateLimit({
   legacyHeaders: false
 });
 
+function auth(req: express.Request, res: express.Response, next: express.NextFunction) {
+  console.log("Auth!")
+  console.log(LOGINS)
+  if (req.session !== null) {
+    const providedLogin = req.session.login;
+    console.log(req.session)
+    if (providedLogin !== undefined) {
+      if (LOGINS.includes(providedLogin)) {
+        console.log("LOGIN")
+        next();
+        return;
+      }
+    }
+  }
+  res.redirect("/login")
+  res.end();
+}
+
 /** Routes to create or edit pins */
 const saveOrEditPinMiddleware = [
   limiter,
+  auth,
   // Enable multer for a singe file upload
   upload.single("thumbnailFile"),
   check("title")
@@ -161,6 +180,20 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
   res.redirect("/");
 }
 
+router.get("/login", async function(req: express.Request, res: express.Response) {
+  res.render("login", {
+    loginForm: loginForm
+  });
+});
+
+router.post("/login", [limiter], async function(req: express.Request, res: express.Response) {
+  
+  req.session.login = req.body.password;
+  req.session.save(() => {
+    res.redirect("/edit");
+  });
+});
+
 router.post(
   "/pin",
   saveOrEditPinMiddleware,
@@ -169,7 +202,7 @@ router.post(
   }
 );
 
-router.get("/edit", async function(req, res, next) {
+router.get("/edit", [auth], async function(req: express.Request, res: express.Response) {
   const errorParams = req.query;
   const pinDict = await data.getPins(false, true, false);
   res.render("edit", {

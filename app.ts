@@ -18,7 +18,7 @@ var editRouter = require('./app/routes.edit');
 
 
 declare module "express-session" {
-  interface SessionData {
+  export interface SessionData {
     login: string
   }
 }

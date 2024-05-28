@@ -1,0 +1,13 @@
+extends layout
+
+include _form.pug
+
+block content
+  header
+    h1=WEBSITE_TITLE
+  main#board
+    
+    form(method="POST")
+        label(for="password") Enter password:
+        input(name="password" type="password" placeholder="Password...")
+        input(type="submit" value="Login")

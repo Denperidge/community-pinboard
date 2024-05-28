@@ -39,6 +39,19 @@ export class TextInput extends Input {
     }
 }
 
+export class PasswordInput extends Input {
+    maxlength: number;
+    placeholder?: string;
+    value?: string;
+
+    constructor(options: IInputOptions & { placeholder?: string, maxLength: number, value?: string }) {
+        super("password", options);
+        this.maxlength = options.maxLength;
+        this.placeholder = options.placeholder;
+        this.value = options.value;
+    }
+}
+
 export class DatetimeInput extends Input {
     value?: string;
 
@@ -161,6 +174,16 @@ function pinForm(
         ),
     }
 }
+
+export const loginForm = {
+    login: new PasswordInput({
+        name: "password",
+        required: true,
+        maxLength: 300,
+        placeholder: "Password",
+        labelText: "Enter password:"
+    })
+};
 
 
 export function indexForm(req: express.Request) {
