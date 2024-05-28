@@ -43,9 +43,8 @@ function auth(req: express.Request, res: express.Response, next: express.NextFun
 }
 
 /** Routes to create or edit pins */
-const saveOrEditPinMiddleware = [
+const savePinMiddleware = [
   limiter,
-  auth,
   // Enable multer for a singe file upload
   upload.single("thumbnailFile"),
   check("title")
@@ -76,6 +75,12 @@ const saveOrEditPinMiddleware = [
   check("thumbnailFile").optional(),
   check("thumbnailImageDescr").optional()
 ]
+// Copy array values (but not reference) using slice
+const editPinMiddleware = savePinMiddleware.slice();
+// Insert auth
+editPinMiddleware.splice(1, 0, auth);
+
+
 async function saveOrEditPin(req: express.Request, res: express.Response, writeToSpecificSlug?:string) {
     /** All errors caught by Express-Validator */
     const errors = validationResult(req);
@@ -193,7 +198,7 @@ router.post("/login", [limiter], async function(req: express.Request, res: expre
 
 router.post(
   "/pin",
-  saveOrEditPinMiddleware,
+  savePinMiddleware,
   async function(req: express.Request, res: express.Response, next: express.NextFunction) {
     saveOrEditPin(req, res);
   }
@@ -217,7 +222,7 @@ router.get("/edit", [auth], async function(req: express.Request, res: express.Re
 
 router.post(
   "/pin/:slug",
-  saveOrEditPinMiddleware,
+  editPinMiddleware,
   async function(req: express.Request, res: express.Response, next: express.NextFunction) {
     saveOrEditPin(req, res, req.params.slug);
   }
