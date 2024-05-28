@@ -6,9 +6,8 @@ import { Request, Response, NextFunction } from "express";
 import { HOST_DOMAIN } from "./app/conf";
 
 const helmet = require("helmet");
-const session = require("express-session");
+import session from "express-session";
 const MemoryStore = require("memorystore")(session);
-
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -17,6 +16,12 @@ var sassMiddleware = require("node-sass-middleware");
 var getRouter = require('./app/routes.get');
 var editRouter = require('./app/routes.edit');
 
+
+declare module "express-session" {
+  interface SessionData {
+    login: string
+  }
+}
 
 var app = express();
 
@@ -36,7 +41,14 @@ app.disable("x-powered-by");
 
 app.use(session({
   // Set cookie lifespan & enable MemoryStore
-  cookie: { maxAge: 3600000 },  // 1 hour
+  cookie: {
+    maxAge: 3600000,
+
+    // Serve only on HOST_DOMAIN & http (not js)
+    domain: HOST_DOMAIN,
+    httpOnly: true,
+
+   },  // 1 hour
   store: new MemoryStore({
     checkPeriod: 3600000
   }),
@@ -44,10 +56,6 @@ app.use(session({
   // Non-standard name, randomised secret
   name: "SessionID",
   secret: randomBytes(64).toString("hex"),  // See README.md - Explanation
-  
-  // Serve only on HOST_DOMAIN & http (not js)
-  domain: HOST_DOMAIN,
-  httpOnly: true,
 
   // Recommended in default setup for MemoryStore
   resave: false,

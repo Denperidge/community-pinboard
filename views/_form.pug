@@ -12,7 +12,6 @@ mixin input(conf)
     if conf.icon
       +icon(conf.icon)
     span=conf.labelText
-  - console.log(conf)
   input(
     accept=(inputType == "file") ? "image/*" : undefined,
     aria-describedby=errorHappened ? `${conf.id}-error` : null

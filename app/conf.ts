@@ -64,3 +64,5 @@ export const MAX_UPLOAD_MB = envOrDefault("MAX_UPLOAD_MB") as number;
 export const PINS_DIR = join(DATA_DIR, "pins/");
 export const UPLOADS_DIR = join(DATA_DIR, "uploads/");
 export const PUBLIC_UPLOADS_PATH = "/uploads/";
+
+export const LOGINS = process.env.ADMIN_PASSWORDS?.split("|") || [];

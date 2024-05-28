@@ -1,7 +1,7 @@
 import * as express from "express";
 import { check, validationResult, matchedData, FieldValidationError } from "express-validator";
 
-import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, PIN_MAXLENGTHS } from "./conf";
+import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, PIN_MAXLENGTHS, LOGINS } from "./conf";
 import * as data from "./data";
 import { IPinParameters, Pin } from "./Pin";
 import multer from "multer";

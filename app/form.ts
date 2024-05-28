@@ -94,9 +94,6 @@ function pinForm(
     idSuffix="",
     values: {[name: string]: string}={},
 ) {
-    console.log("---")
-    console.log(values)
-    console.log(values.title)
     return {
         title: new TextInput({
             name: "title",
