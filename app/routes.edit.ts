@@ -186,12 +186,9 @@ router.get("/login", async function(req: express.Request, res: express.Response)
   });
 });
 
-router.post("/login", [limiter], async function(req: express.Request, res: express.Response) {
-  
+router.post("/login", [limiter], async function(req: express.Request, res: express.Response) {  
   req.session.login = req.body.password;
-  req.session.save(() => {
-    res.redirect("/edit");
-  });
+  res.redirect("/edit");
 });
 
 router.post(

@@ -45,7 +45,7 @@ app.use(session({
     maxAge: 3600000,
 
     // Serve only on HOST_DOMAIN & http (not js)
-    domain: HOST_DOMAIN,
+    //domain: HOST_DOMAIN,
     httpOnly: true,
 
    },  // 1 hour
