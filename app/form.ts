@@ -63,7 +63,11 @@ function FullFileInput(
     placeholderUrl: string,
 
     labelTextImageDescr: string,
-    placeholderImageDescr: string) {
+    placeholderImageDescr: string,
+    values?: {
+        url?: string,
+        imageDescription?: string
+    }) {
     return {
         inputField: true,
         file: new FileInput({
@@ -78,14 +82,16 @@ function FullFileInput(
             labelText: labelTextUrl,
             maxLength: PIN_MAXLENGTHS.thumbnailUrl,
             placeholder: placeholderUrl,
-            labelSrOnly: true
+            labelSrOnly: true,
+            value: values ? values.url : undefined
         }),
         imageDescription: new TextInput({
             name: name + "ImageDescr",
             required: false,
             labelText: labelTextImageDescr,
             placeholder: placeholderImageDescr,
-            maxLength: 300
+            maxLength: 300,
+            value: values ? values.imageDescription : undefined
         })
     }
 }
@@ -147,7 +153,11 @@ function pinForm(
             "thumbnail", 
             "Thumbnail (file):", 
             "Thumbnail (upload):", "https://example.com/image.png",
-            "Thumbnail alt text:", "A black-red flyer for a Newgrounds Death Rugby concert. It reads 24/11, 19:30"
+            "Thumbnail alt text:", "A black-red flyer for a Newgrounds Death Rugby concert. It reads 24/11, 19:30",
+            {
+                imageDescription: values.thumbnailImageDescr,
+                url: values.thumbnailUrl
+            }
         ),
     }
 }
