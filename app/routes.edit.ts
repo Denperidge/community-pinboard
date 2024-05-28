@@ -5,9 +5,9 @@ import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, H
 import * as data from "./data";
 import { IPinParameters, Pin } from "./Pin";
 import multer from "multer";
-import { createEvents } from "ics";
 import slug from "slug";
 import { editForms } from "./form";
+import { rateLimit } from 'express-rate-limit';
 
 /** Express Router, allows assigning routes*/ 
 const router = express.Router();
@@ -15,8 +15,18 @@ const router = express.Router();
 const upload: ReturnType<typeof multer> = multer({storage: multer.memoryStorage()});
 // See https://github.com/DefinitelyTyped/DefinitelyTyped/issues/41970
 
+
+// https://www.npmjs.com/package/express-rate-limit#usage
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15m
+  limit: 25,  // 100 req / window
+  standardHeaders: "draft-7",
+  legacyHeaders: false
+});
+
 /** Routes to create or edit pins */
 const saveOrEditPinMiddleware = [
+  limiter,
   // Enable multer for a singe file upload
   upload.single("thumbnailFile"),
   check("title")
@@ -53,12 +63,12 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
     /** The error field keys & messages to display ot the user */
     const returnErrors: {[fieldId:string]: string} = {};
     /** Express-Validator processed data */
-  const pinData = matchedData(req);
+  const pinData: IPinParameters = matchedData(req) as IPinParameters;
 
   // If any Express-Validator errors have been detected, add to returnErrors variable
   if (!errors.isEmpty()) {
     (errors.array() as FieldValidationError[]).forEach((err: FieldValidationError) => {
-      returnErrors[err.path] = `${err.msg} (provided value: "${err.value}")`;
+      returnErrors[err.path + "Err"] = `${err.msg} (provided value: "${err.value}")`;
     });
   }
 
@@ -68,18 +78,24 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
     // For MB: amountInMegabytes * 1024 * 1024
     const MBLimit = 10;
     if (req.file.buffer.byteLength >= MBLimit * 1024 * 1024) {
-      returnErrors["thumbnailFile"] = `Provided thumbnail is larger than ${MBLimit}MB. Please compress it, or try another image`;
+      returnErrors["thumbnailFileErr"] = `Provided thumbnail is larger than ${MBLimit}MB. Please compress it, or try another image`;
     }
 
     if (!pinData.thumbnailImageDescr) {
-      returnErrors["thumbnailImageDescr"] = "Please enter an image description/transcription for the thumbnail";
+      returnErrors["thumbnailImageDescrErr"] = "Please enter an image description/transcription for the thumbnail";
     }
   }
 
   // If any errors are added to returnErrors, don't save the pin. Instead, render the index page with returnErrors
   if (Object.keys(returnErrors).length != 0) {
-    const par = new URLSearchParams(returnErrors);
-    res.redirect(`/?${par.toString()}#${Array.from(par.keys())[0]}`);
+    const params = new URLSearchParams({...pinData, ...returnErrors});
+    
+    /**
+     * /?
+     * title=Meow,thumbnailImageDescrErr=Please enter
+     * #thumbnailImageDescr
+     */
+    res.redirect(`/?${params.toString()}#${Object.keys(returnErrors)[0]}`);
     return;
   }
 

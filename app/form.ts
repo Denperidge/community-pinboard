@@ -1,5 +1,6 @@
-import { Pin } from "./Pin";
+import { IPinParameters, Pin } from "./Pin";
 import { MAX_UPLOAD_MB as MAX_UPLOAD_MB, PIN_MAXLENGTHS } from "./conf";
+import * as express from "express";
 
 interface IInputOptions {name: string, required: boolean, labelText?: string, icon?: string, id?:string, labelSrOnly?: boolean}
 
@@ -93,6 +94,9 @@ function pinForm(
     idSuffix="",
     values: {[name: string]: string}={},
 ) {
+    console.log("---")
+    console.log(values)
+    console.log(values.title)
     return {
         title: new TextInput({
             name: "title",
@@ -151,7 +155,10 @@ function pinForm(
     }
 }
 
-export const indexForm = pinForm();
+
+export function indexForm(req: express.Request) {
+    return pinForm(undefined, req.query as IPinParameters);
+}
 
 
 export function editForms(pins: {[slug: string]: Pin}) {

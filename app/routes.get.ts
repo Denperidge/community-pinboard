@@ -29,7 +29,7 @@ async function renderIndex(req: express.Request, res: express.Response, returnEl
     HOST_DOMAIN: HOST_DOMAIN,
     WEBSITE_TIMEZONE: WEBSITE_TIMEZONE,
     PIN_MAXLENGTHS: PIN_MAXLENGTHS,
-    form: indexForm,
+    form: indexForm(req),
     errors: errorParams,
     pinArray: await data.getPins(returnElapsedPins, returnUpcomingPins, true)
   });

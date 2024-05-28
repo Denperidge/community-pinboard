@@ -3,7 +3,7 @@ mixin input(conf)
   - let role = "";
 
   if errors
-    if errors[conf.id]
+    if errors[conf.id+"Err"]
       - errorHappened = true;
     
   label(for=conf.id role=errorHappened ? "alert" : "" class=conf.labelSrOnly ? "sr-only" : "")
@@ -12,12 +12,14 @@ mixin input(conf)
     if conf.icon
       +icon(conf.icon)
     span=conf.labelText
+  - console.log(conf)
   input(
     accept=(inputType == "file") ? "image/*" : undefined,
     aria-describedby=errorHappened ? `${conf.id}-error` : null
-    aria-invalid=errorHappened)&attributes(conf)
+    aria-invalid=errorHappened
+    value=conf.value)&attributes(conf)
   if errorHappened
-    p.error(id=`${conf.id}-error` role="alert")=errors[conf.id]
+    p.error(id=`${conf.id}-error` role="alert")=errors[conf.id+"Err"]
 
 mixin fileInput(conf)
   - const id = conf.id + "Span";

@@ -4,7 +4,6 @@ var createError = require('http-errors');
 var express = require('express');
 import { Request, Response, NextFunction } from "express";
 import { HOST_DOMAIN } from "./app/conf";
-import { rateLimit } from 'express-rate-limit';
 
 const helmet = require("helmet");
 const session = require("express-session");
@@ -57,15 +56,6 @@ app.use(session({
   saveUninitialized: false, 
 }));
 
-/*
-// https://www.npmjs.com/package/express-rate-limit#usage
-app.use(rateLimit({
-  windowMs: 15 * 60 * 1000,  // 15m
-  limit: 100,  // 100 req / window
-  standardHeaders: "draft-7",
-  legacyHeaders: false
-}));
-*/
 
 app.use(sassMiddleware({
   src: path.join(__dirname, "styles"),
