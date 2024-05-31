@@ -14,7 +14,7 @@ export const _DEFAULTS: {[key: string]: string|number} = {
     WEBSITE_TITLE: "Community Pinboard!",
     WEBSITE_DESCRIPTION: "A public event pinboard for your local community!",
     TZ: "Europe/Brussels",
-    WEBSITE_LOCALE: "nl-BE",    
+    WEBSITE_LOCALE: "nl-be",    
     MAX_TITLE: 80,
     MAX_DESCRIPTION: 400,
     MAX_LOCATION: 150,

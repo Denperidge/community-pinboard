@@ -187,7 +187,7 @@ TODO
 | DATA_DIR | Where to store data uploaded by users | `data/` | `/app/data/` |
 | WEBSITE_TITLE | The title for your website, displayed in HTML, OpenGraph, [views/index](views/index.pug) h1 | `Community Pinboard!` | not set |
 | WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
-| **\*** WEBSITE_LOCALE | The locale for your website. This will determine in what format datetimes are displayed in the rendered HTML/within [app/Pin.ts](app/Pin.ts) | `en-BE` | not set |
+| **\*** WEBSITE_LOCALE | The locale for your website. This will determine in what format datetimes are displayed in the rendered HTML/within [app/Pin.ts](app/Pin.ts) | `nl-be` | not set |
 | **\*** TZ | The timezone in `Area/City` notation (see `TZ identifier` on [Wikipedia list of database tz time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)). This will determine in what timezone datetimes are added to calendar. Additionally, view the [`process.env.TZ` Node.js docs](https://nodejs.org/docs/v20.12.1/api/cli.html#tz) | `Europe/Brussels` | not set |
 | NODE_ENV | Node.js env variable to set environment | **yarn prod:** `production` / **yarn test:** `test`\*\* | `production` |
 | ADMIN_PASSWORDS | Valid passwords for users to log in with. Passwords are separated using a pipe character '`\|`' | not set | not set |

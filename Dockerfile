@@ -12,7 +12,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV DATA_DIR=/app/data/
 
-COPY --from=build /build/dist/ /app/
+COPY --from=build /build/dist/ /app/dist/
 COPY --from=build /build/package.json /app/package.json
 COPY --from=build /build/yarn.lock /app/yarn.lock
 
