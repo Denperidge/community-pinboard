@@ -181,7 +181,7 @@ TODO
 
 ## Reference
 ### Environment variables
-| Key                 | Explanation | [default](app/conf.ts) | default (Docker) |
+| Key                 | Explanation | [default](app/conf.ts) | [default (Docker)](Dockerfile) |
 | ------------------- | ----------- | ------- | ---------------- |
 | HOST_DOMAIN | Which domain the website/server will be reachable on | `localhost:3000` | not set |
 | DATA_DIR | Where to store data uploaded by users | `data/` | `/app/data/` |
@@ -189,6 +189,8 @@ TODO
 | WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
 | **\*** WEBSITE_LOCALE | The locale for your website. This will determine in what format datetimes are displayed in the rendered HTML/within [app/Pin.ts](app/Pin.ts) | `en-BE` | not set |
 | **\*** TZ | The timezone in `Area/City` notation (see `TZ identifier` on [Wikipedia list of database tz time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)). This will determine in what timezone datetimes are added to calendar. Additionally, view the [`process.env.TZ` Node.js docs](https://nodejs.org/docs/v20.12.1/api/cli.html#tz) | `Europe/Brussels` | not set |
+| NODE_ENV | Node.js env variable to set environment | **yarn prod:** `production` / **yarn test:** `test`\*\* | `production` |
+| ADMIN_PASSWORDS | Valid passwords for users to log in with. Passwords are separated using a pipe character '`\|`' | not set | not set |
 |||||
 | `MAX_TITLE`       | Max character length for pin title | 80 | not set |
 | `MAX_DESCRIPTION` | Max character length for pin description | 400 | not set |
@@ -196,6 +198,7 @@ TODO
 | `MAX_POSTEDBY`    | Max character length for pin posted by | 50 | not set |
 
 *(**\***: recommended)*
+*(**\*\***: set by Jest)*
 
 For an example setup, see [.env.example](.env.example)
 
