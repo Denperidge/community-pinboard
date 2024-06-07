@@ -76,7 +76,7 @@ router.get("/archive.ics", async function (req, res, next) {
   renderIcs(res, true, false);
 });
 
-/** About page. Contains links and ics feed urls */
+/** About page */
 router.get("/about", async function (req, res, next) {
   res.render("pages/about", {
     WEBSITE_TITLE: WEBSITE_TITLE,
@@ -84,6 +84,16 @@ router.get("/about", async function (req, res, next) {
     HOST_DOMAIN: HOST_DOMAIN,
   });
 });
+
+/* Sync page. Contains links and ics feed urls */
+router.get("/sync", async function (req, res, next) {
+  res.render("pages/sync", {
+    WEBSITE_TITLE: WEBSITE_TITLE,
+    WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
+    HOST_DOMAIN: HOST_DOMAIN,
+  });
+});
+
 
 /** Route to return files from ./data/uploads/{filename} */
 router.get(PUBLIC_UPLOADS_PATH + ":file", function (req, res, next) {

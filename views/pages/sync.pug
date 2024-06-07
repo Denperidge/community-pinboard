@@ -1,0 +1,53 @@
+extends ../layout
+
+include ../_nav.pug
+include ../_icon.pug
+
+mixin ics(icsFile, icsLabel)
+  label(for=icsFile)=icsLabel 
+  input(id=icsFile name=icsFile type="text" readonly=true value="https://" + HOST_DOMAIN + "/" + icsFile)
+
+block content
+  style.
+    body {
+        display: initial;
+    }
+
+    main {
+        width: 70%;
+        margin: auto;
+    }
+
+    h2, h3, h4, h5, h6 {
+      text-align: initial;
+    }
+
+  header
+    h1=WEBSITE_TITLE
+
+  main#about
+    +nav
+
+    h2 Sync to calendar
+    p You can automatically sync this website with your calendar app, by subscribing to the right URL!
+    h3 Instructions for:
+    ul
+      li
+        a(href="https://support.google.com/calendar/answer/37100") Google Calendar
+        span &nbsp;(Scroll to "Use a link to add a public calendar")
+      li
+        a(href="https://support.microsoft.com/en-us/office/import-or-subscribe-to-a-calendar-in-outlook-com-or-outlook-on-the-web-cff1429c-5af6-41ec-a5b4-74f2c278e98c#ID0EDD=Personal_account") Microsoft Outlook
+      li
+        a(href="https://support.apple.com/en-us/102301") Apple
+    p (Other apps can do it too, don't worry! These examples are for some of the big calendar apps)
+
+    h3 URLs:
+    ul
+      li
+        +ics("all.ics", "Sync all events (upcoming & past):")
+      li
+        +ics("upcoming.ics", "Sync only upcoming events")
+      li
+        +ics("archive.ics", "Sync only past events:")
+
+      p (If you can't find it (or use a different calendar app), it's usually called "Sync to iCal feed", "Sync from a public url" or "subscribe to someone else's calendar")
