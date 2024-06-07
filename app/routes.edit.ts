@@ -186,7 +186,7 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
 }
 
 router.get("/login", async function(req: express.Request, res: express.Response) {
-  res.render("login", {
+  res.render("pages/login", {
     loginForm: loginForm
   });
 });
@@ -207,7 +207,7 @@ router.post(
 router.get("/edit", [auth], async function(req: express.Request, res: express.Response) {
   const errorParams = req.query;
   const pinDict = await data.getPins(false, true, false);
-  res.render("edit", {
+  res.render("pages/edit", {
     WEBSITE_TITLE: WEBSITE_TITLE,
     WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
     HOST_DOMAIN: HOST_DOMAIN,

@@ -23,7 +23,7 @@ const upload: ReturnType<typeof multer> = multer({storage: multer.memoryStorage(
  */
 async function renderIndex(req: express.Request, res: express.Response, returnElapsedPins=false, returnUpcomingPins=true) {
   const errorParams = req.query;
-  res.render('index', {
+  res.render('pages/index', {
     WEBSITE_TITLE: WEBSITE_TITLE,
     WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
     HOST_DOMAIN: HOST_DOMAIN,
@@ -78,7 +78,7 @@ router.get("/archive.ics", async function (req, res, next) {
 
 /** About page. Contains links and ics feed urls */
 router.get("/about", async function (req, res, next) {
-  res.render("about", {
+  res.render("pages/about", {
     WEBSITE_TITLE: WEBSITE_TITLE,
     WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
     HOST_DOMAIN: HOST_DOMAIN,
