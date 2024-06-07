@@ -10,6 +10,8 @@ A public event pinboard webapp for your local community, meant to be even lighte
 - For the design decision behind this project, see [Explanation](#explanation)
 - For technical info, see [Reference](#reference)
 
+**Note:** this is - at the point of writing - an application meant for small scale deployments. Please ensure you read [Security Considerations](#security-considerations)
+
 ## How-to
 ### Run using Docker Compose
 Recommended for: **production**
@@ -121,6 +123,9 @@ This application was built to replace fragmented organising through multiple Fac
 - **Cross-platform:** Everything has an app, but not everything should be. People barely get around to installing a calendar/scheduling app for people they live or work with, let alone this! A simple, clearview website.
 - **Accessible:** Care should be put into the accessibility of the project. Mandatory image descriptions is a measure that - even though it might have to get a toggle down the line - an attempt at a step to making user-generated content more accessible, or at least thought about. Further care should also be put in providing as well-polished accessibility from the get-go.
 
+### Security considerations
+Obviously, I developed this application with security in mind; following recommended practices wherever I could find. But I'm a programmer and not a cybersecurity expert! Please review the used practices and check with your own security standards. And if you have a suggestion/improvement, please feel free to open an issue/PR!
+
 ### Randomised express-session secret
 In [app.ts](app.ts), the secret is randomly generated on startup. This is to minimize configuration by not requiring a custom string to be set, whilst ensuring the string is secure, whilst not having any noticeable impact on the user experience (as the logins are meant to be temporary).
 
@@ -128,22 +133,6 @@ In [app.ts](app.ts), the secret is randomly generated on startup. This is to min
 Currently the tests should be ran with the [`TZ` environment variable](#environment-variables) set ~~to the same timezone your machine is~~ Europe/Brussels. This is because JavaScript's `new Date().getTimezoneOffset()` (which is used to determine correct resulting hours) does not allow custom timezone insertion.
 
 ### Timezone handling
-#### Use cases
-Datetime and timezones are relevant in the following parts of the application
-
-Legend:
-- 💚: ISO String
-- 🕒: Adjusted for timezone
-- 🏠: Adjusted for locale
-
-| Functionality | Should be displayed/passed as | Relevant files |
-| ------------- | ----------------------------- | -------------- |
-| View Pin date & datetime strings | 🕒🏠 | [Pin (pre)views](views/_pin.pug), [index page](views/index.pug) |
-| Fill in edit form pin existing value | 💚🕒 | [form page](views/_form.pug), [form back-end](app/form.ts), [edit page](views/edit.pug), [edit routes](app/routes.edit.ts) |
-| Read & write `data/pins/*.json` | 💚(🕒) | [Pin class](app/Pin.ts), [ICS feeds](app/routes.get.ts) |
-| Add-To-Calendar-Button | 🕒 (seemingly) | [Pin class](app/Pin.ts), [Pin (pre)views](views/_pin.pug) |
-| ICS feeds | 🕒 | [Pin class](app/Pin.ts), [ICS Feed get routes](app/routes.get.ts) |
-
 #### HTML Forms
 For native `HTML` date(time) input, you have...
 - `date` (which doesn't include time)
