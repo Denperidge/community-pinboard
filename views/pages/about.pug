@@ -1,5 +1,6 @@
 extends ../layout
 
+include ../_nav.pug
 include ../_icon.pug
 
 mixin ics(icsFile, icsLabel)
@@ -25,9 +26,7 @@ block content
     h1=WEBSITE_TITLE
 
   main#about
-    nav
-      h2 Pages
-      a(href="/") Home
+    +nav
 
     section
       h2 Sync to calendar

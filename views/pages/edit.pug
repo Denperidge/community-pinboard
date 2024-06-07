@@ -1,5 +1,6 @@
 extends ../layout
 
+include ../_nav.pug
 include ../_icon.pug
 include ../_pin.pug
 include ../_form.pug
@@ -12,8 +13,7 @@ block content
     h1=WEBSITE_TITLE
   main#edit
     h2 Pages
-    nav(style="text-align: center;")
-      a(href="/about") Calendar sync (and about)
+    +nav
     
     h2 Pin view
     each form, i in forms

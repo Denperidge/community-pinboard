@@ -1,0 +1,14 @@
+include _icon.pug
+
+mixin entry(page, label, icon)
+    a(href=page)
+        li
+            +icon(icon)
+            span=label
+
+mixin nav
+    nav
+        ul
+            +entry("/", "Home", "egg")
+            +entry("/about", "About", "celeste")
+            +entry("/calendar", "Sync to calendar", "time")

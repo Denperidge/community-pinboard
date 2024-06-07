@@ -1,5 +1,6 @@
 extends ../layout
 
+include ../_nav.pug
 include ../_icon.pug
 include ../_pin.pug
 include ../_form.pug
@@ -18,8 +19,7 @@ block content
   // Switch aside to main?
   aside#pinview
     h2 Pages
-    nav(style="text-align: center;")
-      a(href="/about") Calendar sync (and about)
+    +nav
     h2 Pin view
     +pins(pinArray, false)
       hr
