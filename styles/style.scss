@@ -1,17 +1,8 @@
-@import "about";
 @import "accessibility";
-@import "aside";
-@import "board";
-@import "elements";
+@import "base";
 @import "fonts";
 @import "icons";
-@import "person";
 @import "pins";
-@import "layout";
-
-#edit {
-    grid-column-start: 1;
-    grid-column-end: 3;
-    width: 80%;
-    margin: auto;
-}
+@import "pages/about";
+@import "pages/edit";
+@import "pages/index";

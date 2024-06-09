@@ -1,0 +1,100 @@
+#index {
+    display: grid;
+    grid-template-columns: 0.7fr 0.3fr;
+    grid-template-rows: auto 1fr;
+  
+    /*column-gap: 20px;*/
+    header {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row: 1;
+    
+        h1 {
+            padding: 0;
+            margin: 0;
+        }
+    }
+    
+    main {
+        grid-row: 2;
+        height: 100%;
+    }
+    
+    aside {
+        grid-row: 2;
+        margin-left: 50px;
+    }
+    
+    @media (max-width: 800px) {
+        body {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            justify-items: center;
+        }
+    
+        main, aside {
+            width: 90%;
+        }
+    
+        aside {
+            grid-row: 3;
+            margin-left: 0px;
+            margin-bottom: 15px;
+        }
+    
+        .fileInput {
+            flex-direction: column;
+            input:first-of-type {
+                margin-bottom: 0;
+            }
+        }
+    }
+    
+    #board {
+        height: 80%;
+        border: 25px hsl(157, 42%, 67%) solid;
+        background: url("/images/cork.jpg") repeat;
+    
+        box-shadow: inset 0 0 3em #000;
+        padding: 20px;
+    
+        .pins {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, 250px);
+            column-gap: 20px;
+            row-gap: 5px;
+        }
+    }
+    
+    /* Placeholder border image by Jim Kang. See https://gist.github.com/jimkang/6a9df6c0b65effc7c7aa6885e526ceb1 */
+    $woodenBorder: repeating-linear-gradient(40deg, hsl(30, 50%, 15%), hsl(20, 50%, 30%), hsl(25, 40%, 20%) 8px) 60;
+    
+    aside {
+      height: 80vh;
+      overflow-y: hidden;
+      
+      display: flex;
+      flex-direction: column;
+    
+      overflow-y: scroll;
+    
+      border: 25px solid hsl(30, 50%, 15%);
+      border-image: $woodenBorder;
+      background-color: #c1f1f1;
+    
+      h2 {
+        margin: 0;
+      }
+    
+      .pins {
+        scroll-behavior: smooth;
+        flex-grow: 1;
+      }
+    
+      h4 {
+        text-align: initial;
+        margin-bottom: 0;
+      }
+    }
+    
+}
