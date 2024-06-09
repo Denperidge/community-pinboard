@@ -1,7 +1,7 @@
 import * as express from "express";
 import { check, validationResult, matchedData, FieldValidationError } from "express-validator";
 
-import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, PIN_MAXLENGTHS, LOGINS } from "./conf";
+import { renderWithConf, PIN_MAXLENGTHS, LOGINS } from "./conf";
 import * as data from "./data";
 import { IPinParameters, Pin } from "./Pin";
 import multer from "multer";
@@ -186,7 +186,7 @@ async function saveOrEditPin(req: express.Request, res: express.Response, writeT
 }
 
 router.get("/login", async function(req: express.Request, res: express.Response) {
-  res.render("pages/login", {
+  renderWithConf(res, "login", {
     loginForm: loginForm
   });
 });
@@ -207,12 +207,7 @@ router.post(
 router.get("/edit", [auth], async function(req: express.Request, res: express.Response) {
   const errorParams = req.query;
   const pinDict = await data.getPins(false, true, false);
-  res.render("pages/edit", {
-    WEBSITE_TITLE: WEBSITE_TITLE,
-    WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
-    HOST_DOMAIN: HOST_DOMAIN,
-    WEBSITE_TIMEZONE: WEBSITE_TIMEZONE,
-    PIN_MAXLENGTHS: PIN_MAXLENGTHS,
+  renderWithConf(res, "edit", {
     errors: errorParams,
     forms: editForms(pinDict),
     formSlugs: Object.keys(pinDict),

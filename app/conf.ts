@@ -1,3 +1,4 @@
+import { Response } from "express";
 import { tmpdir } from "os";
 import { join } from "path";
 import { config } from "dotenv";
@@ -66,3 +67,16 @@ export const UPLOADS_DIR = join(DATA_DIR, "uploads/");
 export const PUBLIC_UPLOADS_PATH = "/uploads/";
 
 export const LOGINS = process.env.ADMIN_PASSWORDS?.split("|") || [];
+
+export function renderWithConf(res: Response, pageName: string, additionalOptions={}) {
+    const fullOptions = Object.assign(additionalOptions, {
+        WEBSITE_TITLE: WEBSITE_TITLE,
+        WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
+        HOST_DOMAIN: HOST_DOMAIN,
+        WEBSITE_TIMEZONE: WEBSITE_TIMEZONE,
+        PIN_MAXLENGTHS: PIN_MAXLENGTHS,
+        pageName: pageName
+    },);
+
+    res.render(`pages/${pageName}`, fullOptions);
+}

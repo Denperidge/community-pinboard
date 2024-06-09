@@ -1,7 +1,7 @@
 import * as express from "express";
 import { check, validationResult, matchedData, FieldValidationError } from "express-validator";
 
-import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, PIN_MAXLENGTHS } from "./conf";
+import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, PIN_MAXLENGTHS, renderWithConf } from "./conf";
 import * as data from "./data";
 import { Pin } from "./Pin";
 import multer from "multer";
@@ -23,12 +23,7 @@ const upload: ReturnType<typeof multer> = multer({storage: multer.memoryStorage(
  */
 async function renderIndex(req: express.Request, res: express.Response, returnElapsedPins=false, returnUpcomingPins=true) {
   const errorParams = req.query;
-  res.render('pages/index', {
-    WEBSITE_TITLE: WEBSITE_TITLE,
-    WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
-    HOST_DOMAIN: HOST_DOMAIN,
-    WEBSITE_TIMEZONE: WEBSITE_TIMEZONE,
-    PIN_MAXLENGTHS: PIN_MAXLENGTHS,
+  renderWithConf(res, "index", {
     form: indexForm(req),
     errors: errorParams,
     pinArray: await data.getPins(returnElapsedPins, returnUpcomingPins, true)
@@ -78,20 +73,12 @@ router.get("/archive.ics", async function (req, res, next) {
 
 /** About page */
 router.get("/about", async function (req, res, next) {
-  res.render("pages/about", {
-    WEBSITE_TITLE: WEBSITE_TITLE,
-    WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
-    HOST_DOMAIN: HOST_DOMAIN,
-  });
+  renderWithConf(res, "about");
 });
 
 /* Sync page. Contains links and ics feed urls */
 router.get("/sync", async function (req, res, next) {
-  res.render("pages/sync", {
-    WEBSITE_TITLE: WEBSITE_TITLE,
-    WEBSITE_DESCRIPTION: WEBSITE_DESCRIPTION,
-    HOST_DOMAIN: HOST_DOMAIN,
-  });
+  renderWithConf(res, "sync");
 });
 
 
