@@ -1,12 +1,10 @@
 import * as express from "express";
-import { check, validationResult, matchedData, FieldValidationError } from "express-validator";
+import multer from "multer";
 
-import { WEBSITE_TITLE, WEBSITE_DESCRIPTION, UPLOADS_DIR, PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, PIN_MAXLENGTHS, renderWithConf } from "./conf";
+import { UPLOADS_DIR, PUBLIC_UPLOADS_PATH, renderWithConf } from "./conf";
 import * as data from "./data";
 import { Pin } from "./Pin";
-import multer from "multer";
 import { createEvents } from "ics";
-import slug from "slug";
 import { indexForm } from "./form";
 
 /** Express Router, allows assigning routes*/ 

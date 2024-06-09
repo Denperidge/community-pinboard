@@ -1,8 +1,8 @@
 import * as fs from "fs";
-import { join, parse as pathParse, format as pathToString, ParsedPath, parse } from "path";
+import { join, parse as pathParse } from "path";
+
 import { DATA_DIR, PINS_DIR, UPLOADS_DIR } from "./conf";
 import { Pin } from "./Pin";
-import { parse as parsePath } from "path";
 
 export function _returnUniquePath(filePath: string, fileBasename: string, index: number=0) {
     // If file exists
@@ -76,7 +76,7 @@ export async function getPins(returnElapsedPins=false, returnUpcomingPins=true, 
             let pins: Array<Pin>|{[slug:string]: Pin} = returnArray ? [] : {};
             for (let i=0; i < pinFiles.length; i++) {
                 const pinFilename = pinFiles[i];
-                const pinSlug = parsePath(pinFilename).name;
+                const pinSlug = pathParse(pinFilename).name;
                 const pinPath = join(PINS_DIR, pinFilename);
 
                 const pin = await _readPin(pinPath);

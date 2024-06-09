@@ -1,8 +1,10 @@
 import { EventAttributes } from "ics";
-import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import timezone from "dayjs/plugin/timezone";
+
+import { PUBLIC_UPLOADS_PATH, HOST_DOMAIN, WEBSITE_TIMEZONE, WEBSITE_LOCALE } from "./conf";
+
 require(`dayjs/locale/${WEBSITE_LOCALE.trim()}`);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);

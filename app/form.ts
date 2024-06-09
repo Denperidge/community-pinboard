@@ -1,5 +1,5 @@
 import { IPinParameters, Pin } from "./Pin";
-import { MAX_UPLOAD_MB as MAX_UPLOAD_MB, PIN_MAXLENGTHS } from "./conf";
+import { PIN_MAXLENGTHS } from "./conf";
 import * as express from "express";
 
 interface IInputOptions {name: string, required: boolean, labelText?: string, icon?: string, id?:string, labelSrOnly?: boolean}

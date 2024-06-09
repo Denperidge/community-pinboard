@@ -1,11 +1,11 @@
 import * as express from "express";
 import { check, validationResult, matchedData, FieldValidationError } from "express-validator";
+import slug from "slug";
+import multer from "multer";
 
 import { renderWithConf, PIN_MAXLENGTHS, LOGINS } from "./conf";
 import * as data from "./data";
 import { IPinParameters, Pin } from "./Pin";
-import multer from "multer";
-import slug from "slug";
 import { editForms, loginForm } from "./form";
 import { rateLimit } from 'express-rate-limit';
 
