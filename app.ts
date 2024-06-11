@@ -1,17 +1,15 @@
 import { randomBytes } from "crypto";
+var path = require('path');
 
-var createError = require('http-errors');
 var express = require('express');
 import { Request, Response, NextFunction } from "express";
-import { HOST_DOMAIN } from "./app/conf";
-
-const helmet = require("helmet");
+var createError = require('http-errors');
+import helmet from "helmet";
 import session from "express-session";
 const MemoryStore = require("memorystore")(session);
-var path = require('path');
+var sassMiddleware = require("node-sass-middleware");
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var sassMiddleware = require("node-sass-middleware");
 
 var getRouter = require('./app/routes.get');
 var editRouter = require('./app/routes.edit');
@@ -36,7 +34,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // https://expressjs.com/en/advanced/best-practice-security.html#use-helmet
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      "img-src": "* data:",
+      "script-src": ["'self'", 'https://cdn.jsdelivr.net/npm/add-to-calendar-button@2.6.16/dist/atcb-no-pro.js']
+    }
+  }
+}));
 app.disable("x-powered-by");
 
 app.use(session({
