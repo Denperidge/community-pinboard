@@ -168,6 +168,10 @@ To ensure compatibility with more devices and lower client-side footprint, the n
 #### ics.js/ics feed
 TODO
 
+### Troubleshooting
+#### Stylesheets not loading
+Make sure you're serving from https when running in production! Alternatively, set `NODE_ENV=development` or change the Helmet security options to match your server.
+
 ## Reference
 ### Environment variables
 | Key                 | Explanation | [default](app/conf.ts) | [default (Docker)](Dockerfile) |
@@ -178,7 +182,7 @@ TODO
 | WEBSITE_DESCRIPTION | The description for your website, displayed in OpenGraph | `A public event pinboard for your local community!` | not set |
 | **\*** WEBSITE_LOCALE | The locale for your website. This will determine in what format datetimes are displayed in the rendered HTML/within [app/Pin.ts](app/Pin.ts) | `nl-be` | not set |
 | **\*** TZ | The timezone in `Area/City` notation (see `TZ identifier` on [Wikipedia list of database tz time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)). This will determine in what timezone datetimes are added to calendar. Additionally, view the [`process.env.TZ` Node.js docs](https://nodejs.org/docs/v20.12.1/api/cli.html#tz) | `Europe/Brussels` | not set |
-| NODE_ENV | Node.js env variable to set environment | **yarn prod:** `production` / **yarn test:** `test`\*\* | `production` |
+| NODE_ENV | Node.js env variable to set environment. **Will enforce https unless set to development** | **yarn prod:** `production` / **yarn test:** `test`\*\* / **yarn dev:** `development`\*\* | `production` |
 | ADMIN_PASSWORDS | Valid passwords for users to log in with. Passwords are separated using a pipe character '`\|`' | not set | not set |
 |||||
 | `MAX_TITLE`       | Max character length for pin title | 80 | not set |

@@ -38,7 +38,8 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       "img-src": "* data:",
-      "script-src": ["'self'", 'https://cdn.jsdelivr.net/npm/add-to-calendar-button@2.6.16/dist/atcb-no-pro.js']
+      "script-src": ["'self'", 'https://cdn.jsdelivr.net/npm/add-to-calendar-button@2.6.16/dist/atcb-no-pro.js'],
+      "upgrade-insecure-requests": process.env.NODE_ENV != "development" ? helmet.contentSecurityPolicy.getDefaultDirectives()["upgrade-insecure-requests"] : null
     }
   }
 }));
